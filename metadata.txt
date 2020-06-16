@@ -5,12 +5,12 @@
 [general]
 name=Curve Number Generator
 qgisMinimumVersion=3.6
-description=This plugin generates a Curve Number layer for the given Area of Interest within the contiguous Unites States. It can also download Soil and Land Cover datasets for the same area.
-version=0.1
+description=This plugin generates a Curve Number layer for the given Area of Interest within the contiguous United States. It can also download Soil and Land Cover datasets for the same area.
+version=0.2
 author=Abdul Raheem Siddiqui
 email=ars.work.ce@gmail.com
 
-about=This plugin generates a Curve Number layer for the given Area of Interest within the contiguous Unites States. It can also download Soil and Land Cover datasets for the same area.
+about=This plugin generates a Curve Number layer for the given Area of Interest within the contiguous United States. It can also download Soil and Land Cover datasets for the same area.
 
 tracker=https://github.com/someone191/Curve-Number-Generator/issues
 repository=https://github.com/someone191/Curve-Number-Generator
@@ -20,16 +20,23 @@ repository=https://github.com/someone191/Curve-Number-Generator
 
 hasProcessingProvider=yes
 # Uncomment the following line and add your changelog:
-# changelog=
+changelog= Version 0.2 - 2020-06-16
+	- Warning message added to tell the user that ‘You are not using the latest version of QGIS, defaulting to the old version of native set style layer’
+	- EPSG 6996 and 6997 removed from the acceptable CRS list
+	- Assign 'MUNAME = Water', curve number 100
+	- Area calculation changed to planer calculation as some projects can have wrong context causing incorrect extent layer area
+	- Improved comments in the source code
+	- Minor changes in the text of help
+
 
 # Tags are comma separated with spaces allowed
-tags=curve number, CN, NLCD Land Cover, SSURGO, Soil, Hydrologic Soil Group, HSG, WFS, WMS
+tags=curve number, CN, NLCD Land Cover, SSURGO, Soil, Hydrologic Soil Group, HSG, WFS, WMS, Hydrology, SCS,
 
 homepage=https://github.com/someone191/Curve-Number-Generator
 category=Analysis
 icon=icon.png
 # experimental flag
-experimental=True
+experimental=False
 
 # deprecated flag (applies to the whole plugin, not just a single version)
 deprecated=False
