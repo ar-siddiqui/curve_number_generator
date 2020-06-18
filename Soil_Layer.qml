@@ -1,439 +1,439 @@
 <!DOCTYPE qgis PUBLIC 'http://mrcc.com/qgis.dtd' 'SYSTEM'>
-<qgis simplifyMaxScale="1" readOnly="0" version="3.12.1-București" simplifyDrawingTol="1" labelsEnabled="0" simplifyLocal="1" styleCategories="AllStyleCategories" hasScaleBasedVisibilityFlag="0" simplifyAlgorithm="0" maxScale="0" minScale="100000000" simplifyDrawingHints="1">
+<qgis styleCategories="AllStyleCategories" simplifyAlgorithm="0" simplifyDrawingHints="1" version="3.12.1-București" minScale="100000000" simplifyMaxScale="1" simplifyLocal="1" maxScale="0" readOnly="0" simplifyDrawingTol="1" hasScaleBasedVisibilityFlag="0" labelsEnabled="0">
   <flags>
     <Identifiable>1</Identifiable>
     <Removable>1</Removable>
     <Searchable>1</Searchable>
   </flags>
-  <renderer-v2 type="RuleRenderer" forceraster="0" symbollevels="0" enableorderby="0">
+  <renderer-v2 enableorderby="0" symbollevels="0" forceraster="0" type="RuleRenderer">
     <rules key="{d5476048-aca4-4d0b-ad18-678785b60abb}">
-      <rule key="{02d6e445-c271-4771-b272-96b1891231d8}" filter="&quot;hydgrpdcd&quot; = 'A'" label="A" symbol="0"/>
-      <rule key="{01d5cdcd-74f3-4e19-82f2-d85837b280e2}" filter="&quot;hydgrpdcd&quot; = 'A/D'" label="A/D" symbol="1"/>
-      <rule key="{6b19a3c5-0b7e-4c2b-8c1b-d462ce6e831e}" filter="&quot;hydgrpdcd&quot; = 'B'" label="B" symbol="2"/>
-      <rule key="{12def40e-bc1c-4f1c-8216-e0b8d9766fb4}" filter="&quot;hydgrpdcd&quot; = 'B/D'" label="B/D" symbol="3"/>
-      <rule key="{be00609b-97ef-43d3-899a-466f4895a16f}" filter="&quot;hydgrpdcd&quot; = 'C'" label="C" symbol="4"/>
-      <rule key="{be7fc69b-277e-480b-b2d4-870192e53cbf}" filter="&quot;hydgrpdcd&quot; = 'C/D'" label="C/D" symbol="5"/>
-      <rule key="{78a409b1-bb22-4d84-a799-f7f5b9ee9c20}" filter="&quot;hydgrpdcd&quot; = 'D'" label="D" symbol="6"/>
-      <rule key="{ccbe84e1-d0a6-40ff-99d6-8b1d97cf411c}" filter="&quot;MUSYM&quot; = 'W' OR lower(&quot;MUSYM&quot;) = 'water' OR lower(&quot;MUNAME&quot;) = 'water' OR &quot;MUNAME&quot; = 'W'" label="Water" symbol="7"/>
-      <rule key="{fd017dcf-edac-4a35-9ac4-e330e19adef7}" filter="ELSE" label="N/A" symbol="8"/>
+      <rule label="A" symbol="0" key="{02d6e445-c271-4771-b272-96b1891231d8}" filter="&quot;hydgrpdcd&quot; = 'A'"/>
+      <rule label="A/D" symbol="1" key="{01d5cdcd-74f3-4e19-82f2-d85837b280e2}" filter="&quot;hydgrpdcd&quot; = 'A/D'"/>
+      <rule label="B" symbol="2" key="{6b19a3c5-0b7e-4c2b-8c1b-d462ce6e831e}" filter="&quot;hydgrpdcd&quot; = 'B'"/>
+      <rule label="B/D" symbol="3" key="{12def40e-bc1c-4f1c-8216-e0b8d9766fb4}" filter="&quot;hydgrpdcd&quot; = 'B/D'"/>
+      <rule label="C" symbol="4" key="{be00609b-97ef-43d3-899a-466f4895a16f}" filter="&quot;hydgrpdcd&quot; = 'C'"/>
+      <rule label="C/D" symbol="5" key="{be7fc69b-277e-480b-b2d4-870192e53cbf}" filter="&quot;hydgrpdcd&quot; = 'C/D'"/>
+      <rule label="D" symbol="6" key="{78a409b1-bb22-4d84-a799-f7f5b9ee9c20}" filter="&quot;hydgrpdcd&quot; = 'D'"/>
+      <rule label="Water" symbol="7" key="{ccbe84e1-d0a6-40ff-99d6-8b1d97cf411c}" filter=" &quot;musym&quot; = 'W' OR  &quot;musym&quot; = 'WATER'"/>
+      <rule label="N/A" symbol="8" key="{fd017dcf-edac-4a35-9ac4-e330e19adef7}" filter="ELSE"/>
     </rules>
     <symbols>
-      <symbol type="fill" name="0" force_rhr="0" clip_to_extent="1" alpha="1">
-        <layer enabled="1" locked="0" pass="0" class="SimpleFill">
-          <prop v="3x:0,0,0,0,0,0" k="border_width_map_unit_scale"/>
-          <prop v="153,194,70,255" k="color"/>
-          <prop v="bevel" k="joinstyle"/>
-          <prop v="0,0" k="offset"/>
-          <prop v="3x:0,0,0,0,0,0" k="offset_map_unit_scale"/>
-          <prop v="MM" k="offset_unit"/>
-          <prop v="35,35,35,255" k="outline_color"/>
-          <prop v="solid" k="outline_style"/>
-          <prop v="0.26" k="outline_width"/>
-          <prop v="MM" k="outline_width_unit"/>
-          <prop v="solid" k="style"/>
+      <symbol force_rhr="0" clip_to_extent="1" alpha="1" type="fill" name="0">
+        <layer locked="0" pass="0" class="SimpleFill" enabled="1">
+          <prop k="border_width_map_unit_scale" v="3x:0,0,0,0,0,0"/>
+          <prop k="color" v="153,194,70,255"/>
+          <prop k="joinstyle" v="bevel"/>
+          <prop k="offset" v="0,0"/>
+          <prop k="offset_map_unit_scale" v="3x:0,0,0,0,0,0"/>
+          <prop k="offset_unit" v="MM"/>
+          <prop k="outline_color" v="35,35,35,255"/>
+          <prop k="outline_style" v="solid"/>
+          <prop k="outline_width" v="0.26"/>
+          <prop k="outline_width_unit" v="MM"/>
+          <prop k="style" v="solid"/>
           <data_defined_properties>
             <Option type="Map">
-              <Option type="QString" name="name" value=""/>
+              <Option type="QString" value="" name="name"/>
               <Option name="properties"/>
-              <Option type="QString" name="type" value="collection"/>
+              <Option type="QString" value="collection" name="type"/>
             </Option>
           </data_defined_properties>
         </layer>
       </symbol>
-      <symbol type="fill" name="1" force_rhr="0" clip_to_extent="1" alpha="1">
-        <layer enabled="1" locked="0" pass="0" class="SimpleLine">
-          <prop v="square" k="capstyle"/>
-          <prop v="5;2" k="customdash"/>
-          <prop v="3x:0,0,0,0,0,0" k="customdash_map_unit_scale"/>
-          <prop v="MM" k="customdash_unit"/>
-          <prop v="0" k="draw_inside_polygon"/>
-          <prop v="bevel" k="joinstyle"/>
-          <prop v="30,83,47,255" k="line_color"/>
-          <prop v="solid" k="line_style"/>
-          <prop v="0.2" k="line_width"/>
-          <prop v="MM" k="line_width_unit"/>
-          <prop v="0" k="offset"/>
-          <prop v="3x:0,0,0,0,0,0" k="offset_map_unit_scale"/>
-          <prop v="MM" k="offset_unit"/>
-          <prop v="0" k="ring_filter"/>
-          <prop v="0" k="use_custom_dash"/>
-          <prop v="3x:0,0,0,0,0,0" k="width_map_unit_scale"/>
+      <symbol force_rhr="0" clip_to_extent="1" alpha="1" type="fill" name="1">
+        <layer locked="0" pass="0" class="SimpleLine" enabled="1">
+          <prop k="capstyle" v="square"/>
+          <prop k="customdash" v="5;2"/>
+          <prop k="customdash_map_unit_scale" v="3x:0,0,0,0,0,0"/>
+          <prop k="customdash_unit" v="MM"/>
+          <prop k="draw_inside_polygon" v="0"/>
+          <prop k="joinstyle" v="bevel"/>
+          <prop k="line_color" v="30,83,47,255"/>
+          <prop k="line_style" v="solid"/>
+          <prop k="line_width" v="0.2"/>
+          <prop k="line_width_unit" v="MM"/>
+          <prop k="offset" v="0"/>
+          <prop k="offset_map_unit_scale" v="3x:0,0,0,0,0,0"/>
+          <prop k="offset_unit" v="MM"/>
+          <prop k="ring_filter" v="0"/>
+          <prop k="use_custom_dash" v="0"/>
+          <prop k="width_map_unit_scale" v="3x:0,0,0,0,0,0"/>
           <data_defined_properties>
             <Option type="Map">
-              <Option type="QString" name="name" value=""/>
+              <Option type="QString" value="" name="name"/>
               <Option name="properties"/>
-              <Option type="QString" name="type" value="collection"/>
+              <Option type="QString" value="collection" name="type"/>
             </Option>
           </data_defined_properties>
         </layer>
-        <layer enabled="1" locked="0" pass="0" class="SimpleFill">
-          <prop v="3x:0,0,0,0,0,0" k="border_width_map_unit_scale"/>
-          <prop v="215,25,28,255" k="color"/>
-          <prop v="bevel" k="joinstyle"/>
-          <prop v="0,0" k="offset"/>
-          <prop v="3x:0,0,0,0,0,0" k="offset_map_unit_scale"/>
-          <prop v="MM" k="offset_unit"/>
-          <prop v="35,35,35,255" k="outline_color"/>
-          <prop v="solid" k="outline_style"/>
-          <prop v="0.2" k="outline_width"/>
-          <prop v="MM" k="outline_width_unit"/>
-          <prop v="solid" k="style"/>
+        <layer locked="0" pass="0" class="SimpleFill" enabled="1">
+          <prop k="border_width_map_unit_scale" v="3x:0,0,0,0,0,0"/>
+          <prop k="color" v="215,25,28,255"/>
+          <prop k="joinstyle" v="bevel"/>
+          <prop k="offset" v="0,0"/>
+          <prop k="offset_map_unit_scale" v="3x:0,0,0,0,0,0"/>
+          <prop k="offset_unit" v="MM"/>
+          <prop k="outline_color" v="35,35,35,255"/>
+          <prop k="outline_style" v="solid"/>
+          <prop k="outline_width" v="0.2"/>
+          <prop k="outline_width_unit" v="MM"/>
+          <prop k="style" v="solid"/>
           <data_defined_properties>
             <Option type="Map">
-              <Option type="QString" name="name" value=""/>
+              <Option type="QString" value="" name="name"/>
               <Option name="properties"/>
-              <Option type="QString" name="type" value="collection"/>
+              <Option type="QString" value="collection" name="type"/>
             </Option>
           </data_defined_properties>
         </layer>
-        <layer enabled="1" locked="0" pass="0" class="LinePatternFill">
-          <prop v="45" k="angle"/>
-          <prop v="30,83,47,255" k="color"/>
-          <prop v="2" k="distance"/>
-          <prop v="3x:0,0,0,0,0,0" k="distance_map_unit_scale"/>
-          <prop v="MM" k="distance_unit"/>
-          <prop v="0.26" k="line_width"/>
-          <prop v="3x:0,0,0,0,0,0" k="line_width_map_unit_scale"/>
-          <prop v="MM" k="line_width_unit"/>
-          <prop v="0" k="offset"/>
-          <prop v="3x:0,0,0,0,0,0" k="offset_map_unit_scale"/>
-          <prop v="MM" k="offset_unit"/>
-          <prop v="3x:0,0,0,0,0,0" k="outline_width_map_unit_scale"/>
-          <prop v="MM" k="outline_width_unit"/>
+        <layer locked="0" pass="0" class="LinePatternFill" enabled="1">
+          <prop k="angle" v="45"/>
+          <prop k="color" v="30,83,47,255"/>
+          <prop k="distance" v="2"/>
+          <prop k="distance_map_unit_scale" v="3x:0,0,0,0,0,0"/>
+          <prop k="distance_unit" v="MM"/>
+          <prop k="line_width" v="0.26"/>
+          <prop k="line_width_map_unit_scale" v="3x:0,0,0,0,0,0"/>
+          <prop k="line_width_unit" v="MM"/>
+          <prop k="offset" v="0"/>
+          <prop k="offset_map_unit_scale" v="3x:0,0,0,0,0,0"/>
+          <prop k="offset_unit" v="MM"/>
+          <prop k="outline_width_map_unit_scale" v="3x:0,0,0,0,0,0"/>
+          <prop k="outline_width_unit" v="MM"/>
           <data_defined_properties>
             <Option type="Map">
-              <Option type="QString" name="name" value=""/>
+              <Option type="QString" value="" name="name"/>
               <Option name="properties"/>
-              <Option type="QString" name="type" value="collection"/>
+              <Option type="QString" value="collection" name="type"/>
             </Option>
           </data_defined_properties>
-          <symbol type="line" name="@1@2" force_rhr="0" clip_to_extent="1" alpha="1">
-            <layer enabled="1" locked="0" pass="0" class="SimpleLine">
-              <prop v="square" k="capstyle"/>
-              <prop v="5;2" k="customdash"/>
-              <prop v="3x:0,0,0,0,0,0" k="customdash_map_unit_scale"/>
-              <prop v="MM" k="customdash_unit"/>
-              <prop v="0" k="draw_inside_polygon"/>
-              <prop v="bevel" k="joinstyle"/>
-              <prop v="153,194,70,255" k="line_color"/>
-              <prop v="solid" k="line_style"/>
-              <prop v="0.9" k="line_width"/>
-              <prop v="MM" k="line_width_unit"/>
-              <prop v="0" k="offset"/>
-              <prop v="3x:0,0,0,0,0,0" k="offset_map_unit_scale"/>
-              <prop v="MM" k="offset_unit"/>
-              <prop v="0" k="ring_filter"/>
-              <prop v="0" k="use_custom_dash"/>
-              <prop v="3x:0,0,0,0,0,0" k="width_map_unit_scale"/>
+          <symbol force_rhr="0" clip_to_extent="1" alpha="1" type="line" name="@1@2">
+            <layer locked="0" pass="0" class="SimpleLine" enabled="1">
+              <prop k="capstyle" v="square"/>
+              <prop k="customdash" v="5;2"/>
+              <prop k="customdash_map_unit_scale" v="3x:0,0,0,0,0,0"/>
+              <prop k="customdash_unit" v="MM"/>
+              <prop k="draw_inside_polygon" v="0"/>
+              <prop k="joinstyle" v="bevel"/>
+              <prop k="line_color" v="153,194,70,255"/>
+              <prop k="line_style" v="solid"/>
+              <prop k="line_width" v="0.9"/>
+              <prop k="line_width_unit" v="MM"/>
+              <prop k="offset" v="0"/>
+              <prop k="offset_map_unit_scale" v="3x:0,0,0,0,0,0"/>
+              <prop k="offset_unit" v="MM"/>
+              <prop k="ring_filter" v="0"/>
+              <prop k="use_custom_dash" v="0"/>
+              <prop k="width_map_unit_scale" v="3x:0,0,0,0,0,0"/>
               <data_defined_properties>
                 <Option type="Map">
-                  <Option type="QString" name="name" value=""/>
+                  <Option type="QString" value="" name="name"/>
                   <Option name="properties"/>
-                  <Option type="QString" name="type" value="collection"/>
+                  <Option type="QString" value="collection" name="type"/>
                 </Option>
               </data_defined_properties>
             </layer>
           </symbol>
         </layer>
       </symbol>
-      <symbol type="fill" name="2" force_rhr="0" clip_to_extent="1" alpha="1">
-        <layer enabled="1" locked="0" pass="0" class="SimpleFill">
-          <prop v="3x:0,0,0,0,0,0" k="border_width_map_unit_scale"/>
-          <prop v="127,155,41,255" k="color"/>
-          <prop v="bevel" k="joinstyle"/>
-          <prop v="0,0" k="offset"/>
-          <prop v="3x:0,0,0,0,0,0" k="offset_map_unit_scale"/>
-          <prop v="MM" k="offset_unit"/>
-          <prop v="35,35,35,255" k="outline_color"/>
-          <prop v="solid" k="outline_style"/>
-          <prop v="0.26" k="outline_width"/>
-          <prop v="MM" k="outline_width_unit"/>
-          <prop v="solid" k="style"/>
+      <symbol force_rhr="0" clip_to_extent="1" alpha="1" type="fill" name="2">
+        <layer locked="0" pass="0" class="SimpleFill" enabled="1">
+          <prop k="border_width_map_unit_scale" v="3x:0,0,0,0,0,0"/>
+          <prop k="color" v="127,155,41,255"/>
+          <prop k="joinstyle" v="bevel"/>
+          <prop k="offset" v="0,0"/>
+          <prop k="offset_map_unit_scale" v="3x:0,0,0,0,0,0"/>
+          <prop k="offset_unit" v="MM"/>
+          <prop k="outline_color" v="35,35,35,255"/>
+          <prop k="outline_style" v="solid"/>
+          <prop k="outline_width" v="0.26"/>
+          <prop k="outline_width_unit" v="MM"/>
+          <prop k="style" v="solid"/>
           <data_defined_properties>
             <Option type="Map">
-              <Option type="QString" name="name" value=""/>
+              <Option type="QString" value="" name="name"/>
               <Option name="properties"/>
-              <Option type="QString" name="type" value="collection"/>
+              <Option type="QString" value="collection" name="type"/>
             </Option>
           </data_defined_properties>
         </layer>
       </symbol>
-      <symbol type="fill" name="3" force_rhr="0" clip_to_extent="1" alpha="1">
-        <layer enabled="1" locked="0" pass="0" class="SimpleLine">
-          <prop v="square" k="capstyle"/>
-          <prop v="5;2" k="customdash"/>
-          <prop v="3x:0,0,0,0,0,0" k="customdash_map_unit_scale"/>
-          <prop v="MM" k="customdash_unit"/>
-          <prop v="0" k="draw_inside_polygon"/>
-          <prop v="bevel" k="joinstyle"/>
-          <prop v="30,83,47,255" k="line_color"/>
-          <prop v="solid" k="line_style"/>
-          <prop v="0.2" k="line_width"/>
-          <prop v="MM" k="line_width_unit"/>
-          <prop v="0" k="offset"/>
-          <prop v="3x:0,0,0,0,0,0" k="offset_map_unit_scale"/>
-          <prop v="MM" k="offset_unit"/>
-          <prop v="0" k="ring_filter"/>
-          <prop v="0" k="use_custom_dash"/>
-          <prop v="3x:0,0,0,0,0,0" k="width_map_unit_scale"/>
+      <symbol force_rhr="0" clip_to_extent="1" alpha="1" type="fill" name="3">
+        <layer locked="0" pass="0" class="SimpleLine" enabled="1">
+          <prop k="capstyle" v="square"/>
+          <prop k="customdash" v="5;2"/>
+          <prop k="customdash_map_unit_scale" v="3x:0,0,0,0,0,0"/>
+          <prop k="customdash_unit" v="MM"/>
+          <prop k="draw_inside_polygon" v="0"/>
+          <prop k="joinstyle" v="bevel"/>
+          <prop k="line_color" v="30,83,47,255"/>
+          <prop k="line_style" v="solid"/>
+          <prop k="line_width" v="0.2"/>
+          <prop k="line_width_unit" v="MM"/>
+          <prop k="offset" v="0"/>
+          <prop k="offset_map_unit_scale" v="3x:0,0,0,0,0,0"/>
+          <prop k="offset_unit" v="MM"/>
+          <prop k="ring_filter" v="0"/>
+          <prop k="use_custom_dash" v="0"/>
+          <prop k="width_map_unit_scale" v="3x:0,0,0,0,0,0"/>
           <data_defined_properties>
             <Option type="Map">
-              <Option type="QString" name="name" value=""/>
+              <Option type="QString" value="" name="name"/>
               <Option name="properties"/>
-              <Option type="QString" name="type" value="collection"/>
+              <Option type="QString" value="collection" name="type"/>
             </Option>
           </data_defined_properties>
         </layer>
-        <layer enabled="1" locked="0" pass="0" class="SimpleFill">
-          <prop v="3x:0,0,0,0,0,0" k="border_width_map_unit_scale"/>
-          <prop v="215,25,28,255" k="color"/>
-          <prop v="bevel" k="joinstyle"/>
-          <prop v="0,0" k="offset"/>
-          <prop v="3x:0,0,0,0,0,0" k="offset_map_unit_scale"/>
-          <prop v="MM" k="offset_unit"/>
-          <prop v="35,35,35,255" k="outline_color"/>
-          <prop v="solid" k="outline_style"/>
-          <prop v="0.2" k="outline_width"/>
-          <prop v="MM" k="outline_width_unit"/>
-          <prop v="solid" k="style"/>
+        <layer locked="0" pass="0" class="SimpleFill" enabled="1">
+          <prop k="border_width_map_unit_scale" v="3x:0,0,0,0,0,0"/>
+          <prop k="color" v="215,25,28,255"/>
+          <prop k="joinstyle" v="bevel"/>
+          <prop k="offset" v="0,0"/>
+          <prop k="offset_map_unit_scale" v="3x:0,0,0,0,0,0"/>
+          <prop k="offset_unit" v="MM"/>
+          <prop k="outline_color" v="35,35,35,255"/>
+          <prop k="outline_style" v="solid"/>
+          <prop k="outline_width" v="0.2"/>
+          <prop k="outline_width_unit" v="MM"/>
+          <prop k="style" v="solid"/>
           <data_defined_properties>
             <Option type="Map">
-              <Option type="QString" name="name" value=""/>
+              <Option type="QString" value="" name="name"/>
               <Option name="properties"/>
-              <Option type="QString" name="type" value="collection"/>
+              <Option type="QString" value="collection" name="type"/>
             </Option>
           </data_defined_properties>
         </layer>
-        <layer enabled="1" locked="0" pass="0" class="LinePatternFill">
-          <prop v="45" k="angle"/>
-          <prop v="30,83,47,255" k="color"/>
-          <prop v="2" k="distance"/>
-          <prop v="3x:0,0,0,0,0,0" k="distance_map_unit_scale"/>
-          <prop v="MM" k="distance_unit"/>
-          <prop v="0.26" k="line_width"/>
-          <prop v="3x:0,0,0,0,0,0" k="line_width_map_unit_scale"/>
-          <prop v="MM" k="line_width_unit"/>
-          <prop v="0" k="offset"/>
-          <prop v="3x:0,0,0,0,0,0" k="offset_map_unit_scale"/>
-          <prop v="MM" k="offset_unit"/>
-          <prop v="3x:0,0,0,0,0,0" k="outline_width_map_unit_scale"/>
-          <prop v="MM" k="outline_width_unit"/>
+        <layer locked="0" pass="0" class="LinePatternFill" enabled="1">
+          <prop k="angle" v="45"/>
+          <prop k="color" v="30,83,47,255"/>
+          <prop k="distance" v="2"/>
+          <prop k="distance_map_unit_scale" v="3x:0,0,0,0,0,0"/>
+          <prop k="distance_unit" v="MM"/>
+          <prop k="line_width" v="0.26"/>
+          <prop k="line_width_map_unit_scale" v="3x:0,0,0,0,0,0"/>
+          <prop k="line_width_unit" v="MM"/>
+          <prop k="offset" v="0"/>
+          <prop k="offset_map_unit_scale" v="3x:0,0,0,0,0,0"/>
+          <prop k="offset_unit" v="MM"/>
+          <prop k="outline_width_map_unit_scale" v="3x:0,0,0,0,0,0"/>
+          <prop k="outline_width_unit" v="MM"/>
           <data_defined_properties>
             <Option type="Map">
-              <Option type="QString" name="name" value=""/>
+              <Option type="QString" value="" name="name"/>
               <Option name="properties"/>
-              <Option type="QString" name="type" value="collection"/>
+              <Option type="QString" value="collection" name="type"/>
             </Option>
           </data_defined_properties>
-          <symbol type="line" name="@3@2" force_rhr="0" clip_to_extent="1" alpha="1">
-            <layer enabled="1" locked="0" pass="0" class="SimpleLine">
-              <prop v="square" k="capstyle"/>
-              <prop v="5;2" k="customdash"/>
-              <prop v="3x:0,0,0,0,0,0" k="customdash_map_unit_scale"/>
-              <prop v="MM" k="customdash_unit"/>
-              <prop v="0" k="draw_inside_polygon"/>
-              <prop v="bevel" k="joinstyle"/>
-              <prop v="127,155,41,255" k="line_color"/>
-              <prop v="solid" k="line_style"/>
-              <prop v="0.9" k="line_width"/>
-              <prop v="MM" k="line_width_unit"/>
-              <prop v="0" k="offset"/>
-              <prop v="3x:0,0,0,0,0,0" k="offset_map_unit_scale"/>
-              <prop v="MM" k="offset_unit"/>
-              <prop v="0" k="ring_filter"/>
-              <prop v="0" k="use_custom_dash"/>
-              <prop v="3x:0,0,0,0,0,0" k="width_map_unit_scale"/>
+          <symbol force_rhr="0" clip_to_extent="1" alpha="1" type="line" name="@3@2">
+            <layer locked="0" pass="0" class="SimpleLine" enabled="1">
+              <prop k="capstyle" v="square"/>
+              <prop k="customdash" v="5;2"/>
+              <prop k="customdash_map_unit_scale" v="3x:0,0,0,0,0,0"/>
+              <prop k="customdash_unit" v="MM"/>
+              <prop k="draw_inside_polygon" v="0"/>
+              <prop k="joinstyle" v="bevel"/>
+              <prop k="line_color" v="127,155,41,255"/>
+              <prop k="line_style" v="solid"/>
+              <prop k="line_width" v="0.9"/>
+              <prop k="line_width_unit" v="MM"/>
+              <prop k="offset" v="0"/>
+              <prop k="offset_map_unit_scale" v="3x:0,0,0,0,0,0"/>
+              <prop k="offset_unit" v="MM"/>
+              <prop k="ring_filter" v="0"/>
+              <prop k="use_custom_dash" v="0"/>
+              <prop k="width_map_unit_scale" v="3x:0,0,0,0,0,0"/>
               <data_defined_properties>
                 <Option type="Map">
-                  <Option type="QString" name="name" value=""/>
+                  <Option type="QString" value="" name="name"/>
                   <Option name="properties"/>
-                  <Option type="QString" name="type" value="collection"/>
+                  <Option type="QString" value="collection" name="type"/>
                 </Option>
               </data_defined_properties>
             </layer>
           </symbol>
         </layer>
       </symbol>
-      <symbol type="fill" name="4" force_rhr="0" clip_to_extent="1" alpha="1">
-        <layer enabled="1" locked="0" pass="0" class="SimpleFill">
-          <prop v="3x:0,0,0,0,0,0" k="border_width_map_unit_scale"/>
-          <prop v="255,127,0,255" k="color"/>
-          <prop v="bevel" k="joinstyle"/>
-          <prop v="0,0" k="offset"/>
-          <prop v="3x:0,0,0,0,0,0" k="offset_map_unit_scale"/>
-          <prop v="MM" k="offset_unit"/>
-          <prop v="35,35,35,255" k="outline_color"/>
-          <prop v="solid" k="outline_style"/>
-          <prop v="0.26" k="outline_width"/>
-          <prop v="MM" k="outline_width_unit"/>
-          <prop v="solid" k="style"/>
+      <symbol force_rhr="0" clip_to_extent="1" alpha="1" type="fill" name="4">
+        <layer locked="0" pass="0" class="SimpleFill" enabled="1">
+          <prop k="border_width_map_unit_scale" v="3x:0,0,0,0,0,0"/>
+          <prop k="color" v="255,127,0,255"/>
+          <prop k="joinstyle" v="bevel"/>
+          <prop k="offset" v="0,0"/>
+          <prop k="offset_map_unit_scale" v="3x:0,0,0,0,0,0"/>
+          <prop k="offset_unit" v="MM"/>
+          <prop k="outline_color" v="35,35,35,255"/>
+          <prop k="outline_style" v="solid"/>
+          <prop k="outline_width" v="0.26"/>
+          <prop k="outline_width_unit" v="MM"/>
+          <prop k="style" v="solid"/>
           <data_defined_properties>
             <Option type="Map">
-              <Option type="QString" name="name" value=""/>
+              <Option type="QString" value="" name="name"/>
               <Option name="properties"/>
-              <Option type="QString" name="type" value="collection"/>
+              <Option type="QString" value="collection" name="type"/>
             </Option>
           </data_defined_properties>
         </layer>
       </symbol>
-      <symbol type="fill" name="5" force_rhr="0" clip_to_extent="1" alpha="1">
-        <layer enabled="1" locked="0" pass="0" class="SimpleLine">
-          <prop v="square" k="capstyle"/>
-          <prop v="5;2" k="customdash"/>
-          <prop v="3x:0,0,0,0,0,0" k="customdash_map_unit_scale"/>
-          <prop v="MM" k="customdash_unit"/>
-          <prop v="0" k="draw_inside_polygon"/>
-          <prop v="bevel" k="joinstyle"/>
-          <prop v="30,83,47,255" k="line_color"/>
-          <prop v="solid" k="line_style"/>
-          <prop v="0.2" k="line_width"/>
-          <prop v="MM" k="line_width_unit"/>
-          <prop v="0" k="offset"/>
-          <prop v="3x:0,0,0,0,0,0" k="offset_map_unit_scale"/>
-          <prop v="MM" k="offset_unit"/>
-          <prop v="0" k="ring_filter"/>
-          <prop v="0" k="use_custom_dash"/>
-          <prop v="3x:0,0,0,0,0,0" k="width_map_unit_scale"/>
+      <symbol force_rhr="0" clip_to_extent="1" alpha="1" type="fill" name="5">
+        <layer locked="0" pass="0" class="SimpleLine" enabled="1">
+          <prop k="capstyle" v="square"/>
+          <prop k="customdash" v="5;2"/>
+          <prop k="customdash_map_unit_scale" v="3x:0,0,0,0,0,0"/>
+          <prop k="customdash_unit" v="MM"/>
+          <prop k="draw_inside_polygon" v="0"/>
+          <prop k="joinstyle" v="bevel"/>
+          <prop k="line_color" v="30,83,47,255"/>
+          <prop k="line_style" v="solid"/>
+          <prop k="line_width" v="0.2"/>
+          <prop k="line_width_unit" v="MM"/>
+          <prop k="offset" v="0"/>
+          <prop k="offset_map_unit_scale" v="3x:0,0,0,0,0,0"/>
+          <prop k="offset_unit" v="MM"/>
+          <prop k="ring_filter" v="0"/>
+          <prop k="use_custom_dash" v="0"/>
+          <prop k="width_map_unit_scale" v="3x:0,0,0,0,0,0"/>
           <data_defined_properties>
             <Option type="Map">
-              <Option type="QString" name="name" value=""/>
+              <Option type="QString" value="" name="name"/>
               <Option name="properties"/>
-              <Option type="QString" name="type" value="collection"/>
+              <Option type="QString" value="collection" name="type"/>
             </Option>
           </data_defined_properties>
         </layer>
-        <layer enabled="1" locked="0" pass="0" class="SimpleFill">
-          <prop v="3x:0,0,0,0,0,0" k="border_width_map_unit_scale"/>
-          <prop v="215,25,28,255" k="color"/>
-          <prop v="bevel" k="joinstyle"/>
-          <prop v="0,0" k="offset"/>
-          <prop v="3x:0,0,0,0,0,0" k="offset_map_unit_scale"/>
-          <prop v="MM" k="offset_unit"/>
-          <prop v="35,35,35,255" k="outline_color"/>
-          <prop v="solid" k="outline_style"/>
-          <prop v="0.2" k="outline_width"/>
-          <prop v="MM" k="outline_width_unit"/>
-          <prop v="solid" k="style"/>
+        <layer locked="0" pass="0" class="SimpleFill" enabled="1">
+          <prop k="border_width_map_unit_scale" v="3x:0,0,0,0,0,0"/>
+          <prop k="color" v="215,25,28,255"/>
+          <prop k="joinstyle" v="bevel"/>
+          <prop k="offset" v="0,0"/>
+          <prop k="offset_map_unit_scale" v="3x:0,0,0,0,0,0"/>
+          <prop k="offset_unit" v="MM"/>
+          <prop k="outline_color" v="35,35,35,255"/>
+          <prop k="outline_style" v="solid"/>
+          <prop k="outline_width" v="0.2"/>
+          <prop k="outline_width_unit" v="MM"/>
+          <prop k="style" v="solid"/>
           <data_defined_properties>
             <Option type="Map">
-              <Option type="QString" name="name" value=""/>
+              <Option type="QString" value="" name="name"/>
               <Option name="properties"/>
-              <Option type="QString" name="type" value="collection"/>
+              <Option type="QString" value="collection" name="type"/>
             </Option>
           </data_defined_properties>
         </layer>
-        <layer enabled="1" locked="0" pass="0" class="LinePatternFill">
-          <prop v="45" k="angle"/>
-          <prop v="30,83,47,255" k="color"/>
-          <prop v="2" k="distance"/>
-          <prop v="3x:0,0,0,0,0,0" k="distance_map_unit_scale"/>
-          <prop v="MM" k="distance_unit"/>
-          <prop v="0.26" k="line_width"/>
-          <prop v="3x:0,0,0,0,0,0" k="line_width_map_unit_scale"/>
-          <prop v="MM" k="line_width_unit"/>
-          <prop v="0" k="offset"/>
-          <prop v="3x:0,0,0,0,0,0" k="offset_map_unit_scale"/>
-          <prop v="MM" k="offset_unit"/>
-          <prop v="3x:0,0,0,0,0,0" k="outline_width_map_unit_scale"/>
-          <prop v="MM" k="outline_width_unit"/>
+        <layer locked="0" pass="0" class="LinePatternFill" enabled="1">
+          <prop k="angle" v="45"/>
+          <prop k="color" v="30,83,47,255"/>
+          <prop k="distance" v="2"/>
+          <prop k="distance_map_unit_scale" v="3x:0,0,0,0,0,0"/>
+          <prop k="distance_unit" v="MM"/>
+          <prop k="line_width" v="0.26"/>
+          <prop k="line_width_map_unit_scale" v="3x:0,0,0,0,0,0"/>
+          <prop k="line_width_unit" v="MM"/>
+          <prop k="offset" v="0"/>
+          <prop k="offset_map_unit_scale" v="3x:0,0,0,0,0,0"/>
+          <prop k="offset_unit" v="MM"/>
+          <prop k="outline_width_map_unit_scale" v="3x:0,0,0,0,0,0"/>
+          <prop k="outline_width_unit" v="MM"/>
           <data_defined_properties>
             <Option type="Map">
-              <Option type="QString" name="name" value=""/>
+              <Option type="QString" value="" name="name"/>
               <Option name="properties"/>
-              <Option type="QString" name="type" value="collection"/>
+              <Option type="QString" value="collection" name="type"/>
             </Option>
           </data_defined_properties>
-          <symbol type="line" name="@5@2" force_rhr="0" clip_to_extent="1" alpha="1">
-            <layer enabled="1" locked="0" pass="0" class="SimpleLine">
-              <prop v="square" k="capstyle"/>
-              <prop v="5;2" k="customdash"/>
-              <prop v="3x:0,0,0,0,0,0" k="customdash_map_unit_scale"/>
-              <prop v="MM" k="customdash_unit"/>
-              <prop v="0" k="draw_inside_polygon"/>
-              <prop v="bevel" k="joinstyle"/>
-              <prop v="255,127,0,255" k="line_color"/>
-              <prop v="solid" k="line_style"/>
-              <prop v="0.9" k="line_width"/>
-              <prop v="MM" k="line_width_unit"/>
-              <prop v="0" k="offset"/>
-              <prop v="3x:0,0,0,0,0,0" k="offset_map_unit_scale"/>
-              <prop v="MM" k="offset_unit"/>
-              <prop v="0" k="ring_filter"/>
-              <prop v="0" k="use_custom_dash"/>
-              <prop v="3x:0,0,0,0,0,0" k="width_map_unit_scale"/>
+          <symbol force_rhr="0" clip_to_extent="1" alpha="1" type="line" name="@5@2">
+            <layer locked="0" pass="0" class="SimpleLine" enabled="1">
+              <prop k="capstyle" v="square"/>
+              <prop k="customdash" v="5;2"/>
+              <prop k="customdash_map_unit_scale" v="3x:0,0,0,0,0,0"/>
+              <prop k="customdash_unit" v="MM"/>
+              <prop k="draw_inside_polygon" v="0"/>
+              <prop k="joinstyle" v="bevel"/>
+              <prop k="line_color" v="255,127,0,255"/>
+              <prop k="line_style" v="solid"/>
+              <prop k="line_width" v="0.9"/>
+              <prop k="line_width_unit" v="MM"/>
+              <prop k="offset" v="0"/>
+              <prop k="offset_map_unit_scale" v="3x:0,0,0,0,0,0"/>
+              <prop k="offset_unit" v="MM"/>
+              <prop k="ring_filter" v="0"/>
+              <prop k="use_custom_dash" v="0"/>
+              <prop k="width_map_unit_scale" v="3x:0,0,0,0,0,0"/>
               <data_defined_properties>
                 <Option type="Map">
-                  <Option type="QString" name="name" value=""/>
+                  <Option type="QString" value="" name="name"/>
                   <Option name="properties"/>
-                  <Option type="QString" name="type" value="collection"/>
+                  <Option type="QString" value="collection" name="type"/>
                 </Option>
               </data_defined_properties>
             </layer>
           </symbol>
         </layer>
       </symbol>
-      <symbol type="fill" name="6" force_rhr="0" clip_to_extent="1" alpha="1">
-        <layer enabled="1" locked="0" pass="0" class="SimpleFill">
-          <prop v="3x:0,0,0,0,0,0" k="border_width_map_unit_scale"/>
-          <prop v="215,25,28,255" k="color"/>
-          <prop v="bevel" k="joinstyle"/>
-          <prop v="0,0" k="offset"/>
-          <prop v="3x:0,0,0,0,0,0" k="offset_map_unit_scale"/>
-          <prop v="MM" k="offset_unit"/>
-          <prop v="35,35,35,255" k="outline_color"/>
-          <prop v="solid" k="outline_style"/>
-          <prop v="0.26" k="outline_width"/>
-          <prop v="MM" k="outline_width_unit"/>
-          <prop v="solid" k="style"/>
+      <symbol force_rhr="0" clip_to_extent="1" alpha="1" type="fill" name="6">
+        <layer locked="0" pass="0" class="SimpleFill" enabled="1">
+          <prop k="border_width_map_unit_scale" v="3x:0,0,0,0,0,0"/>
+          <prop k="color" v="215,25,28,255"/>
+          <prop k="joinstyle" v="bevel"/>
+          <prop k="offset" v="0,0"/>
+          <prop k="offset_map_unit_scale" v="3x:0,0,0,0,0,0"/>
+          <prop k="offset_unit" v="MM"/>
+          <prop k="outline_color" v="35,35,35,255"/>
+          <prop k="outline_style" v="solid"/>
+          <prop k="outline_width" v="0.26"/>
+          <prop k="outline_width_unit" v="MM"/>
+          <prop k="style" v="solid"/>
           <data_defined_properties>
             <Option type="Map">
-              <Option type="QString" name="name" value=""/>
+              <Option type="QString" value="" name="name"/>
               <Option name="properties"/>
-              <Option type="QString" name="type" value="collection"/>
+              <Option type="QString" value="collection" name="type"/>
             </Option>
           </data_defined_properties>
         </layer>
       </symbol>
-      <symbol type="fill" name="7" force_rhr="0" clip_to_extent="1" alpha="1">
-        <layer enabled="1" locked="0" pass="0" class="SimpleFill">
-          <prop v="3x:0,0,0,0,0,0" k="border_width_map_unit_scale"/>
-          <prop v="0,128,248,255" k="color"/>
-          <prop v="bevel" k="joinstyle"/>
-          <prop v="0,0" k="offset"/>
-          <prop v="3x:0,0,0,0,0,0" k="offset_map_unit_scale"/>
-          <prop v="MM" k="offset_unit"/>
-          <prop v="35,35,35,255" k="outline_color"/>
-          <prop v="solid" k="outline_style"/>
-          <prop v="0.26" k="outline_width"/>
-          <prop v="MM" k="outline_width_unit"/>
-          <prop v="solid" k="style"/>
+      <symbol force_rhr="0" clip_to_extent="1" alpha="1" type="fill" name="7">
+        <layer locked="0" pass="0" class="SimpleFill" enabled="1">
+          <prop k="border_width_map_unit_scale" v="3x:0,0,0,0,0,0"/>
+          <prop k="color" v="0,128,248,255"/>
+          <prop k="joinstyle" v="bevel"/>
+          <prop k="offset" v="0,0"/>
+          <prop k="offset_map_unit_scale" v="3x:0,0,0,0,0,0"/>
+          <prop k="offset_unit" v="MM"/>
+          <prop k="outline_color" v="35,35,35,255"/>
+          <prop k="outline_style" v="solid"/>
+          <prop k="outline_width" v="0.26"/>
+          <prop k="outline_width_unit" v="MM"/>
+          <prop k="style" v="solid"/>
           <data_defined_properties>
             <Option type="Map">
-              <Option type="QString" name="name" value=""/>
+              <Option type="QString" value="" name="name"/>
               <Option name="properties"/>
-              <Option type="QString" name="type" value="collection"/>
+              <Option type="QString" value="collection" name="type"/>
             </Option>
           </data_defined_properties>
         </layer>
       </symbol>
-      <symbol type="fill" name="8" force_rhr="0" clip_to_extent="1" alpha="1">
-        <layer enabled="1" locked="0" pass="0" class="SimpleFill">
-          <prop v="3x:0,0,0,0,0,0" k="border_width_map_unit_scale"/>
-          <prop v="137,137,137,255" k="color"/>
-          <prop v="bevel" k="joinstyle"/>
-          <prop v="0,0" k="offset"/>
-          <prop v="3x:0,0,0,0,0,0" k="offset_map_unit_scale"/>
-          <prop v="MM" k="offset_unit"/>
-          <prop v="35,35,35,255" k="outline_color"/>
-          <prop v="solid" k="outline_style"/>
-          <prop v="0.26" k="outline_width"/>
-          <prop v="MM" k="outline_width_unit"/>
-          <prop v="solid" k="style"/>
+      <symbol force_rhr="0" clip_to_extent="1" alpha="1" type="fill" name="8">
+        <layer locked="0" pass="0" class="SimpleFill" enabled="1">
+          <prop k="border_width_map_unit_scale" v="3x:0,0,0,0,0,0"/>
+          <prop k="color" v="137,137,137,255"/>
+          <prop k="joinstyle" v="bevel"/>
+          <prop k="offset" v="0,0"/>
+          <prop k="offset_map_unit_scale" v="3x:0,0,0,0,0,0"/>
+          <prop k="offset_unit" v="MM"/>
+          <prop k="outline_color" v="35,35,35,255"/>
+          <prop k="outline_style" v="solid"/>
+          <prop k="outline_width" v="0.26"/>
+          <prop k="outline_width_unit" v="MM"/>
+          <prop k="style" v="solid"/>
           <data_defined_properties>
             <Option type="Map">
-              <Option type="QString" name="name" value=""/>
+              <Option type="QString" value="" name="name"/>
               <Option name="properties"/>
-              <Option type="QString" name="type" value="collection"/>
+              <Option type="QString" value="collection" name="type"/>
             </Option>
           </data_defined_properties>
         </layer>
@@ -450,33 +450,33 @@
   <featureBlendMode>0</featureBlendMode>
   <layerOpacity>1</layerOpacity>
   <SingleCategoryDiagramRenderer diagramType="Histogram" attributeLegend="1">
-    <DiagramCategory backgroundAlpha="255" minScaleDenominator="0" labelPlacementMethod="XHeight" lineSizeScale="3x:0,0,0,0,0,0" sizeScale="3x:0,0,0,0,0,0" spacing="5" enabled="0" diagramOrientation="Up" rotationOffset="270" sizeType="MM" spacingUnitScale="3x:0,0,0,0,0,0" minimumSize="0" maxScaleDenominator="1e+08" backgroundColor="#ffffff" spacingUnit="MM" width="15" opacity="1" scaleBasedVisibility="0" barWidth="5" direction="0" penAlpha="255" showAxis="1" penColor="#000000" scaleDependency="Area" height="15" penWidth="0" lineSizeType="MM">
-      <fontProperties style="" description="MS Shell Dlg 2,7.8,-1,5,50,0,0,0,0,0"/>
-      <attribute field="" label="" color="#000000"/>
+    <DiagramCategory scaleDependency="Area" penWidth="0" spacingUnit="MM" maxScaleDenominator="1e+08" sizeType="MM" penColor="#000000" labelPlacementMethod="XHeight" minimumSize="0" spacing="5" showAxis="1" scaleBasedVisibility="0" height="15" direction="0" penAlpha="255" minScaleDenominator="0" rotationOffset="270" spacingUnitScale="3x:0,0,0,0,0,0" backgroundColor="#ffffff" lineSizeType="MM" opacity="1" backgroundAlpha="255" diagramOrientation="Up" barWidth="5" sizeScale="3x:0,0,0,0,0,0" width="15" enabled="0" lineSizeScale="3x:0,0,0,0,0,0">
+      <fontProperties description="MS Shell Dlg 2,7.8,-1,5,50,0,0,0,0,0" style=""/>
+      <attribute color="#000000" label="" field=""/>
       <axisSymbol>
-        <symbol type="line" name="" force_rhr="0" clip_to_extent="1" alpha="1">
-          <layer enabled="1" locked="0" pass="0" class="SimpleLine">
-            <prop v="square" k="capstyle"/>
-            <prop v="5;2" k="customdash"/>
-            <prop v="3x:0,0,0,0,0,0" k="customdash_map_unit_scale"/>
-            <prop v="MM" k="customdash_unit"/>
-            <prop v="0" k="draw_inside_polygon"/>
-            <prop v="bevel" k="joinstyle"/>
-            <prop v="35,35,35,255" k="line_color"/>
-            <prop v="solid" k="line_style"/>
-            <prop v="0.26" k="line_width"/>
-            <prop v="MM" k="line_width_unit"/>
-            <prop v="0" k="offset"/>
-            <prop v="3x:0,0,0,0,0,0" k="offset_map_unit_scale"/>
-            <prop v="MM" k="offset_unit"/>
-            <prop v="0" k="ring_filter"/>
-            <prop v="0" k="use_custom_dash"/>
-            <prop v="3x:0,0,0,0,0,0" k="width_map_unit_scale"/>
+        <symbol force_rhr="0" clip_to_extent="1" alpha="1" type="line" name="">
+          <layer locked="0" pass="0" class="SimpleLine" enabled="1">
+            <prop k="capstyle" v="square"/>
+            <prop k="customdash" v="5;2"/>
+            <prop k="customdash_map_unit_scale" v="3x:0,0,0,0,0,0"/>
+            <prop k="customdash_unit" v="MM"/>
+            <prop k="draw_inside_polygon" v="0"/>
+            <prop k="joinstyle" v="bevel"/>
+            <prop k="line_color" v="35,35,35,255"/>
+            <prop k="line_style" v="solid"/>
+            <prop k="line_width" v="0.26"/>
+            <prop k="line_width_unit" v="MM"/>
+            <prop k="offset" v="0"/>
+            <prop k="offset_map_unit_scale" v="3x:0,0,0,0,0,0"/>
+            <prop k="offset_unit" v="MM"/>
+            <prop k="ring_filter" v="0"/>
+            <prop k="use_custom_dash" v="0"/>
+            <prop k="width_map_unit_scale" v="3x:0,0,0,0,0,0"/>
             <data_defined_properties>
               <Option type="Map">
-                <Option type="QString" name="name" value=""/>
+                <Option type="QString" value="" name="name"/>
                 <Option name="properties"/>
-                <Option type="QString" name="type" value="collection"/>
+                <Option type="QString" value="collection" name="type"/>
               </Option>
             </data_defined_properties>
           </layer>
@@ -484,22 +484,22 @@
       </axisSymbol>
     </DiagramCategory>
   </SingleCategoryDiagramRenderer>
-  <DiagramLayerSettings placement="1" zIndex="0" showAll="1" linePlacementFlags="18" dist="0" obstacle="0" priority="0">
+  <DiagramLayerSettings dist="0" showAll="1" placement="1" obstacle="0" linePlacementFlags="18" priority="0" zIndex="0">
     <properties>
       <Option type="Map">
-        <Option type="QString" name="name" value=""/>
+        <Option type="QString" value="" name="name"/>
         <Option name="properties"/>
-        <Option type="QString" name="type" value="collection"/>
+        <Option type="QString" value="collection" name="type"/>
       </Option>
     </properties>
   </DiagramLayerSettings>
-  <geometryOptions removeDuplicateNodes="0" geometryPrecision="0">
+  <geometryOptions geometryPrecision="0" removeDuplicateNodes="0">
     <activeChecks/>
     <checkConfiguration type="Map">
       <Option type="Map" name="QgsGeometryGapCheck">
-        <Option type="double" name="allowedGapsBuffer" value="0"/>
-        <Option type="bool" name="allowedGapsEnabled" value="false"/>
-        <Option type="QString" name="allowedGapsLayer" value=""/>
+        <Option type="double" value="0" name="allowedGapsBuffer"/>
+        <Option type="bool" value="false" name="allowedGapsEnabled"/>
+        <Option type="QString" value="" name="allowedGapsLayer"/>
       </Option>
     </checkConfiguration>
   </geometryOptions>
@@ -872,198 +872,198 @@
   <excludeAttributesWMS/>
   <excludeAttributesWFS/>
   <defaults>
-    <default field="gml_id" applyOnUpdate="0" expression=""/>
-    <default field="areasymbol" applyOnUpdate="0" expression=""/>
-    <default field="musym" applyOnUpdate="0" expression=""/>
-    <default field="nationalmusym" applyOnUpdate="0" expression=""/>
-    <default field="mukey" applyOnUpdate="0" expression=""/>
-    <default field="spatialversion" applyOnUpdate="0" expression=""/>
-    <default field="muname" applyOnUpdate="0" expression=""/>
-    <default field="mustatus" applyOnUpdate="0" expression=""/>
-    <default field="slopegraddcp" applyOnUpdate="0" expression=""/>
-    <default field="slopegradwta" applyOnUpdate="0" expression=""/>
-    <default field="brockdepmin" applyOnUpdate="0" expression=""/>
-    <default field="wtdepannmin" applyOnUpdate="0" expression=""/>
-    <default field="wtdepaprjunmin" applyOnUpdate="0" expression=""/>
-    <default field="flodfreqdcd" applyOnUpdate="0" expression=""/>
-    <default field="flodfreqmax" applyOnUpdate="0" expression=""/>
-    <default field="pondfreqprs" applyOnUpdate="0" expression=""/>
-    <default field="aws025wta" applyOnUpdate="0" expression=""/>
-    <default field="aws050wta" applyOnUpdate="0" expression=""/>
-    <default field="aws0100wta" applyOnUpdate="0" expression=""/>
-    <default field="aws0150wta" applyOnUpdate="0" expression=""/>
-    <default field="drclassdcd" applyOnUpdate="0" expression=""/>
-    <default field="drclasswettest" applyOnUpdate="0" expression=""/>
-    <default field="hydgrpdcd" applyOnUpdate="0" expression=""/>
-    <default field="iccdcd" applyOnUpdate="0" expression=""/>
-    <default field="iccdcdpct" applyOnUpdate="0" expression=""/>
-    <default field="niccdcd" applyOnUpdate="0" expression=""/>
-    <default field="niccdcdpct" applyOnUpdate="0" expression=""/>
-    <default field="engdwobdcd" applyOnUpdate="0" expression=""/>
-    <default field="engdwbdcd" applyOnUpdate="0" expression=""/>
-    <default field="engdwbll" applyOnUpdate="0" expression=""/>
-    <default field="engdwbml" applyOnUpdate="0" expression=""/>
-    <default field="engstafdcd" applyOnUpdate="0" expression=""/>
-    <default field="engstafll" applyOnUpdate="0" expression=""/>
-    <default field="engstafml" applyOnUpdate="0" expression=""/>
-    <default field="engsldcd" applyOnUpdate="0" expression=""/>
-    <default field="engsldcp" applyOnUpdate="0" expression=""/>
-    <default field="englrsdcd" applyOnUpdate="0" expression=""/>
-    <default field="engcmssdcd" applyOnUpdate="0" expression=""/>
-    <default field="engcmssmp" applyOnUpdate="0" expression=""/>
-    <default field="urbrecptdcd" applyOnUpdate="0" expression=""/>
-    <default field="urbrecptwta" applyOnUpdate="0" expression=""/>
-    <default field="forpehrtdcp" applyOnUpdate="0" expression=""/>
-    <default field="hydclprs" applyOnUpdate="0" expression=""/>
-    <default field="awmmfpwwta" applyOnUpdate="0" expression=""/>
-    <default field="mupolygonkey" applyOnUpdate="0" expression=""/>
+    <default applyOnUpdate="0" field="gml_id" expression=""/>
+    <default applyOnUpdate="0" field="areasymbol" expression=""/>
+    <default applyOnUpdate="0" field="musym" expression=""/>
+    <default applyOnUpdate="0" field="nationalmusym" expression=""/>
+    <default applyOnUpdate="0" field="mukey" expression=""/>
+    <default applyOnUpdate="0" field="spatialversion" expression=""/>
+    <default applyOnUpdate="0" field="muname" expression=""/>
+    <default applyOnUpdate="0" field="mustatus" expression=""/>
+    <default applyOnUpdate="0" field="slopegraddcp" expression=""/>
+    <default applyOnUpdate="0" field="slopegradwta" expression=""/>
+    <default applyOnUpdate="0" field="brockdepmin" expression=""/>
+    <default applyOnUpdate="0" field="wtdepannmin" expression=""/>
+    <default applyOnUpdate="0" field="wtdepaprjunmin" expression=""/>
+    <default applyOnUpdate="0" field="flodfreqdcd" expression=""/>
+    <default applyOnUpdate="0" field="flodfreqmax" expression=""/>
+    <default applyOnUpdate="0" field="pondfreqprs" expression=""/>
+    <default applyOnUpdate="0" field="aws025wta" expression=""/>
+    <default applyOnUpdate="0" field="aws050wta" expression=""/>
+    <default applyOnUpdate="0" field="aws0100wta" expression=""/>
+    <default applyOnUpdate="0" field="aws0150wta" expression=""/>
+    <default applyOnUpdate="0" field="drclassdcd" expression=""/>
+    <default applyOnUpdate="0" field="drclasswettest" expression=""/>
+    <default applyOnUpdate="0" field="hydgrpdcd" expression=""/>
+    <default applyOnUpdate="0" field="iccdcd" expression=""/>
+    <default applyOnUpdate="0" field="iccdcdpct" expression=""/>
+    <default applyOnUpdate="0" field="niccdcd" expression=""/>
+    <default applyOnUpdate="0" field="niccdcdpct" expression=""/>
+    <default applyOnUpdate="0" field="engdwobdcd" expression=""/>
+    <default applyOnUpdate="0" field="engdwbdcd" expression=""/>
+    <default applyOnUpdate="0" field="engdwbll" expression=""/>
+    <default applyOnUpdate="0" field="engdwbml" expression=""/>
+    <default applyOnUpdate="0" field="engstafdcd" expression=""/>
+    <default applyOnUpdate="0" field="engstafll" expression=""/>
+    <default applyOnUpdate="0" field="engstafml" expression=""/>
+    <default applyOnUpdate="0" field="engsldcd" expression=""/>
+    <default applyOnUpdate="0" field="engsldcp" expression=""/>
+    <default applyOnUpdate="0" field="englrsdcd" expression=""/>
+    <default applyOnUpdate="0" field="engcmssdcd" expression=""/>
+    <default applyOnUpdate="0" field="engcmssmp" expression=""/>
+    <default applyOnUpdate="0" field="urbrecptdcd" expression=""/>
+    <default applyOnUpdate="0" field="urbrecptwta" expression=""/>
+    <default applyOnUpdate="0" field="forpehrtdcp" expression=""/>
+    <default applyOnUpdate="0" field="hydclprs" expression=""/>
+    <default applyOnUpdate="0" field="awmmfpwwta" expression=""/>
+    <default applyOnUpdate="0" field="mupolygonkey" expression=""/>
   </defaults>
   <constraints>
-    <constraint exp_strength="0" constraints="0" field="gml_id" notnull_strength="0" unique_strength="0"/>
-    <constraint exp_strength="0" constraints="0" field="areasymbol" notnull_strength="0" unique_strength="0"/>
-    <constraint exp_strength="0" constraints="0" field="musym" notnull_strength="0" unique_strength="0"/>
-    <constraint exp_strength="0" constraints="0" field="nationalmusym" notnull_strength="0" unique_strength="0"/>
-    <constraint exp_strength="0" constraints="0" field="mukey" notnull_strength="0" unique_strength="0"/>
-    <constraint exp_strength="0" constraints="0" field="spatialversion" notnull_strength="0" unique_strength="0"/>
-    <constraint exp_strength="0" constraints="0" field="muname" notnull_strength="0" unique_strength="0"/>
-    <constraint exp_strength="0" constraints="0" field="mustatus" notnull_strength="0" unique_strength="0"/>
-    <constraint exp_strength="0" constraints="0" field="slopegraddcp" notnull_strength="0" unique_strength="0"/>
-    <constraint exp_strength="0" constraints="0" field="slopegradwta" notnull_strength="0" unique_strength="0"/>
-    <constraint exp_strength="0" constraints="0" field="brockdepmin" notnull_strength="0" unique_strength="0"/>
-    <constraint exp_strength="0" constraints="0" field="wtdepannmin" notnull_strength="0" unique_strength="0"/>
-    <constraint exp_strength="0" constraints="0" field="wtdepaprjunmin" notnull_strength="0" unique_strength="0"/>
-    <constraint exp_strength="0" constraints="0" field="flodfreqdcd" notnull_strength="0" unique_strength="0"/>
-    <constraint exp_strength="0" constraints="0" field="flodfreqmax" notnull_strength="0" unique_strength="0"/>
-    <constraint exp_strength="0" constraints="0" field="pondfreqprs" notnull_strength="0" unique_strength="0"/>
-    <constraint exp_strength="0" constraints="0" field="aws025wta" notnull_strength="0" unique_strength="0"/>
-    <constraint exp_strength="0" constraints="0" field="aws050wta" notnull_strength="0" unique_strength="0"/>
-    <constraint exp_strength="0" constraints="0" field="aws0100wta" notnull_strength="0" unique_strength="0"/>
-    <constraint exp_strength="0" constraints="0" field="aws0150wta" notnull_strength="0" unique_strength="0"/>
-    <constraint exp_strength="0" constraints="0" field="drclassdcd" notnull_strength="0" unique_strength="0"/>
-    <constraint exp_strength="0" constraints="0" field="drclasswettest" notnull_strength="0" unique_strength="0"/>
-    <constraint exp_strength="0" constraints="0" field="hydgrpdcd" notnull_strength="0" unique_strength="0"/>
-    <constraint exp_strength="0" constraints="0" field="iccdcd" notnull_strength="0" unique_strength="0"/>
-    <constraint exp_strength="0" constraints="0" field="iccdcdpct" notnull_strength="0" unique_strength="0"/>
-    <constraint exp_strength="0" constraints="0" field="niccdcd" notnull_strength="0" unique_strength="0"/>
-    <constraint exp_strength="0" constraints="0" field="niccdcdpct" notnull_strength="0" unique_strength="0"/>
-    <constraint exp_strength="0" constraints="0" field="engdwobdcd" notnull_strength="0" unique_strength="0"/>
-    <constraint exp_strength="0" constraints="0" field="engdwbdcd" notnull_strength="0" unique_strength="0"/>
-    <constraint exp_strength="0" constraints="0" field="engdwbll" notnull_strength="0" unique_strength="0"/>
-    <constraint exp_strength="0" constraints="0" field="engdwbml" notnull_strength="0" unique_strength="0"/>
-    <constraint exp_strength="0" constraints="0" field="engstafdcd" notnull_strength="0" unique_strength="0"/>
-    <constraint exp_strength="0" constraints="0" field="engstafll" notnull_strength="0" unique_strength="0"/>
-    <constraint exp_strength="0" constraints="0" field="engstafml" notnull_strength="0" unique_strength="0"/>
-    <constraint exp_strength="0" constraints="0" field="engsldcd" notnull_strength="0" unique_strength="0"/>
-    <constraint exp_strength="0" constraints="0" field="engsldcp" notnull_strength="0" unique_strength="0"/>
-    <constraint exp_strength="0" constraints="0" field="englrsdcd" notnull_strength="0" unique_strength="0"/>
-    <constraint exp_strength="0" constraints="0" field="engcmssdcd" notnull_strength="0" unique_strength="0"/>
-    <constraint exp_strength="0" constraints="0" field="engcmssmp" notnull_strength="0" unique_strength="0"/>
-    <constraint exp_strength="0" constraints="0" field="urbrecptdcd" notnull_strength="0" unique_strength="0"/>
-    <constraint exp_strength="0" constraints="0" field="urbrecptwta" notnull_strength="0" unique_strength="0"/>
-    <constraint exp_strength="0" constraints="0" field="forpehrtdcp" notnull_strength="0" unique_strength="0"/>
-    <constraint exp_strength="0" constraints="0" field="hydclprs" notnull_strength="0" unique_strength="0"/>
-    <constraint exp_strength="0" constraints="0" field="awmmfpwwta" notnull_strength="0" unique_strength="0"/>
-    <constraint exp_strength="0" constraints="0" field="mupolygonkey" notnull_strength="0" unique_strength="0"/>
+    <constraint notnull_strength="0" field="gml_id" unique_strength="0" constraints="0" exp_strength="0"/>
+    <constraint notnull_strength="0" field="areasymbol" unique_strength="0" constraints="0" exp_strength="0"/>
+    <constraint notnull_strength="0" field="musym" unique_strength="0" constraints="0" exp_strength="0"/>
+    <constraint notnull_strength="0" field="nationalmusym" unique_strength="0" constraints="0" exp_strength="0"/>
+    <constraint notnull_strength="0" field="mukey" unique_strength="0" constraints="0" exp_strength="0"/>
+    <constraint notnull_strength="0" field="spatialversion" unique_strength="0" constraints="0" exp_strength="0"/>
+    <constraint notnull_strength="0" field="muname" unique_strength="0" constraints="0" exp_strength="0"/>
+    <constraint notnull_strength="0" field="mustatus" unique_strength="0" constraints="0" exp_strength="0"/>
+    <constraint notnull_strength="0" field="slopegraddcp" unique_strength="0" constraints="0" exp_strength="0"/>
+    <constraint notnull_strength="0" field="slopegradwta" unique_strength="0" constraints="0" exp_strength="0"/>
+    <constraint notnull_strength="0" field="brockdepmin" unique_strength="0" constraints="0" exp_strength="0"/>
+    <constraint notnull_strength="0" field="wtdepannmin" unique_strength="0" constraints="0" exp_strength="0"/>
+    <constraint notnull_strength="0" field="wtdepaprjunmin" unique_strength="0" constraints="0" exp_strength="0"/>
+    <constraint notnull_strength="0" field="flodfreqdcd" unique_strength="0" constraints="0" exp_strength="0"/>
+    <constraint notnull_strength="0" field="flodfreqmax" unique_strength="0" constraints="0" exp_strength="0"/>
+    <constraint notnull_strength="0" field="pondfreqprs" unique_strength="0" constraints="0" exp_strength="0"/>
+    <constraint notnull_strength="0" field="aws025wta" unique_strength="0" constraints="0" exp_strength="0"/>
+    <constraint notnull_strength="0" field="aws050wta" unique_strength="0" constraints="0" exp_strength="0"/>
+    <constraint notnull_strength="0" field="aws0100wta" unique_strength="0" constraints="0" exp_strength="0"/>
+    <constraint notnull_strength="0" field="aws0150wta" unique_strength="0" constraints="0" exp_strength="0"/>
+    <constraint notnull_strength="0" field="drclassdcd" unique_strength="0" constraints="0" exp_strength="0"/>
+    <constraint notnull_strength="0" field="drclasswettest" unique_strength="0" constraints="0" exp_strength="0"/>
+    <constraint notnull_strength="0" field="hydgrpdcd" unique_strength="0" constraints="0" exp_strength="0"/>
+    <constraint notnull_strength="0" field="iccdcd" unique_strength="0" constraints="0" exp_strength="0"/>
+    <constraint notnull_strength="0" field="iccdcdpct" unique_strength="0" constraints="0" exp_strength="0"/>
+    <constraint notnull_strength="0" field="niccdcd" unique_strength="0" constraints="0" exp_strength="0"/>
+    <constraint notnull_strength="0" field="niccdcdpct" unique_strength="0" constraints="0" exp_strength="0"/>
+    <constraint notnull_strength="0" field="engdwobdcd" unique_strength="0" constraints="0" exp_strength="0"/>
+    <constraint notnull_strength="0" field="engdwbdcd" unique_strength="0" constraints="0" exp_strength="0"/>
+    <constraint notnull_strength="0" field="engdwbll" unique_strength="0" constraints="0" exp_strength="0"/>
+    <constraint notnull_strength="0" field="engdwbml" unique_strength="0" constraints="0" exp_strength="0"/>
+    <constraint notnull_strength="0" field="engstafdcd" unique_strength="0" constraints="0" exp_strength="0"/>
+    <constraint notnull_strength="0" field="engstafll" unique_strength="0" constraints="0" exp_strength="0"/>
+    <constraint notnull_strength="0" field="engstafml" unique_strength="0" constraints="0" exp_strength="0"/>
+    <constraint notnull_strength="0" field="engsldcd" unique_strength="0" constraints="0" exp_strength="0"/>
+    <constraint notnull_strength="0" field="engsldcp" unique_strength="0" constraints="0" exp_strength="0"/>
+    <constraint notnull_strength="0" field="englrsdcd" unique_strength="0" constraints="0" exp_strength="0"/>
+    <constraint notnull_strength="0" field="engcmssdcd" unique_strength="0" constraints="0" exp_strength="0"/>
+    <constraint notnull_strength="0" field="engcmssmp" unique_strength="0" constraints="0" exp_strength="0"/>
+    <constraint notnull_strength="0" field="urbrecptdcd" unique_strength="0" constraints="0" exp_strength="0"/>
+    <constraint notnull_strength="0" field="urbrecptwta" unique_strength="0" constraints="0" exp_strength="0"/>
+    <constraint notnull_strength="0" field="forpehrtdcp" unique_strength="0" constraints="0" exp_strength="0"/>
+    <constraint notnull_strength="0" field="hydclprs" unique_strength="0" constraints="0" exp_strength="0"/>
+    <constraint notnull_strength="0" field="awmmfpwwta" unique_strength="0" constraints="0" exp_strength="0"/>
+    <constraint notnull_strength="0" field="mupolygonkey" unique_strength="0" constraints="0" exp_strength="0"/>
   </constraints>
   <constraintExpressions>
-    <constraint field="gml_id" desc="" exp=""/>
-    <constraint field="areasymbol" desc="" exp=""/>
-    <constraint field="musym" desc="" exp=""/>
-    <constraint field="nationalmusym" desc="" exp=""/>
-    <constraint field="mukey" desc="" exp=""/>
-    <constraint field="spatialversion" desc="" exp=""/>
-    <constraint field="muname" desc="" exp=""/>
-    <constraint field="mustatus" desc="" exp=""/>
-    <constraint field="slopegraddcp" desc="" exp=""/>
-    <constraint field="slopegradwta" desc="" exp=""/>
-    <constraint field="brockdepmin" desc="" exp=""/>
-    <constraint field="wtdepannmin" desc="" exp=""/>
-    <constraint field="wtdepaprjunmin" desc="" exp=""/>
-    <constraint field="flodfreqdcd" desc="" exp=""/>
-    <constraint field="flodfreqmax" desc="" exp=""/>
-    <constraint field="pondfreqprs" desc="" exp=""/>
-    <constraint field="aws025wta" desc="" exp=""/>
-    <constraint field="aws050wta" desc="" exp=""/>
-    <constraint field="aws0100wta" desc="" exp=""/>
-    <constraint field="aws0150wta" desc="" exp=""/>
-    <constraint field="drclassdcd" desc="" exp=""/>
-    <constraint field="drclasswettest" desc="" exp=""/>
-    <constraint field="hydgrpdcd" desc="" exp=""/>
-    <constraint field="iccdcd" desc="" exp=""/>
-    <constraint field="iccdcdpct" desc="" exp=""/>
-    <constraint field="niccdcd" desc="" exp=""/>
-    <constraint field="niccdcdpct" desc="" exp=""/>
-    <constraint field="engdwobdcd" desc="" exp=""/>
-    <constraint field="engdwbdcd" desc="" exp=""/>
-    <constraint field="engdwbll" desc="" exp=""/>
-    <constraint field="engdwbml" desc="" exp=""/>
-    <constraint field="engstafdcd" desc="" exp=""/>
-    <constraint field="engstafll" desc="" exp=""/>
-    <constraint field="engstafml" desc="" exp=""/>
-    <constraint field="engsldcd" desc="" exp=""/>
-    <constraint field="engsldcp" desc="" exp=""/>
-    <constraint field="englrsdcd" desc="" exp=""/>
-    <constraint field="engcmssdcd" desc="" exp=""/>
-    <constraint field="engcmssmp" desc="" exp=""/>
-    <constraint field="urbrecptdcd" desc="" exp=""/>
-    <constraint field="urbrecptwta" desc="" exp=""/>
-    <constraint field="forpehrtdcp" desc="" exp=""/>
-    <constraint field="hydclprs" desc="" exp=""/>
-    <constraint field="awmmfpwwta" desc="" exp=""/>
-    <constraint field="mupolygonkey" desc="" exp=""/>
+    <constraint field="gml_id" exp="" desc=""/>
+    <constraint field="areasymbol" exp="" desc=""/>
+    <constraint field="musym" exp="" desc=""/>
+    <constraint field="nationalmusym" exp="" desc=""/>
+    <constraint field="mukey" exp="" desc=""/>
+    <constraint field="spatialversion" exp="" desc=""/>
+    <constraint field="muname" exp="" desc=""/>
+    <constraint field="mustatus" exp="" desc=""/>
+    <constraint field="slopegraddcp" exp="" desc=""/>
+    <constraint field="slopegradwta" exp="" desc=""/>
+    <constraint field="brockdepmin" exp="" desc=""/>
+    <constraint field="wtdepannmin" exp="" desc=""/>
+    <constraint field="wtdepaprjunmin" exp="" desc=""/>
+    <constraint field="flodfreqdcd" exp="" desc=""/>
+    <constraint field="flodfreqmax" exp="" desc=""/>
+    <constraint field="pondfreqprs" exp="" desc=""/>
+    <constraint field="aws025wta" exp="" desc=""/>
+    <constraint field="aws050wta" exp="" desc=""/>
+    <constraint field="aws0100wta" exp="" desc=""/>
+    <constraint field="aws0150wta" exp="" desc=""/>
+    <constraint field="drclassdcd" exp="" desc=""/>
+    <constraint field="drclasswettest" exp="" desc=""/>
+    <constraint field="hydgrpdcd" exp="" desc=""/>
+    <constraint field="iccdcd" exp="" desc=""/>
+    <constraint field="iccdcdpct" exp="" desc=""/>
+    <constraint field="niccdcd" exp="" desc=""/>
+    <constraint field="niccdcdpct" exp="" desc=""/>
+    <constraint field="engdwobdcd" exp="" desc=""/>
+    <constraint field="engdwbdcd" exp="" desc=""/>
+    <constraint field="engdwbll" exp="" desc=""/>
+    <constraint field="engdwbml" exp="" desc=""/>
+    <constraint field="engstafdcd" exp="" desc=""/>
+    <constraint field="engstafll" exp="" desc=""/>
+    <constraint field="engstafml" exp="" desc=""/>
+    <constraint field="engsldcd" exp="" desc=""/>
+    <constraint field="engsldcp" exp="" desc=""/>
+    <constraint field="englrsdcd" exp="" desc=""/>
+    <constraint field="engcmssdcd" exp="" desc=""/>
+    <constraint field="engcmssmp" exp="" desc=""/>
+    <constraint field="urbrecptdcd" exp="" desc=""/>
+    <constraint field="urbrecptwta" exp="" desc=""/>
+    <constraint field="forpehrtdcp" exp="" desc=""/>
+    <constraint field="hydclprs" exp="" desc=""/>
+    <constraint field="awmmfpwwta" exp="" desc=""/>
+    <constraint field="mupolygonkey" exp="" desc=""/>
   </constraintExpressions>
   <expressionfields/>
   <attributeactions>
     <defaultAction key="Canvas" value="{00000000-0000-0000-0000-000000000000}"/>
   </attributeactions>
-  <attributetableconfig sortExpression="&quot;hydgrpdcd&quot;" sortOrder="0" actionWidgetStyle="dropDown">
+  <attributetableconfig sortOrder="0" actionWidgetStyle="dropDown" sortExpression="&quot;hydgrpdcd&quot;">
     <columns>
-      <column type="field" hidden="0" name="gml_id" width="264"/>
-      <column type="field" hidden="0" name="areasymbol" width="-1"/>
-      <column type="field" hidden="0" name="musym" width="-1"/>
-      <column type="field" hidden="0" name="nationalmusym" width="-1"/>
-      <column type="field" hidden="0" name="mukey" width="-1"/>
-      <column type="field" hidden="0" name="spatialversion" width="-1"/>
-      <column type="field" hidden="0" name="muname" width="474"/>
-      <column type="field" hidden="0" name="mustatus" width="-1"/>
-      <column type="field" hidden="0" name="slopegraddcp" width="-1"/>
-      <column type="field" hidden="0" name="slopegradwta" width="-1"/>
-      <column type="field" hidden="0" name="brockdepmin" width="-1"/>
-      <column type="field" hidden="0" name="wtdepannmin" width="-1"/>
-      <column type="field" hidden="0" name="wtdepaprjunmin" width="-1"/>
-      <column type="field" hidden="0" name="flodfreqdcd" width="-1"/>
-      <column type="field" hidden="0" name="flodfreqmax" width="-1"/>
-      <column type="field" hidden="0" name="pondfreqprs" width="-1"/>
-      <column type="field" hidden="0" name="aws025wta" width="-1"/>
-      <column type="field" hidden="0" name="aws050wta" width="-1"/>
-      <column type="field" hidden="0" name="aws0100wta" width="-1"/>
-      <column type="field" hidden="0" name="aws0150wta" width="-1"/>
-      <column type="field" hidden="0" name="drclassdcd" width="-1"/>
-      <column type="field" hidden="0" name="drclasswettest" width="-1"/>
-      <column type="field" hidden="0" name="hydgrpdcd" width="-1"/>
-      <column type="field" hidden="0" name="iccdcd" width="-1"/>
-      <column type="field" hidden="0" name="iccdcdpct" width="-1"/>
-      <column type="field" hidden="0" name="niccdcd" width="-1"/>
-      <column type="field" hidden="0" name="niccdcdpct" width="-1"/>
-      <column type="field" hidden="0" name="engdwobdcd" width="-1"/>
-      <column type="field" hidden="0" name="engdwbdcd" width="-1"/>
-      <column type="field" hidden="0" name="engdwbll" width="-1"/>
-      <column type="field" hidden="0" name="engdwbml" width="-1"/>
-      <column type="field" hidden="0" name="engstafdcd" width="-1"/>
-      <column type="field" hidden="0" name="engstafll" width="-1"/>
-      <column type="field" hidden="0" name="engstafml" width="-1"/>
-      <column type="field" hidden="0" name="engsldcd" width="-1"/>
-      <column type="field" hidden="0" name="engsldcp" width="-1"/>
-      <column type="field" hidden="0" name="englrsdcd" width="-1"/>
-      <column type="field" hidden="0" name="engcmssdcd" width="-1"/>
-      <column type="field" hidden="0" name="engcmssmp" width="-1"/>
-      <column type="field" hidden="0" name="urbrecptdcd" width="-1"/>
-      <column type="field" hidden="0" name="urbrecptwta" width="-1"/>
-      <column type="field" hidden="0" name="forpehrtdcp" width="-1"/>
-      <column type="field" hidden="0" name="hydclprs" width="-1"/>
-      <column type="field" hidden="0" name="awmmfpwwta" width="-1"/>
-      <column type="field" hidden="0" name="mupolygonkey" width="-1"/>
-      <column type="actions" hidden="1" width="-1"/>
+      <column width="264" hidden="0" type="field" name="gml_id"/>
+      <column width="-1" hidden="0" type="field" name="areasymbol"/>
+      <column width="-1" hidden="0" type="field" name="musym"/>
+      <column width="-1" hidden="0" type="field" name="nationalmusym"/>
+      <column width="-1" hidden="0" type="field" name="mukey"/>
+      <column width="-1" hidden="0" type="field" name="spatialversion"/>
+      <column width="474" hidden="0" type="field" name="muname"/>
+      <column width="-1" hidden="0" type="field" name="mustatus"/>
+      <column width="-1" hidden="0" type="field" name="slopegraddcp"/>
+      <column width="-1" hidden="0" type="field" name="slopegradwta"/>
+      <column width="-1" hidden="0" type="field" name="brockdepmin"/>
+      <column width="-1" hidden="0" type="field" name="wtdepannmin"/>
+      <column width="-1" hidden="0" type="field" name="wtdepaprjunmin"/>
+      <column width="-1" hidden="0" type="field" name="flodfreqdcd"/>
+      <column width="-1" hidden="0" type="field" name="flodfreqmax"/>
+      <column width="-1" hidden="0" type="field" name="pondfreqprs"/>
+      <column width="-1" hidden="0" type="field" name="aws025wta"/>
+      <column width="-1" hidden="0" type="field" name="aws050wta"/>
+      <column width="-1" hidden="0" type="field" name="aws0100wta"/>
+      <column width="-1" hidden="0" type="field" name="aws0150wta"/>
+      <column width="-1" hidden="0" type="field" name="drclassdcd"/>
+      <column width="-1" hidden="0" type="field" name="drclasswettest"/>
+      <column width="-1" hidden="0" type="field" name="hydgrpdcd"/>
+      <column width="-1" hidden="0" type="field" name="iccdcd"/>
+      <column width="-1" hidden="0" type="field" name="iccdcdpct"/>
+      <column width="-1" hidden="0" type="field" name="niccdcd"/>
+      <column width="-1" hidden="0" type="field" name="niccdcdpct"/>
+      <column width="-1" hidden="0" type="field" name="engdwobdcd"/>
+      <column width="-1" hidden="0" type="field" name="engdwbdcd"/>
+      <column width="-1" hidden="0" type="field" name="engdwbll"/>
+      <column width="-1" hidden="0" type="field" name="engdwbml"/>
+      <column width="-1" hidden="0" type="field" name="engstafdcd"/>
+      <column width="-1" hidden="0" type="field" name="engstafll"/>
+      <column width="-1" hidden="0" type="field" name="engstafml"/>
+      <column width="-1" hidden="0" type="field" name="engsldcd"/>
+      <column width="-1" hidden="0" type="field" name="engsldcp"/>
+      <column width="-1" hidden="0" type="field" name="englrsdcd"/>
+      <column width="-1" hidden="0" type="field" name="engcmssdcd"/>
+      <column width="-1" hidden="0" type="field" name="engcmssmp"/>
+      <column width="-1" hidden="0" type="field" name="urbrecptdcd"/>
+      <column width="-1" hidden="0" type="field" name="urbrecptwta"/>
+      <column width="-1" hidden="0" type="field" name="forpehrtdcp"/>
+      <column width="-1" hidden="0" type="field" name="hydclprs"/>
+      <column width="-1" hidden="0" type="field" name="awmmfpwwta"/>
+      <column width="-1" hidden="0" type="field" name="mupolygonkey"/>
+      <column width="-1" hidden="1" type="actions"/>
     </columns>
   </attributetableconfig>
   <conditionalstyles>
@@ -1142,51 +1142,51 @@ def my_form_open(dialog, layer, feature):
     <field editable="1" name="wtdepaprjunmin"/>
   </editable>
   <labelOnTop>
-    <field name="areasymbol" labelOnTop="0"/>
-    <field name="awmmfpwwta" labelOnTop="0"/>
-    <field name="aws0100wta" labelOnTop="0"/>
-    <field name="aws0150wta" labelOnTop="0"/>
-    <field name="aws025wta" labelOnTop="0"/>
-    <field name="aws050wta" labelOnTop="0"/>
-    <field name="brockdepmin" labelOnTop="0"/>
-    <field name="drclassdcd" labelOnTop="0"/>
-    <field name="drclasswettest" labelOnTop="0"/>
-    <field name="engcmssdcd" labelOnTop="0"/>
-    <field name="engcmssmp" labelOnTop="0"/>
-    <field name="engdwbdcd" labelOnTop="0"/>
-    <field name="engdwbll" labelOnTop="0"/>
-    <field name="engdwbml" labelOnTop="0"/>
-    <field name="engdwobdcd" labelOnTop="0"/>
-    <field name="englrsdcd" labelOnTop="0"/>
-    <field name="engsldcd" labelOnTop="0"/>
-    <field name="engsldcp" labelOnTop="0"/>
-    <field name="engstafdcd" labelOnTop="0"/>
-    <field name="engstafll" labelOnTop="0"/>
-    <field name="engstafml" labelOnTop="0"/>
-    <field name="flodfreqdcd" labelOnTop="0"/>
-    <field name="flodfreqmax" labelOnTop="0"/>
-    <field name="forpehrtdcp" labelOnTop="0"/>
-    <field name="gml_id" labelOnTop="0"/>
-    <field name="hydclprs" labelOnTop="0"/>
-    <field name="hydgrpdcd" labelOnTop="0"/>
-    <field name="iccdcd" labelOnTop="0"/>
-    <field name="iccdcdpct" labelOnTop="0"/>
-    <field name="mukey" labelOnTop="0"/>
-    <field name="muname" labelOnTop="0"/>
-    <field name="mupolygonkey" labelOnTop="0"/>
-    <field name="mustatus" labelOnTop="0"/>
-    <field name="musym" labelOnTop="0"/>
-    <field name="nationalmusym" labelOnTop="0"/>
-    <field name="niccdcd" labelOnTop="0"/>
-    <field name="niccdcdpct" labelOnTop="0"/>
-    <field name="pondfreqprs" labelOnTop="0"/>
-    <field name="slopegraddcp" labelOnTop="0"/>
-    <field name="slopegradwta" labelOnTop="0"/>
-    <field name="spatialversion" labelOnTop="0"/>
-    <field name="urbrecptdcd" labelOnTop="0"/>
-    <field name="urbrecptwta" labelOnTop="0"/>
-    <field name="wtdepannmin" labelOnTop="0"/>
-    <field name="wtdepaprjunmin" labelOnTop="0"/>
+    <field labelOnTop="0" name="areasymbol"/>
+    <field labelOnTop="0" name="awmmfpwwta"/>
+    <field labelOnTop="0" name="aws0100wta"/>
+    <field labelOnTop="0" name="aws0150wta"/>
+    <field labelOnTop="0" name="aws025wta"/>
+    <field labelOnTop="0" name="aws050wta"/>
+    <field labelOnTop="0" name="brockdepmin"/>
+    <field labelOnTop="0" name="drclassdcd"/>
+    <field labelOnTop="0" name="drclasswettest"/>
+    <field labelOnTop="0" name="engcmssdcd"/>
+    <field labelOnTop="0" name="engcmssmp"/>
+    <field labelOnTop="0" name="engdwbdcd"/>
+    <field labelOnTop="0" name="engdwbll"/>
+    <field labelOnTop="0" name="engdwbml"/>
+    <field labelOnTop="0" name="engdwobdcd"/>
+    <field labelOnTop="0" name="englrsdcd"/>
+    <field labelOnTop="0" name="engsldcd"/>
+    <field labelOnTop="0" name="engsldcp"/>
+    <field labelOnTop="0" name="engstafdcd"/>
+    <field labelOnTop="0" name="engstafll"/>
+    <field labelOnTop="0" name="engstafml"/>
+    <field labelOnTop="0" name="flodfreqdcd"/>
+    <field labelOnTop="0" name="flodfreqmax"/>
+    <field labelOnTop="0" name="forpehrtdcp"/>
+    <field labelOnTop="0" name="gml_id"/>
+    <field labelOnTop="0" name="hydclprs"/>
+    <field labelOnTop="0" name="hydgrpdcd"/>
+    <field labelOnTop="0" name="iccdcd"/>
+    <field labelOnTop="0" name="iccdcdpct"/>
+    <field labelOnTop="0" name="mukey"/>
+    <field labelOnTop="0" name="muname"/>
+    <field labelOnTop="0" name="mupolygonkey"/>
+    <field labelOnTop="0" name="mustatus"/>
+    <field labelOnTop="0" name="musym"/>
+    <field labelOnTop="0" name="nationalmusym"/>
+    <field labelOnTop="0" name="niccdcd"/>
+    <field labelOnTop="0" name="niccdcdpct"/>
+    <field labelOnTop="0" name="pondfreqprs"/>
+    <field labelOnTop="0" name="slopegraddcp"/>
+    <field labelOnTop="0" name="slopegradwta"/>
+    <field labelOnTop="0" name="spatialversion"/>
+    <field labelOnTop="0" name="urbrecptdcd"/>
+    <field labelOnTop="0" name="urbrecptwta"/>
+    <field labelOnTop="0" name="wtdepannmin"/>
+    <field labelOnTop="0" name="wtdepaprjunmin"/>
   </labelOnTop>
   <widgets/>
   <previewExpression>muname</previewExpression>

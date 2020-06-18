@@ -2,7 +2,7 @@ Curve Number Generator
 
 Algorithm description
 
-This algorithm generates Curve Number layer for the given Area of Interest within the contiguous United States. It can also download Soil and Land Cover datasets for the same area.
+This algorithm generates Curve Number layer for the given Area of Interest within the contiguous Unites States. It can also download Soil and Land Cover datasets for the same area.
 
 Input parameters
 
@@ -32,6 +32,6 @@ Generated Curve Number Layer based on Land Cover and HSG values.
 
 Algorithm author: Abdul Raheem Siddiqui
 Help author: Abdul Raheem Siddiqui
-Algorithm version: 0.2
+Algorithm version: 0.1
 Contact email: ars.work.ce@gmail.com
 Disclaimer: The curve number generated with this algorithm is a high level estimate and should not be used for detailed modeling or construction projects.
