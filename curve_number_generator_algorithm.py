@@ -926,7 +926,7 @@ If checked the algorithm will assume HSG A/B/C for each dual category soil.</p>
 <p>SSURGO Extended Soil Dataset </p>
 <h3>Curve Number Layer</h3>
 <p>Generated Curve Number Layer based on Land Cover and HSG values.</p>
-<br><p align="right">Algorithm author: Abdul Raheem Siddiqui</p><p align="right">Help author: Abdul Raheem Siddiqui</p><p align="right">Algorithm version: 0.3</p><p align="right">Contact email: ars.work.ce@gmail.com</p><p>Disclaimer: The curve numbers generated with this algorithm are high level estimates and should be reviewed in detail before being used for detailed modeling or construction projects.</p></body></html>"""
+<br><p align="right">Algorithm author: Abdul Raheem Siddiqui</p><p align="right">Help author: Abdul Raheem Siddiqui</p><p align="right">Algorithm version: 1.0</p><p align="right">Contact email: ars.work.ce@gmail.com</p><p>Disclaimer: The curve numbers generated with this algorithm are high level estimates and should be reviewed in detail before being used for detailed modeling or construction projects.</p></body></html>"""
 
     def helpUrl(self):
         return "mailto:ars.work.ce@gmail.com"
