@@ -8,8 +8,8 @@ This algorithm generates Curve Number layer for the given Area of Interest withi
 
 ### Input parameters
 
-Area Boundary:  
-Area of Interest
+![Alt][1] Area Boundary:  
+     Area of Interest
 
 CN_Lookup.csv:  
 Optional Table to relate NLCD Land Use Value and HSG Value to a particular curve number. By default the algorithm uses pre defined table. The table must have two columns 'GDCode' and 'CN_Join'.
@@ -19,16 +19,16 @@ Certain Soils are categorized as dual category in SSURGO dataset. They have Hydr
 
 ### Outputs
 
-NLCD Land Cover Vector:
+NLCD Land Cover Vector:  
 NLCD 2016 Land Cover Dataset Vectorized
 
-NLCD Land Cover Raster:
+NLCD Land Cover Raster:  
 NLCD 2016 Land Cover Dataset
 
-Soil Layer:
+Soil Layer:  
 SSURGO Extended Soil Dataset 
 
-Curve Number Layer:
+Curve Number Layer:  
 Generated Curve Number Layer based on Land Cover and HSG values.
 
 ### About
@@ -42,7 +42,7 @@ Disclaimer: The curve number generated with this algorithm is a high level estim
 
 ### DONATE
   
-<p>If this plugin is useful for you, please consider to make a donation of any value to the Maintainer</p>
+<p>If this plugin is useful for you, please consider making a donation of any value to the developer</p>
  
 <form action="https://www.paypal.com/donate" method="post" target="_top">
 <input type="hidden" name="business" value="T25JMRWJAL5SQ" />
@@ -51,3 +51,15 @@ Disclaimer: The curve number generated with this algorithm is a high level estim
 <input type="image" src="https://www.paypalobjects.com/en_US/i/btn/btn_donateCC_LG.gif" border="0" name="submit" title="PayPal - The safer, easier way to pay online!" alt="Donate with PayPal button" />
 <img alt="" border="0" src="https://www.paypal.com/en_US/i/scr/pixel.gif" width="1" height="1" />
 </form>
+
+
+### DONATE2
+  
+ <p>If this plugin is useful for you, please consider to make a donation of any value to the Maintainer</p>
+ 
+ <a href="https://www.paypal.com/donate?business=T25JMRWJAL5SQ&item_name=Curve+Number+Generator&currency_code=USD" target="_blank">
+ <img border="0" alt="Donate" src="https://www.paypalobjects.com/en_US/i/btn/btn_donateCC_LG.gif">
+ </a>
+
+
+[1]: logo.png "Title"
