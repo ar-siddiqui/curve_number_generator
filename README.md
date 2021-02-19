@@ -40,9 +40,9 @@ Contact email: ars.work.ce@gmail.com
 
 Disclaimer: The curve number generated with this algorithm is a high level estimate and should not be used for detailed modeling or construction projects.
 
-## DONATE
+## Donate
   
- <p>If this plugin is useful for you, please consider making a donation of any value to the developer</p>
+ <p>If this plugin is useful for you, please consider making a donation of any value to the developer.</p>
  
  <a href="https://www.paypal.com/donate?business=T25JMRWJAL5SQ&item_name=For+Curve+Number+Generator+Plugin&currency_code=USD" target="_blank">
  <img border="0" alt="Donate" src="https://www.paypalobjects.com/en_US/i/btn/btn_donateCC_LG.gif">
