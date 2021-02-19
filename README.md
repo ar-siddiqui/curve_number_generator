@@ -1,4 +1,6 @@
-# Curve-Number-Generator                       ![curve number generator icon](logo.png)
+![curve number generator icon](logo.png)
+
+# Curve-Number-Generator
 Plugin to generate Curve Number layer for any Area of Interest within the contiguous United States. It can also download Soil and Land Cover datasets for the same area.
 
 ## Algorithm description
@@ -42,6 +44,6 @@ Disclaimer: The curve number generated with this algorithm is a high level estim
   
  <p>If this plugin is useful for you, please consider to make a donation of any value to the Maintainer</p>
  
- <a href="https://www.paypal.com/donate?business=T25JMRWJAL5SQ&item_name=Curve+Number+Generator&currency_code=USD" target="_blank">
+ <a href="https://www.paypal.com/donate?business=T25JMRWJAL5SQ&item_name=For+Curve+Number+Generator+Plugin&currency_code=USD" target="_blank">
  <img border="0" alt="Donate" src="https://www.paypalobjects.com/en_US/i/btn/btn_donateCC_LG.gif">
  </a>
