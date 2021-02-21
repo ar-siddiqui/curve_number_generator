@@ -119,6 +119,13 @@ class CurveNumberGeneratorAlgorithm(QgsProcessingAlgorithm):
         )
         self.addParameter(
             QgsProcessingParameterBoolean(
+                "OutputNLCDImperviousRaster",
+                "Output NLCD Impervious Surface Raster",
+                defaultValue=False,
+            )
+        )
+        self.addParameter(
+            QgsProcessingParameterBoolean(
                 "OutputSoilLayer", "Output Soil Layer", defaultValue=False
             )
         )
@@ -141,7 +148,7 @@ class CurveNumberGeneratorAlgorithm(QgsProcessingAlgorithm):
     def processAlgorithm(self, parameters, context, model_feedback):
         # Use a multi-step feedback, so that individual child algorithm progress reports are adjusted for the
         # overall progress through the model
-        feedback = QgsProcessingMultiStepFeedback(21, model_feedback)
+        feedback = QgsProcessingMultiStepFeedback(24, model_feedback)
         results = {}
         outputs = {}
 
@@ -150,6 +157,9 @@ class CurveNumberGeneratorAlgorithm(QgsProcessingAlgorithm):
         )
         nlcd_vect_output = self.parameterAsBool(
             parameters, "OutputNLCDLandCoverVector", context
+        )
+        nlcd_rast_imp_output = self.parameterAsBool(
+            parameters, "OutputNLCDImperviousRaster", context
         )
         soil_output = self.parameterAsBool(parameters, "OutputSoilLayer", context)
         curve_number_output = self.parameterAsBool(
@@ -197,42 +207,106 @@ class CurveNumberGeneratorAlgorithm(QgsProcessingAlgorithm):
         extent_area = d.measureArea(QgsGeometry().fromRect(area_layer.extent()))
         area_acres = d.convertAreaMeasurement(extent_area, QgsUnitTypes.AreaAcres)
 
-        if area_acres < 100000:
+        if area_acres < 4000000:
             feedback.pushInfo(
-                str(
-                    "Area Boundary layer extent area is "
-                    + str(area_acres)
-                    + " acres"
-                    + "\n"
-                )
+                f"Area Boundary layer extent area is {round(area_acres,4):,} acres\n"
             )
         else:
             feedback.reportError(
-                "Area Boundary layer extent area should be less than 100,000 acres"
-                + "\n"
-                + "\n"
-                + "Execution Failed",
+                f"Area Boundary layer extent area should be less than 4,000,000 acres.\nArea Boundary layer extent area is {round(area_acres,4):,} acres.\n\nExecution Failed",
                 True,
             )
             return results
 
-        # NLCD Data
+        # Get extent of the area boundary layer
+        xmin = area_layer.extent().xMinimum()
+        ymin = area_layer.extent().yMinimum()
+        xmax = area_layer.extent().xMaximum()
+        ymax = area_layer.extent().yMaximum()
 
+        BBOX_width = (xmax - xmin) / 30
+        BBOX_height = (ymax - ymin) / 30
+        BBOX_width_int = round(BBOX_width)
+        BBOX_height_int = round(BBOX_height)
+
+        # NLCD Impervious Raster
+        if nlcd_rast_imp_output == True:
+            request_URL = (
+                "https://www.mrlc.gov/geoserver/mrlc_display/NLCD_2016_Impervious_L48/ows?version=1.3.0&service=WMS&layers=NLCD_2016_Impervious_L48&styles&crs="
+                + str(EPSGCode)
+                + "&format=image/geotiff&request=GetMap&width="
+                + str(BBOX_width_int)
+                + "&height="
+                + str(BBOX_height_int)
+                + "&BBOX="
+                + str(xmin)
+                + ","
+                + str(ymin)
+                + ","
+                + str(xmax)
+                + ","
+                + str(ymax)
+                + "&"
+            )
+            feedback.pushInfo(request_URL)
+
+            # Download NLCD Impervious Raster
+            try:
+                alg_params = {
+                    "URL": request_URL,
+                    "OUTPUT": QgsProcessing.TEMPORARY_OUTPUT,
+                }
+                outputs["DownloadNlcdImp"] = processing.run(
+                    "native:filedownloader",
+                    alg_params,
+                    context=context,
+                    feedback=feedback,
+                    is_child_algorithm=True,
+                )
+            except QgsProcessingException:
+                feedback.reportError(
+                    "Error requesting land use data from 'www.mrlc.gov'. Most probably because either their server is down or there is a certification issue.\nThis should be temporary. Try again later.",
+                    True,
+                )
+                return results
+
+            feedback.setCurrentStep(1)
+            if feedback.isCanceled():
+                return {}
+
+            # Set layer style
+            alg_params = {
+                "INPUT": outputs["DownloadNlcdImp"]["OUTPUT"],
+                "STYLE": os.path.join(cmd_folder, "NLCD_Raster_Imp.qml"),
+            }
+
+            try:  # for QGIS Version later than 3.12
+                outputs["SetLayerStyle"] = processing.run(
+                    "native:setlayerstyle",
+                    alg_params,
+                    context=context,
+                    feedback=feedback,
+                    is_child_algorithm=True,
+                )
+            except:  # for QGIS Version older than 3.12
+                outputs["SetStyleForRasterLayer"] = processing.run(
+                    "qgis:setstyleforrasterlayer",
+                    alg_params,
+                    context=context,
+                    feedback=feedback,
+                    is_child_algorithm=True,
+                )
+
+            feedback.setCurrentStep(2)
+            if feedback.isCanceled():
+                return {}
+
+        # NLCD Land Cover Data
         if (
             curve_number_output == True
             or nlcd_vect_output == True
             or nlcd_rast_output == True
         ):
-            # Get extent of the area boundary layer
-            xmin = area_layer.extent().xMinimum()
-            ymin = area_layer.extent().yMinimum()
-            xmax = area_layer.extent().xMaximum()
-            ymax = area_layer.extent().yMaximum()
-
-            BBOX_width = (xmax - xmin) / 30
-            BBOX_height = (ymax - ymin) / 30
-            BBOX_width_int = round(BBOX_width)
-            BBOX_height_int = round(BBOX_height)
             request_URL = (
                 "https://www.mrlc.gov/geoserver/mrlc_display/NLCD_2016_Land_Cover_L48/ows?version=1.3.0&service=WMS&layers=NLCD_2016_Land_Cover_L48&styles&crs="
                 + str(EPSGCode)
@@ -250,7 +324,7 @@ class CurveNumberGeneratorAlgorithm(QgsProcessingAlgorithm):
                 + str(ymax)
                 + "&"
             )
-            # feedback.pushInfo(request_URL)
+            feedback.pushInfo(request_URL)
 
             # Download NLCD
             try:
@@ -272,7 +346,7 @@ class CurveNumberGeneratorAlgorithm(QgsProcessingAlgorithm):
                 )
                 return results
 
-            feedback.setCurrentStep(1)
+            feedback.setCurrentStep(3)
             if feedback.isCanceled():
                 return {}
 
@@ -297,7 +371,7 @@ class CurveNumberGeneratorAlgorithm(QgsProcessingAlgorithm):
                 is_child_algorithm=True,
             )
 
-            feedback.setCurrentStep(2)
+            feedback.setCurrentStep(4)
             if feedback.isCanceled():
                 return {}
 
@@ -324,7 +398,7 @@ class CurveNumberGeneratorAlgorithm(QgsProcessingAlgorithm):
                     is_child_algorithm=True,
                 )
 
-            feedback.setCurrentStep(3)
+            feedback.setCurrentStep(5)
             if feedback.isCanceled():
                 return {}
 
@@ -346,7 +420,7 @@ class CurveNumberGeneratorAlgorithm(QgsProcessingAlgorithm):
                     is_child_algorithm=True,
                 )
 
-                feedback.setCurrentStep(4)
+                feedback.setCurrentStep(6)
                 if feedback.isCanceled():
                     return {}
 
@@ -363,7 +437,7 @@ class CurveNumberGeneratorAlgorithm(QgsProcessingAlgorithm):
                     is_child_algorithm=True,
                 )
 
-                feedback.setCurrentStep(5)
+                feedback.setCurrentStep(7)
                 if feedback.isCanceled():
                     return {}
 
@@ -389,12 +463,11 @@ class CurveNumberGeneratorAlgorithm(QgsProcessingAlgorithm):
                         is_child_algorithm=True,
                     )
 
-                feedback.setCurrentStep(6)
+                feedback.setCurrentStep(8)
                 if feedback.isCanceled():
                     return {}
 
         # Soil Layer
-
         if soil_output == True or curve_number_output == True:
 
             # Reproject layer
@@ -412,7 +485,7 @@ class CurveNumberGeneratorAlgorithm(QgsProcessingAlgorithm):
                 is_child_algorithm=True,
             )
 
-            feedback.setCurrentStep(7)
+            feedback.setCurrentStep(9)
             if feedback.isCanceled():
                 return {}
 
@@ -494,7 +567,7 @@ class CurveNumberGeneratorAlgorithm(QgsProcessingAlgorithm):
                 url = "https://sdmdataaccess.sc.egov.usda.gov/TABULAR/post.rest"
                 soil_response = requests.post(url, json=body).json()
 
-                feedback.setCurrentStep(8)
+                feedback.setCurrentStep(10)
                 if feedback.isCanceled():
                     return {}
 
@@ -510,12 +583,14 @@ class CurveNumberGeneratorAlgorithm(QgsProcessingAlgorithm):
                             feat.setGeometry(QgsGeometry.fromWkt(col))
                     provider.addFeatures([feat])
 
-                feedback.setCurrentStep(9)
+                feedback.setCurrentStep(11)
                 if feedback.isCanceled():
                     return {}
 
             except:  # try wfs request
-
+                feedback.reportError(
+                    "Error getting soil data through post request. Your input layer maybe too large. Trying WFS now. If the Algorithm stopped responding. Terminate the Algorithm and rerun with smaller input layer"
+                )
                 xmin_reprojected = area_layer_reprojected.extent().xMinimum()
                 ymin_reprojected = area_layer_reprojected.extent().yMinimum()
                 xmax_reprojected = area_layer_reprojected.extent().xMaximum()
@@ -544,7 +619,7 @@ class CurveNumberGeneratorAlgorithm(QgsProcessingAlgorithm):
                     is_child_algorithm=True,
                 )
 
-                feedback.setCurrentStep(8)
+                feedback.setCurrentStep(12)
                 if feedback.isCanceled():
                     return {}
 
@@ -561,7 +636,7 @@ class CurveNumberGeneratorAlgorithm(QgsProcessingAlgorithm):
                     is_child_algorithm=True,
                 )
 
-                feedback.setCurrentStep(9)
+                feedback.setCurrentStep(13)
                 if feedback.isCanceled():
                     return {}
 
@@ -577,7 +652,7 @@ class CurveNumberGeneratorAlgorithm(QgsProcessingAlgorithm):
                 is_child_algorithm=True,
             )
 
-            feedback.setCurrentStep(10)
+            feedback.setCurrentStep(14)
             if feedback.isCanceled():
                 return {}
 
@@ -595,7 +670,7 @@ class CurveNumberGeneratorAlgorithm(QgsProcessingAlgorithm):
                 is_child_algorithm=True,
             )
 
-            feedback.setCurrentStep(11)
+            feedback.setCurrentStep(15)
             if feedback.isCanceled():
                 return {}
 
@@ -614,7 +689,7 @@ class CurveNumberGeneratorAlgorithm(QgsProcessingAlgorithm):
                 is_child_algorithm=True,
             )
 
-            feedback.setCurrentStep(12)
+            feedback.setCurrentStep(16)
             if feedback.isCanceled():
                 return {}
 
@@ -640,12 +715,11 @@ class CurveNumberGeneratorAlgorithm(QgsProcessingAlgorithm):
                     is_child_algorithm=True,
                 )
 
-            feedback.setCurrentStep(13)
+            feedback.setCurrentStep(17)
             if feedback.isCanceled():
                 return {}
 
         # Curve Number Calculations
-
         if curve_number_output == True:
 
             # Intersection
@@ -665,7 +739,7 @@ class CurveNumberGeneratorAlgorithm(QgsProcessingAlgorithm):
                 is_child_algorithm=True,
             )
 
-            feedback.setCurrentStep(14)
+            feedback.setCurrentStep(18)
             if feedback.isCanceled():
                 return {}
 
@@ -688,7 +762,7 @@ class CurveNumberGeneratorAlgorithm(QgsProcessingAlgorithm):
                 is_child_algorithm=True,
             )
 
-            feedback.setCurrentStep(15)
+            feedback.setCurrentStep(19)
             if feedback.isCanceled():
                 return {}
 
@@ -711,7 +785,7 @@ class CurveNumberGeneratorAlgorithm(QgsProcessingAlgorithm):
                 is_child_algorithm=True,
             )
 
-            feedback.setCurrentStep(16)
+            feedback.setCurrentStep(20)
             if feedback.isCanceled():
                 return {}
 
@@ -734,7 +808,7 @@ class CurveNumberGeneratorAlgorithm(QgsProcessingAlgorithm):
                 is_child_algorithm=True,
             )
 
-            feedback.setCurrentStep(17)
+            feedback.setCurrentStep(21)
             if feedback.isCanceled():
                 return {}
 
@@ -758,7 +832,7 @@ class CurveNumberGeneratorAlgorithm(QgsProcessingAlgorithm):
                 is_child_algorithm=True,
             )
 
-            feedback.setCurrentStep(18)
+            feedback.setCurrentStep(22)
             if feedback.isCanceled():
                 return {}
 
@@ -781,7 +855,7 @@ class CurveNumberGeneratorAlgorithm(QgsProcessingAlgorithm):
                 is_child_algorithm=True,
             )
 
-            feedback.setCurrentStep(19)
+            feedback.setCurrentStep(23)
             if feedback.isCanceled():
                 return {}
 
@@ -799,7 +873,7 @@ class CurveNumberGeneratorAlgorithm(QgsProcessingAlgorithm):
                 is_child_algorithm=True,
             )
 
-            feedback.setCurrentStep(20)
+            feedback.setCurrentStep(24)
             if feedback.isCanceled():
                 return {}
 
@@ -853,13 +927,27 @@ class CurveNumberGeneratorAlgorithm(QgsProcessingAlgorithm):
                 is_child_algorithm=True,
             )
 
+        if nlcd_rast_imp_output:
+            # Load NLCD Impervious Raster into project
+            alg_params = {
+                "INPUT": outputs["DownloadNlcdImp"]["OUTPUT"],
+                "NAME": "NLCD Impervious Raster",
+            }
+            outputs["LoadLayerIntoProject3"] = processing.run(
+                "native:loadlayer",
+                alg_params,
+                context=context,
+                feedback=feedback,
+                is_child_algorithm=True,
+            )
+
         if soil_output:
             # Load Soil Layer into project
             alg_params = {
                 "INPUT": outputs["ReprojectSoil"]["OUTPUT"],
                 "NAME": "SSURGO Soil Layer",
             }
-            outputs["LoadLayerIntoProject3"] = processing.run(
+            outputs["LoadLayerIntoProject4"] = processing.run(
                 "native:loadlayer",
                 alg_params,
                 context=context,
@@ -873,7 +961,7 @@ class CurveNumberGeneratorAlgorithm(QgsProcessingAlgorithm):
                 "INPUT": outputs["DropFields"]["OUTPUT"],
                 "NAME": "Curve Number Layer",
             }
-            outputs["LoadLayerIntoProject4"] = processing.run(
+            outputs["LoadLayerIntoProject5"] = processing.run(
                 "native:loadlayer",
                 alg_params,
                 context=context,
@@ -956,11 +1044,13 @@ If checked the algorithm will assume HSG A/B/C for each dual category soil.</p>
 <p>NLCD 2016 Land Cover Dataset Vectorized</p>
 <h3>NLCD Land Cover Raster</h3>
 <p>NLCD 2016 Land Cover Dataset</p>
+<h3>NLCD Impervious Surface Raster</h3>
+<p>NLCD 2016 Impervious Surface Dataset</p>
 <h3>Soil Layer</h3>
 <p>SSURGO Extended Soil Dataset </p>
 <h3>Curve Number Layer</h3>
 <p>Generated Curve Number Layer based on Land Cover and HSG values.</p>
-<br><p align="right">Algorithm author: Abdul Raheem Siddiqui</p><p align="right">Help author: Abdul Raheem Siddiqui</p><p align="right">Algorithm version: 1.0</p><p align="right">Contact email: ars.work.ce@gmail.com</p><p>Disclaimer: The curve numbers generated with this algorithm are high level estimates and should be reviewed in detail before being used for detailed modeling or construction projects.</p></body></html>"""
+<br><p align="right">Algorithm author: Abdul Raheem Siddiqui</p><p align="right">Help author: Abdul Raheem Siddiqui</p><p align="right">Algorithm version: 1.1</p><p align="right">Contact email: ars.work.ce@gmail.com</p><p>Disclaimer: The curve numbers generated with this algorithm are high level estimates and should be reviewed in detail before being used for detailed modeling or construction projects.</p></body></html>"""
 
     def helpUrl(self):
         return "mailto:ars.work.ce@gmail.com"
