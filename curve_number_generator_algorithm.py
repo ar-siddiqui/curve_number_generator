@@ -24,6 +24,7 @@
 import sys
 import inspect
 import requests
+import codecs
 import os
 import processing
 from qgis.PyQt.QtGui import QIcon
@@ -50,7 +51,9 @@ from qgis.core import (
     QgsField,
     QgsFeature,
     QgsProcessingException,
+    QgsProcessingOutputHtml,
 )
+from tempfile import NamedTemporaryFile
 
 cmd_folder = os.path.split(inspect.getfile(inspect.currentframe()))[0]
 sys.path.append(cmd_folder)
@@ -126,6 +129,14 @@ class CurveNumberGeneratorAlgorithm(QgsProcessingAlgorithm):
                 defaultValue=False,
             )
         )
+
+        # read usage
+        with open(os.path.join(cmd_folder, "usage_counter.log"), "r+") as f:
+            counter = int(f.readline())
+
+        # check if counter is milestone
+        if (counter + 1) % 25 == 0:
+            self.addOutput(QgsProcessingOutputHtml("Message", "Curve Number Generator"))
 
     def processAlgorithm(self, parameters, context, model_feedback):
         # Use a multi-step feedback, so that individual child algorithm progress reports are adjusted for the
@@ -870,6 +881,18 @@ class CurveNumberGeneratorAlgorithm(QgsProcessingAlgorithm):
                 is_child_algorithm=True,
             )
 
+        # log usage
+        with open(os.path.join(cmd_folder, "usage_counter.log"), "r+") as f:
+            counter = int(f.readline())
+            f.seek(0)
+            f.write(str(counter + 1))
+
+        # check if counter is milestone
+        if (counter + 1) % 25 == 0:
+            appeal_file = NamedTemporaryFile("w", suffix=".html", delete=False)
+            self.createHTML(appeal_file.name, counter + 1)
+            results["Message"] = appeal_file.name
+
         return results
 
     def name(self):
@@ -944,3 +967,31 @@ If checked the algorithm will assume HSG A/B/C for each dual category soil.</p>
 
     def createInstance(self):
         return CurveNumberGeneratorAlgorithm()
+
+    def createHTML(self, outputFile, counter):
+        with codecs.open(outputFile, "w", encoding="utf-8") as f:
+            f.write(
+                f"""
+<html>
+
+<head>
+    <meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
+</head>
+
+<body>
+    <p style="font-size:21px;margin-bottom:0;"><br>WOW! You have used the Curve Number Generator Plugin <b>{counter}</b>
+        times already. If this plugin is useful for you, please consider making a donation of any value to the
+        developer.</p>
+    <br>
+    <form action="https://www.paypal.com/donate" method="post" target="_top">
+        <input type="hidden" name="business" value="T25JMRWJAL5SQ" />
+        <input type="hidden" name="item_name" value="For Curve Number Generator" />
+        <input type="hidden" name="currency_code" value="USD" />
+        <input type="image" src="https://www.paypalobjects.com/en_US/i/btn/btn_donateCC_LG.gif" border="0" name="submit"
+            title="PayPal - The safer, easier way to pay online!" alt="Donate with PayPal button" />
+        <img alt="" border="0" src="https://www.paypal.com/en_US/i/scr/pixel.gif" width="1" height="1" />
+    </form>
+</body>
+
+</html>"""
+            )
