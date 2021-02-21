@@ -5,7 +5,7 @@
 #							 -------------------
 #		begin				: 2020-06-06
 #		git sha				: $Format:%H$
-#		copyright			: (C) 2020 by Abdul Raheem Siddiqui
+#		copyright			: (C) 2021 by Abdul Raheem Siddiqui
 #		email				: mailto:ars.work.ce@gmail.com
 # ***************************************************************************/
 #

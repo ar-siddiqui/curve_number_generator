@@ -25,13 +25,13 @@ repository=https://github.com/ar-siddiqui/curve_number_generator
 
 hasProcessingProvider=yes
 # Uncomment the following line and add your changelog:
-changelog= Version 1.0 - 2020-12-25
-	- Warning messages about version of QGIS removed
-	- Soil data download will first be tried using post request, which is fast and more reliable
+changelog= Version 1.1 - 2021-02-21
+	- Download Impervious Surface raster
+	- Error handling for server issues of www.mrlc.gov
 
 
 # Tags are comma separated with spaces allowed
-tags=curve number, CN, NLCD Land Cover, SSURGO, Soil, Hydrologic Soil Group, HSG, WFS, WMS, Hydrology, SCS,
+tags=curve number, CN, NLCD Land Cover, SSURGO, Soil, Hydrologic Soil Group, HSG, WFS, WMS, Hydrology, SCS, Impervious Surface
 
 homepage=https://github.com/ar-siddiqui/curve_number_generator
 category=Analysis
