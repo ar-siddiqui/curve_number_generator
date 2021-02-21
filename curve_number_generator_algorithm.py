@@ -49,6 +49,7 @@ from qgis.core import (
     QgsGeometry,
     QgsField,
     QgsFeature,
+    QgsProcessingException,
 )
 
 cmd_folder = os.path.split(inspect.getfile(inspect.currentframe()))[0]
@@ -241,14 +242,24 @@ class CurveNumberGeneratorAlgorithm(QgsProcessingAlgorithm):
             # feedback.pushInfo(request_URL)
 
             # Download NLCD
-            alg_params = {"URL": request_URL, "OUTPUT": QgsProcessing.TEMPORARY_OUTPUT}
-            outputs["DownloadNlcd"] = processing.run(
-                "native:filedownloader",
-                alg_params,
-                context=context,
-                feedback=feedback,
-                is_child_algorithm=True,
-            )
+            try:
+                alg_params = {
+                    "URL": request_URL,
+                    "OUTPUT": QgsProcessing.TEMPORARY_OUTPUT,
+                }
+                outputs["DownloadNlcd"] = processing.run(
+                    "native:filedownloader",
+                    alg_params,
+                    context=context,
+                    feedback=feedback,
+                    is_child_algorithm=True,
+                )
+            except QgsProcessingException:
+                feedback.reportError(
+                    "Error requesting land use data from 'www.mrlc.gov'. Most probably because either their server is down or there is a certification issue.\nThis should be temporary. Try again later.",
+                    True,
+                )
+                return results
 
             feedback.setCurrentStep(1)
             if feedback.isCanceled():
