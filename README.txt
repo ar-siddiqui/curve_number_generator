@@ -2,7 +2,7 @@ Curve Number Generator
 
 Algorithm description
 
-This algorithm generates Curve Number layer for the given Area of Interest within the contiguous United States. It can also download Soil and Land Cover datasets for the same area.
+This algorithm generates Curve Number layer for the given Area of Interest within the contiguous United States. It can also download Soil, Land Cover, and Impervious Surface datasets for the same area.
 
 Input parameters
 

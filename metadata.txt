@@ -5,12 +5,12 @@
 [general]
 name=Curve Number Generator
 qgisMinimumVersion=3.6
-description=This plugin generates a Curve Number layer for the given Area of Interest within the contiguous United States. It can also download Soil and Land Cover datasets for the same area.
+description=This plugin generates a Curve Number layer for the given Area of Interest within the contiguous United States. It can also download Soil, Land Cover, and Impervious Surface datasets for the same area.
 version=1.1
 author=Abdul Raheem Siddiqui
 email=ars.work.ce@gmail.com
 
-about=This plugin generates a Curve Number layer for the given Area of Interest within the contiguous United States. It can also download Soil and Land Cover datasets for the same area.
+about=This plugin generates a Curve Number layer for the given Area of Interest within the contiguous United States. It can also download Soil, Land Cover, and Impervious Surface datasets for the same area.
 	<p>If this plugin is useful for you, please consider making a donation of any value to the developer.</p>
 	<a href="https://www.paypal.com/donate?business=T25JMRWJAL5SQ&item_name=For+Curve+Number+Generator+Plugin&currency_code=USD" target="_blank">
 	<img border="0" alt="Donate" src="https://www.paypalobjects.com/en_US/i/btn/btn_donateCC_LG.gif">

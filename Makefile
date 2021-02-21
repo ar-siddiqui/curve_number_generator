@@ -1,7 +1,7 @@
 #/***************************************************************************
 # CurveNumberGenerator
 #
-# This plugin generates a Curve Number layer for the given Area of Interest within the contiguous Unites States. It can also download Soil and Land Cover datasets for the same area.
+# This plugin generates a Curve Number layer for the given Area of Interest within the contiguous Unites States. It can also download Soil, Land Cover, and Impervious Surface datasets for the same area.
 #							 -------------------
 #		begin				: 2020-06-06
 #		git sha				: $Format:%H$
