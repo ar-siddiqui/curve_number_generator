@@ -25,6 +25,9 @@ This algorithm generates Curve Number layer for the given Area of Interest withi
 - NLCD Land Cover Raster:  
     NLCD 2016 Land Cover Dataset
 
+- NLCD Impervious Surface Raster:  
+    NLCD 2016 Impervious Surface Dataset
+
 - Soil Layer:  
     SSURGO Extended Soil Dataset 
 

@@ -17,11 +17,14 @@ Certain Soils are categorized as dual category in SSURGO dataset. They have Hydr
 
 Outputs
 
+NLCD Land Cover Raster
+NLCD 2016 Land Cover Dataset
+
 NLCD Land Cover Vector
 NLCD 2016 Land Cover Dataset Vectorized
 
-NLCD Land Cover Raster
-NLCD 2016 Land Cover Dataset
+NLCD Impervious Surface Raster
+NLCD 2016 Impervious Surface Dataset
 
 Soil Layer
 SSURGO Extended Soil Dataset 
@@ -32,6 +35,6 @@ Generated Curve Number Layer based on Land Cover and HSG values.
 
 Algorithm author: Abdul Raheem Siddiqui
 Help author: Abdul Raheem Siddiqui
-Algorithm version: 1.0
+Algorithm version: 1.1
 Contact email: ars.work.ce@gmail.com
 Disclaimer: The curve number generated with this algorithm is a high level estimate and should not be used for detailed modeling or construction projects.
