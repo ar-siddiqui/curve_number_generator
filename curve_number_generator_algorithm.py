@@ -1069,11 +1069,14 @@ If checked the algorithm will assume HSG A/B/C for each dual category soil.</p>
 </head>
 
 <body>
-    <p style="font-size:21px;margin-bottom:0;"><br>WOW! You have used the Curve Number Generator Plugin <b>{counter}</b>
-        times already. If this plugin is useful for you, please consider making a donation of any value to the
-        developer.</p>
+    <p style="font-size:21px;line-height: 1.5;text-align:center;"><br>WOW! You have used the Curve Number Generator
+        Plugin <b>{counter}</b>
+        times already.<br />If you would like to get any GIS task automated for your organization please contact me at
+        ars.work.ce@gmail.com<br />
+        If this plugin has saved your time, please consider making a personal or organizational donation of any value to
+        the developer.</p>
     <br>
-    <form action="https://www.paypal.com/donate" method="post" target="_top">
+    <form action="https://www.paypal.com/donate" method="post" target="_top" style="text-align: center;">
         <input type="hidden" name="business" value="T25JMRWJAL5SQ" />
         <input type="hidden" name="item_name" value="For Curve Number Generator" />
         <input type="hidden" name="currency_code" value="USD" />
