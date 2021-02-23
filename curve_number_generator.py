@@ -68,12 +68,10 @@ class CurveNumberGeneratorPlugin(object):
         )
         self.action.triggered.connect(self.run)
         self.iface.addPluginToMenu(u"&CurveNumberGenerator", self.action)
-        self.iface.addToolBarIcon(self.action)
 
     def unload(self):
         QgsApplication.processingRegistry().removeProvider(self.provider)
         self.iface.removePluginMenu(u"&CurveNumberGenerator", self.action)
-        self.iface.removeToolBarIcon(self.action)
 
     def run(self):
-        processing.execAlgorithmDialog("Auzaar:Curve Number Generator")
+        processing.execAlgorithmDialog("Curve Number Generator:Curve Number Generator")
