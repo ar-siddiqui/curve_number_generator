@@ -1,48 +1,52 @@
+![curve number generator icon](logo.png)
+
 # Curve-Number-Generator
-Plugin to generate Curve Number layer for any Area of Interest within the contiguous United States. It can also download Soil and Land Cover datasets for the same area.
+Plugin to generate Curve Number layer for any Area of Interest within the contiguous United States. It can also download Soil, Land Cover, and Impervious Surface datasets for the same area.
 
-### Algorithm description
-This algorithm generates Curve Number layer for the given Area of Interest within the contiguous United States. It can also download Soil and Land Cover datasets for the same area.
+## Algorithm description
+This algorithm generates Curve Number layer for the given Area of Interest within the contiguous United States. It can also download Soil, Land Cover, and Impervious Surface datasets for the same area.
 
-### Input parameters
+## Input parameters
 
-Area Boundary:
+- Area Boundary:  
+    Area of Interest
 
-Area of Interest
+- CN_Lookup.csv:  
+    Optional Table to relate NLCD Land Use Value and HSG Value to a particular curve number. By default the algorithm uses pre defined table. The table must have two columns 'GDCode' and 'CN_Join'.
 
-CN_Lookup.csv:
+- Drained Soils? [leave unchecked if not sure]:  
+    Certain Soils are categorized as dual category in SSURGO dataset. They have Hydrologic Soil Group D for Undrained Conditions and Hydrologic Soil Group A/B/C for Drained Conditions. If left unchecked the algorithm will assume HSG D for all dual category soils.  If checked the algorithm will assume HSG A/B/C for each dual category soil.
 
-Optional Table to relate NLCD Land Use Value and HSG Value to a particular curve number. By default the algorithm uses pre defined table. The table must have two columns 'GDCode' and 'CN_Join'.
+## Outputs
 
-Drained Soils? [leave unchecked if not sure]:
+- NLCD Land Cover Vector:  
+    NLCD 2016 Land Cover Dataset Vectorized
 
-Certain Soils are categorized as dual category in SSURGO dataset. They have Hydrologic Soil Group D for Undrained Conditions and Hydrologic Soil Group A/B/C for Drained Conditions. If left unchecked the algorithm will assume HSG D for all dual category soils.  If checked the algorithm will assume HSG A/B/C for each dual category soil.
+- NLCD Land Cover Raster:  
+    NLCD 2016 Land Cover Dataset
 
-### Outputs
+- NLCD Impervious Surface Raster:  
+    NLCD 2016 Impervious Surface Dataset
 
-NLCD Land Cover Vector:
+- Soil Layer:  
+    SSURGO Extended Soil Dataset 
 
-NLCD 2016 Land Cover Dataset Vectorized
+- Curve Number Layer:  
+    Generated Curve Number Layer based on Land Cover and HSG values.
 
-NLCD Land Cover Raster:
+## About
 
-NLCD 2016 Land Cover Dataset
-
-Soil Layer:
-
-SSURGO Extended Soil Dataset 
-
-Curve Number Layer:
-
-Generated Curve Number Layer based on Land Cover and HSG values.
-
-
-Algorithm author: Abdul Raheem Siddiqui
-
-Help author: Abdul Raheem Siddiqui
-
-Algorithm version: 1.0
-
+Algorithm author: Abdul Raheem Siddiqui  
+Help author: Abdul Raheem Siddiqui  
+Algorithm version: 1.1  
 Contact email: ars.work.ce@gmail.com
 
 Disclaimer: The curve number generated with this algorithm is a high level estimate and should not be used for detailed modeling or construction projects.
+
+## Donate
+  
+ <p>If this plugin is useful for you, please consider making a donation of any value to the developer.</p>
+ 
+ <a href="https://www.paypal.com/donate?business=T25JMRWJAL5SQ&item_name=For+Curve+Number+Generator+Plugin&currency_code=USD" target="_blank">
+ <img border="0" alt="Donate" src="https://www.paypalobjects.com/en_US/i/btn/btn_donateCC_LG.gif">
+ </a>
