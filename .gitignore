@@ -1,0 +1,9 @@
+# vs code files
+.vscode/settings.json
+
+# .pyc files
+*.pyc
+
+#.log files
+*.log
+usage_counter.log
