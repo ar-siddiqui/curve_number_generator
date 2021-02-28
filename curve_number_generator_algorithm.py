@@ -207,13 +207,13 @@ class CurveNumberGeneratorAlgorithm(QgsProcessingAlgorithm):
         extent_area = d.measureArea(QgsGeometry().fromRect(area_layer.extent()))
         area_acres = d.convertAreaMeasurement(extent_area, QgsUnitTypes.AreaAcres)
 
-        if area_acres < 4000000:
+        if area_acres < 3000000:
             feedback.pushInfo(
                 f"Area Boundary layer extent area is {round(area_acres,4):,} acres\n"
             )
         else:
             feedback.reportError(
-                f"Area Boundary layer extent area should be less than 4,000,000 acres.\nArea Boundary layer extent area is {round(area_acres,4):,} acres.\n\nExecution Failed",
+                f"Area Boundary layer extent area should be less than 3,000,000 acres.\nArea Boundary layer extent area is {round(area_acres,4):,} acres.\n\nExecution Failed",
                 True,
             )
             return results

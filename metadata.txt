@@ -24,7 +24,7 @@ hasProcessingProvider=yes
 changelog= Version 1.1 - 2021-02-21
 	- Download Impervious Surface raster
 	- Error handling for server issues of www.mrlc.gov
-	- Increase AOI limit to 4,000,000 acres.
+	- Increase AOI limit to 3,000,000 acres.
 
 
 # Tags are comma separated with spaces allowed
