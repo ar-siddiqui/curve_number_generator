@@ -563,7 +563,8 @@ class CurveNumberGeneratorAlgorithm(QgsProcessingAlgorithm):
 
             except:  # try wfs request
                 feedback.reportError(
-                    "Error getting soil data through post request. Your input layer maybe too large. Trying WFS now. If the Algorithm stopped responding. Terminate the Algorithm and rerun with smaller input layer"
+                    "Error getting soil data through post request. Your input layer maybe too large. Trying WFS download now.\nIf the Algorithm do not respond in next few minutes. Terminate the Algorithm and rerun with smaller input layer.",
+                    False,
                 )
                 xmin_reprojected = area_layer_reprojected.extent().xMinimum()
                 ymin_reprojected = area_layer_reprojected.extent().yMinimum()
