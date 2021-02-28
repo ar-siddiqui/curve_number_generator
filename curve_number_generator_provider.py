@@ -23,7 +23,7 @@
 """
 
 __author__ = "Abdul Raheem Siddiqui"
-__date__ = "2021-02-27"
+__date__ = "2021-02-28"
 __copyright__ = "(C) 2021 by Abdul Raheem Siddiqui"
 
 # This will get replaced with a git SHA1 when you do a git archive
@@ -83,7 +83,7 @@ class CurveNumberGeneratorProvider(QgsProcessingProvider):
         the Processing toolbox.
         """
         cmd_folder = os.path.split(inspect.getfile(inspect.currentframe()))[0]
-        icon = QIcon(os.path.join(os.path.join(cmd_folder, "logo.png")))
+        icon = QIcon(os.path.join(os.path.join(cmd_folder, "icon.png")))
         return icon
 
     def longName(self):

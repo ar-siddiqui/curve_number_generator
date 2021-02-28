@@ -1,4 +1,4 @@
-![curve number generator icon](logo.png)
+![curve number generator icon](icon.png)
 
 # Curve-Number-Generator
 Plugin to generate Curve Number layer for any Area of Interest within the contiguous United States. It can also download Soil, Land Cover, and Impervious Surface datasets for the same area.

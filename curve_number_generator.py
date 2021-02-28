@@ -23,7 +23,7 @@
 """
 
 __author__ = "Abdul Raheem Siddiqui"
-__date__ = "2021-02-27"
+__date__ = "2021-02-28"
 __copyright__ = "(C) 2021 by Abdul Raheem Siddiqui"
 
 # This will get replaced with a git SHA1 when you do a git archive
@@ -62,7 +62,7 @@ class CurveNumberGeneratorPlugin(object):
     def initGui(self):
         self.initProcessing()
 
-        icon = os.path.join(os.path.join(cmd_folder, "logo.png"))
+        icon = os.path.join(os.path.join(cmd_folder, "icon.png"))
         self.action = QAction(
             QIcon(icon), u"Curve Number Generator", self.iface.mainWindow()
         )

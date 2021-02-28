@@ -21,10 +21,10 @@ repository=https://github.com/ar-siddiqui/curve_number_generator
 
 hasProcessingProvider=yes
 # Uncomment the following line and add your changelog:
-changelog= Version 1.1 - 2021-02-27
+changelog= Version 1.1 - 2021-02-28
 	- New fuctionality to download Impervious Surface raster
 	- Error handling for server issues of www.mrlc.gov
-	- Increase AOI limit to 3,000,000 acres.
+	- Increase AOI limit to 500,000 acres.
 
 
 # Tags are comma separated with spaces allowed

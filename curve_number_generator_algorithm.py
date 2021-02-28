@@ -61,7 +61,7 @@ sys.path.append(cmd_folder)
 from cust_functions import check_crs_acceptable
 
 __author__ = "Abdul Raheem Siddiqui"
-__date__ = "2021-02-27"
+__date__ = "2021-02-28"
 __copyright__ = "(C) 2021 by Abdul Raheem Siddiqui"
 
 # This will get replaced with a git SHA1 when you do a git archive
@@ -207,16 +207,21 @@ class CurveNumberGeneratorAlgorithm(QgsProcessingAlgorithm):
         extent_area = d.measureArea(QgsGeometry().fromRect(area_layer.extent()))
         area_acres = d.convertAreaMeasurement(extent_area, QgsUnitTypes.AreaAcres)
 
-        if area_acres < 3000000:
-            feedback.pushInfo(
-                f"Area Boundary layer extent area is {round(area_acres,4):,} acres\n"
-            )
-        else:
+        if area_acres > 500000:
             feedback.reportError(
-                f"Area Boundary layer extent area should be less than 3,000,000 acres.\nArea Boundary layer extent area is {round(area_acres,4):,} acres.\n\nExecution Failed",
+                f"Area Boundary layer extent area should be less than 500,000 acres.\nArea Boundary layer extent area is {round(area_acres,4):,} acres.\n\nExecution Failed",
                 True,
             )
             return results
+        elif area_acres > 100000:
+            feedback.reportError(
+                f"Your Area Boundary layer extent area is {round(area_acres,4):,} acres. The recommended extent area is 100,000 acres or less. If the Algorithm fails, rerun with a smaller input layer.\n",
+                False,
+            )
+        else:
+            feedback.pushInfo(
+                f"Area Boundary layer extent area is {round(area_acres,4):,} acres\n"
+            )
 
         # Get extent of the area boundary layer
         xmin = area_layer.extent().xMinimum()
@@ -563,7 +568,7 @@ class CurveNumberGeneratorAlgorithm(QgsProcessingAlgorithm):
 
             except:  # try wfs request
                 feedback.reportError(
-                    "Error getting soil data through post request. Your input layer maybe too large. Trying WFS download now.\nIf the Algorithm do not respond in next few minutes. Terminate the Algorithm and rerun with smaller input layer.",
+                    "Error getting soil data through post request. Your input layer maybe too large. Trying WFS download now.\nIf the Algorithm get stuck during download. Terminate the Algorithm and rerun with a smaller input layer.",
                     False,
                 )
                 xmin_reprojected = area_layer_reprojected.extent().xMinimum()
@@ -571,16 +576,7 @@ class CurveNumberGeneratorAlgorithm(QgsProcessingAlgorithm):
                 xmax_reprojected = area_layer_reprojected.extent().xMaximum()
                 ymax_reprojected = area_layer_reprojected.extent().yMaximum()
 
-                request_URL_soil = (
-                    "https://sdmdataaccess.sc.egov.usda.gov/Spatial/SDMWGS84GEOGRAPHIC.wfs?SERVICE=WFS&VERSION=1.1.0&REQUEST=GetFeature&TYPENAME=mapunitpolyextended&SRSNAME=EPSG:4326&BBOX="
-                    + str(xmin_reprojected)
-                    + ","
-                    + str(ymin_reprojected)
-                    + ","
-                    + str(xmax_reprojected)
-                    + ","
-                    + str(ymax_reprojected)
-                )
+                request_URL_soil = f"https://sdmdataaccess.sc.egov.usda.gov/Spatial/SDMWGS84GEOGRAPHIC.wfs?SERVICE=WFS&VERSION=1.1.0&REQUEST=GetFeature&TYPENAME=mapunitpolyextended&SRSNAME=EPSG:4326&BBOX={str(xmin_reprojected)},{str(ymin_reprojected)},{str(xmax_reprojected)},{str(ymax_reprojected)}"
 
                 alg_params = {
                     "URL": request_URL_soil,
@@ -668,9 +664,26 @@ class CurveNumberGeneratorAlgorithm(QgsProcessingAlgorithm):
             if feedback.isCanceled():
                 return {}
 
-            # Set layer style
+            # Fix soil layer geometries second time
             alg_params = {
                 "INPUT": outputs["ReprojectSoil"]["OUTPUT"],
+                "OUTPUT": QgsProcessing.TEMPORARY_OUTPUT,
+            }
+            outputs["FixGeometries3"] = processing.run(
+                "native:fixgeometries",
+                alg_params,
+                context=context,
+                feedback=feedback,
+                is_child_algorithm=True,
+            )
+
+            feedback.setCurrentStep(17)
+            if feedback.isCanceled():
+                return {}
+
+            # Set layer style
+            alg_params = {
+                "INPUT": outputs["FixGeometries3"]["OUTPUT"],
                 "STYLE": os.path.join(cmd_folder, "Soil_Layer.qml"),
             }
             try:  # for QGIS Version 3.12 and later
@@ -690,16 +703,19 @@ class CurveNumberGeneratorAlgorithm(QgsProcessingAlgorithm):
                     is_child_algorithm=True,
                 )
 
-            feedback.setCurrentStep(17)
+            feedback.setCurrentStep(18)
             if feedback.isCanceled():
                 return {}
 
         # Curve Number Calculations
         if curve_number_output == True:
 
+            feedback.pushInfo(
+                "Generating Curve Number Layer. This may take a while. Do not cancel."
+            )
             # Intersection
             alg_params = {
-                "INPUT": outputs["ReprojectSoil"]["OUTPUT"],
+                "INPUT": outputs["FixGeometries3"]["OUTPUT"],
                 "INPUT_FIELDS": ["MUSYM", "HYDGRPDCD", "MUNAME"],
                 "OVERLAY": outputs["FixGeometries"]["OUTPUT"],
                 "OVERLAY_FIELDS": ["VALUE"],
@@ -919,7 +935,7 @@ class CurveNumberGeneratorAlgorithm(QgsProcessingAlgorithm):
         if soil_output:
             # Load Soil Layer into project
             alg_params = {
-                "INPUT": outputs["ReprojectSoil"]["OUTPUT"],
+                "INPUT": outputs["FixGeometries3"]["OUTPUT"],
                 "NAME": "SSURGO Soil Layer",
             }
             outputs["LoadLayerIntoProject4"] = processing.run(
@@ -997,7 +1013,7 @@ class CurveNumberGeneratorAlgorithm(QgsProcessingAlgorithm):
 
     def icon(self):
         cmd_folder = os.path.split(inspect.getfile(inspect.currentframe()))[0]
-        icon = QIcon(os.path.join(os.path.join(cmd_folder, "logo.png")))
+        icon = QIcon(os.path.join(os.path.join(cmd_folder, "icon.png")))
         return icon
 
     def shortHelpString(self):
