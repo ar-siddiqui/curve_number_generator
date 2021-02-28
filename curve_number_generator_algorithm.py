@@ -235,7 +235,7 @@ class CurveNumberGeneratorAlgorithm(QgsProcessingAlgorithm):
 
             # Download NLCD Impervious Raster
             try:
-                ping_URL = "https://www.mrlc.gov/geoserver/mrlc_display/NLCD_2016_Impervious_L48/"
+                ping_URL = "https://www.mrlc.gov/geoserver/mrlc_display/NLCD_2016_Impervious_L48/ows"
                 r = requests.head(ping_URL, verify=False)
                 r.raise_for_status()
 
@@ -298,7 +298,7 @@ class CurveNumberGeneratorAlgorithm(QgsProcessingAlgorithm):
 
             # Download NLCD
             try:
-                ping_URL = "https://www.mrlc.gov/geoserver/mrlc_display/NLCD_2016_Land_Cover_L48/"
+                ping_URL = "https://www.mrlc.gov/geoserver/mrlc_display/NLCD_2016_Land_Cover_L48/ows"
                 r = requests.head(ping_URL, verify=False)
                 r.raise_for_status()
 
@@ -473,7 +473,7 @@ class CurveNumberGeneratorAlgorithm(QgsProcessingAlgorithm):
             try:  # request using post rest
 
                 # create vector layer structure to store data
-                feedback.pushInfo("post")
+                feedback.pushInfo("Creating POST request...")
                 uri = "Polygon?crs=epsg:4326"
                 soil_layer = QgsVectorLayer(uri, "soil layer", "memory")
                 provider = soil_layer.dataProvider()
