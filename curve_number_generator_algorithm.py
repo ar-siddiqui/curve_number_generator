@@ -231,27 +231,14 @@ class CurveNumberGeneratorAlgorithm(QgsProcessingAlgorithm):
 
         # NLCD Impervious Raster
         if nlcd_rast_imp_output == True:
-            request_URL = (
-                "https://www.mrlc.gov/geoserver/mrlc_display/NLCD_2016_Impervious_L48/ows?version=1.3.0&service=WMS&layers=NLCD_2016_Impervious_L48&styles&crs="
-                + str(EPSGCode)
-                + "&format=image/geotiff&request=GetMap&width="
-                + str(BBOX_width_int)
-                + "&height="
-                + str(BBOX_height_int)
-                + "&BBOX="
-                + str(xmin)
-                + ","
-                + str(ymin)
-                + ","
-                + str(xmax)
-                + ","
-                + str(ymax)
-                + "&"
-            )
-            feedback.pushInfo(request_URL)
+            request_URL = f"https://www.mrlc.gov/geoserver/mrlc_display/NLCD_2016_Impervious_L48/ows?version=1.3.0&service=WMS&layers=NLCD_2016_Impervious_L48&styles&crs={str(EPSGCode)}&format=image/geotiff&request=GetMap&width={str(BBOX_width_int)}&height={str(BBOX_height_int)}&BBOX={str(xmin)},{str(ymin)},{str(xmax)},{str(ymax)}&"
 
             # Download NLCD Impervious Raster
             try:
+                ping_URL = "https://www.mrlc.gov/geoserver/mrlc_display/NLCD_2016_Impervious_L48/ows"
+                r = requests.head(ping_URL, verify=False)
+                r.raise_for_status()
+
                 alg_params = {
                     "URL": request_URL,
                     "OUTPUT": QgsProcessing.TEMPORARY_OUTPUT,
@@ -263,9 +250,9 @@ class CurveNumberGeneratorAlgorithm(QgsProcessingAlgorithm):
                     feedback=feedback,
                     is_child_algorithm=True,
                 )
-            except QgsProcessingException:
+            except (QgsProcessingException, requests.exceptions.HTTPError) as e:
                 feedback.reportError(
-                    "Error requesting land use data from 'www.mrlc.gov'. Most probably because either their server is down or there is a certification issue.\nThis should be temporary. Try again later.",
+                    f"Error: {str(e)}\n\nError requesting land use data from 'www.mrlc.gov'. Most probably because either their server is down or there is a certification issue.\nThis should be temporary. Try again later.\n",
                     True,
                 )
                 return results
@@ -307,27 +294,14 @@ class CurveNumberGeneratorAlgorithm(QgsProcessingAlgorithm):
             or nlcd_vect_output == True
             or nlcd_rast_output == True
         ):
-            request_URL = (
-                "https://www.mrlc.gov/geoserver/mrlc_display/NLCD_2016_Land_Cover_L48/ows?version=1.3.0&service=WMS&layers=NLCD_2016_Land_Cover_L48&styles&crs="
-                + str(EPSGCode)
-                + "&format=image/geotiff&request=GetMap&width="
-                + str(BBOX_width_int)
-                + "&height="
-                + str(BBOX_height_int)
-                + "&BBOX="
-                + str(xmin)
-                + ","
-                + str(ymin)
-                + ","
-                + str(xmax)
-                + ","
-                + str(ymax)
-                + "&"
-            )
-            feedback.pushInfo(request_URL)
+            request_URL = f"https://www.mrlc.gov/geoserver/mrlc_display/NLCD_2016_Land_Cover_L48/ows?version=1.3.0&service=WMS&layers=NLCD_2016_Land_Cover_L48&styles&crs={str(EPSGCode)}&format=image/geotiff&request=GetMap&width={str(BBOX_width_int)}&height={str(BBOX_height_int)}&BBOX={str(xmin)},{str(ymin)},{str(xmax)},{str(ymax)}&"
 
             # Download NLCD
             try:
+                ping_URL = "https://www.mrlc.gov/geoserver/mrlc_display/NLCD_2016_Land_Cover_L48/ows"
+                r = requests.head(ping_URL, verify=False)
+                r.raise_for_status()
+
                 alg_params = {
                     "URL": request_URL,
                     "OUTPUT": QgsProcessing.TEMPORARY_OUTPUT,
@@ -339,9 +313,9 @@ class CurveNumberGeneratorAlgorithm(QgsProcessingAlgorithm):
                     feedback=feedback,
                     is_child_algorithm=True,
                 )
-            except QgsProcessingException:
+            except (QgsProcessingException, requests.exceptions.HTTPError) as e:
                 feedback.reportError(
-                    "Error requesting land use data from 'www.mrlc.gov'. Most probably because either their server is down or there is a certification issue.\nThis should be temporary. Try again later.",
+                    f"Error: {str(e)}\n\nError requesting land use data from 'www.mrlc.gov'. Most probably because either their server is down or there is a certification issue.\nThis should be temporary. Try again later.\n",
                     True,
                 )
                 return results
@@ -499,7 +473,7 @@ class CurveNumberGeneratorAlgorithm(QgsProcessingAlgorithm):
             try:  # request using post rest
 
                 # create vector layer structure to store data
-                feedback.pushInfo("post")
+                feedback.pushInfo("Creating POST request...")
                 uri = "Polygon?crs=epsg:4326"
                 soil_layer = QgsVectorLayer(uri, "soil layer", "memory")
                 provider = soil_layer.dataProvider()
@@ -589,7 +563,8 @@ class CurveNumberGeneratorAlgorithm(QgsProcessingAlgorithm):
 
             except:  # try wfs request
                 feedback.reportError(
-                    "Error getting soil data through post request. Your input layer maybe too large. Trying WFS now. If the Algorithm stopped responding. Terminate the Algorithm and rerun with smaller input layer"
+                    "Error getting soil data through post request. Your input layer maybe too large. Trying WFS download now.\nIf the Algorithm do not respond in next few minutes. Terminate the Algorithm and rerun with smaller input layer.",
+                    False,
                 )
                 xmin_reprojected = area_layer_reprojected.extent().xMinimum()
                 ymin_reprojected = area_layer_reprojected.extent().yMinimum()
