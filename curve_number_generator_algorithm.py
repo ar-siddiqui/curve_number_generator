@@ -148,7 +148,7 @@ class CurveNumberGeneratorAlgorithm(QgsProcessingAlgorithm):
     def processAlgorithm(self, parameters, context, model_feedback):
         # Use a multi-step feedback, so that individual child algorithm progress reports are adjusted for the
         # overall progress through the model
-        feedback = QgsProcessingMultiStepFeedback(24, model_feedback)
+        feedback = QgsProcessingMultiStepFeedback(25, model_feedback)
         results = {}
         outputs = {}
 
@@ -730,7 +730,7 @@ class CurveNumberGeneratorAlgorithm(QgsProcessingAlgorithm):
                 is_child_algorithm=True,
             )
 
-            feedback.setCurrentStep(18)
+            feedback.setCurrentStep(19)
             if feedback.isCanceled():
                 return {}
 
@@ -753,7 +753,7 @@ class CurveNumberGeneratorAlgorithm(QgsProcessingAlgorithm):
                 is_child_algorithm=True,
             )
 
-            feedback.setCurrentStep(19)
+            feedback.setCurrentStep(20)
             if feedback.isCanceled():
                 return {}
 
@@ -776,7 +776,7 @@ class CurveNumberGeneratorAlgorithm(QgsProcessingAlgorithm):
                 is_child_algorithm=True,
             )
 
-            feedback.setCurrentStep(20)
+            feedback.setCurrentStep(21)
             if feedback.isCanceled():
                 return {}
 
@@ -799,7 +799,7 @@ class CurveNumberGeneratorAlgorithm(QgsProcessingAlgorithm):
                 is_child_algorithm=True,
             )
 
-            feedback.setCurrentStep(21)
+            feedback.setCurrentStep(22)
             if feedback.isCanceled():
                 return {}
 
@@ -823,7 +823,7 @@ class CurveNumberGeneratorAlgorithm(QgsProcessingAlgorithm):
                 is_child_algorithm=True,
             )
 
-            feedback.setCurrentStep(22)
+            feedback.setCurrentStep(23)
             if feedback.isCanceled():
                 return {}
 
@@ -846,7 +846,7 @@ class CurveNumberGeneratorAlgorithm(QgsProcessingAlgorithm):
                 is_child_algorithm=True,
             )
 
-            feedback.setCurrentStep(23)
+            feedback.setCurrentStep(24)
             if feedback.isCanceled():
                 return {}
 
@@ -864,7 +864,7 @@ class CurveNumberGeneratorAlgorithm(QgsProcessingAlgorithm):
                 is_child_algorithm=True,
             )
 
-            feedback.setCurrentStep(24)
+            feedback.setCurrentStep(25)
             if feedback.isCanceled():
                 return {}
 
