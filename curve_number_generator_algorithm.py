@@ -1092,7 +1092,7 @@ class CurveNumberGeneratorAlgorithm(QgsProcessingAlgorithm):
 <h3>Area Boundary</h3>
 <p>Area of Interest</p>
 <h3>CN_Lookup.csv [optional]</h3>
-<p>Optional Table to relate NLCD Land Use Value and HSG Value to a particular curve number. By default the algorithm uses pre defined table. The table must have two columns 'GDCode' and 'CN_Join'. GDCode is concatenation of NLCD Land Use code and Hydrologic Soil Group. <a href="https://drive.google.com/file/d/1NwFzP8mBObrxkzt_QZCdeAQXQPQQENUZ/view">Template to create custom table.</a></p>
+<p>Optional Table to relate NLCD Land Use Value and HSG Value to a particular curve number. By default the algorithm uses pre defined table. The table must have two columns 'GDCode' and 'CN_Join'. GDCode is concatenation of NLCD Land Use code and Hydrologic Soil Group. <a href="https://raw.githubusercontent.com/ar-siddiqui/curve_number_generator/development/CN_Lookup.csv">Template csv file to create custom table.</a></p>
 <h3>Drained Soils? [leave unchecked if not sure]</h3>
 <p>Certain Soils are categorized as dual category in SSURGO dataset. They have Hydrologic Soil Group D for Undrained Conditions and Hydrologic Soil Group A/B/C for Drained Conditions.
 
