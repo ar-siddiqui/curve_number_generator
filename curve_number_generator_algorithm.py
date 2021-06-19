@@ -151,10 +151,9 @@ class CurveNumberGeneratorAlgorithm(QgsProcessingAlgorithm):
 
         # check if new version is available of the plugin
         try:  # try except because this is not a critical part
-            if (counter + 1) % 4 == 0:
-                avail_version = check_avail_plugin_version("Curve Number Generator")
-                if avail_version != curr_version:
-                    upgradeMessage()
+            avail_version = check_avail_plugin_version("Curve Number Generator")
+            if avail_version != curr_version:
+                upgradeMessage()
         except:
             pass
 
