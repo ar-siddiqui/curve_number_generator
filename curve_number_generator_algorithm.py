@@ -31,14 +31,11 @@ from qgis.PyQt.QtGui import QIcon
 from qgis.PyQt.QtCore import QCoreApplication, QVariant
 from qgis.core import (
     QgsProcessing,
-    QgsFeatureSink,
     QgsProcessingAlgorithm,
     QgsProcessingParameterFeatureSource,
     QgsProcessingMultiStepFeedback,
     QgsProcessingParameterVectorLayer,
     QgsProcessingParameterBoolean,
-    QgsProcessingParameterFeatureSink,
-    QgsProcessingParameterRasterDestination,
     QgsProcessingParameterDefinition,
     QgsCoordinateReferenceSystem,
     QgsExpression,
@@ -46,7 +43,6 @@ from qgis.core import (
     QgsDistanceArea,
     QgsUnitTypes,
     QgsCoordinateTransformContext,
-    QgsProject,
     QgsGeometry,
     QgsField,
     QgsFeature,
@@ -153,11 +149,14 @@ class CurveNumberGeneratorAlgorithm(QgsProcessingAlgorithm):
         if (counter + 1) % 25 == 0:
             self.addOutput(QgsProcessingOutputHtml("Message", "Curve Number Generator"))
 
-        # check if counter is milestone
-        if (counter + 1) % 4 == 0:
-            avail_version = check_avail_plugin_version("Curve Number Generator")
-            if avail_version != curr_version:
-                upgradeMessage()
+        # check if new version is available of the plugin
+        try:  # try except because this is not a critical part
+            if (counter + 1) % 4 == 0:
+                avail_version = check_avail_plugin_version("Curve Number Generator")
+                if avail_version != curr_version:
+                    upgradeMessage()
+        except:
+            pass
 
     def processAlgorithm(self, parameters, context, model_feedback):
         # Use a multi-step feedback, so that individual child algorithm progress reports are adjusted for the
@@ -187,10 +186,13 @@ class CurveNumberGeneratorAlgorithm(QgsProcessingAlgorithm):
             )
             csv = QgsVectorLayer(csv_uri, "CN_Lookup.csv", "delimitedtext")
             parameters["cnlookup"] = csv
-            # feedback.pushInfo(str(csv_uri))
 
         area_layer = self.parameterAsVectorLayer(parameters, "areaboundary", context)
+
         EPSGCode = area_layer.crs().authid()
+        origEPSGCode = EPSGCode  # preserve orignal EPSGCode to project back to it
+        # feedback.pushInfo(str(EPSGCode))
+
         if check_crs_acceptable(EPSGCode):
             pass
         else:
@@ -211,6 +213,7 @@ class CurveNumberGeneratorAlgorithm(QgsProcessingAlgorithm):
             area_layer = context.takeResultLayer(
                 outputs["ReprojectLayer5070"]["OUTPUT"]
             )
+
             EPSGCode = area_layer.crs().authid()
 
         # Check if area of the extent is less than 100,000 Acres
@@ -280,6 +283,32 @@ class CurveNumberGeneratorAlgorithm(QgsProcessingAlgorithm):
             if feedback.isCanceled():
                 return {}
 
+            # reproject to original crs
+            # Warp (reproject)
+            if EPSGCode != origEPSGCode:
+                alg_params = {
+                    "DATA_TYPE": 0,
+                    "EXTRA": "",
+                    "INPUT": outputs["DownloadNlcdImp"]["OUTPUT"],
+                    "MULTITHREADING": False,
+                    "NODATA": None,
+                    "OPTIONS": "",
+                    "RESAMPLING": 0,
+                    "SOURCE_CRS": None,
+                    "TARGET_CRS": QgsCoordinateReferenceSystem(str(origEPSGCode)),
+                    "TARGET_EXTENT": None,
+                    "TARGET_EXTENT_CRS": None,
+                    "TARGET_RESOLUTION": None,
+                    "OUTPUT": QgsProcessing.TEMPORARY_OUTPUT,
+                }
+                outputs["DownloadNlcdImp"] = processing.run(
+                    "gdal:warpreproject",
+                    alg_params,
+                    context=context,
+                    feedback=feedback,
+                    is_child_algorithm=True,
+                )
+
             # Set layer style
             alg_params = {
                 "INPUT": outputs["DownloadNlcdImp"]["OUTPUT"],
@@ -342,6 +371,32 @@ class CurveNumberGeneratorAlgorithm(QgsProcessingAlgorithm):
             feedback.setCurrentStep(3)
             if feedback.isCanceled():
                 return {}
+
+            # reproject to original crs
+            # Warp (reproject)
+            if EPSGCode != origEPSGCode:
+                alg_params = {
+                    "DATA_TYPE": 0,
+                    "EXTRA": "",
+                    "INPUT": outputs["DownloadNlcd"]["OUTPUT"],
+                    "MULTITHREADING": False,
+                    "NODATA": None,
+                    "OPTIONS": "",
+                    "RESAMPLING": 0,
+                    "SOURCE_CRS": None,
+                    "TARGET_CRS": QgsCoordinateReferenceSystem(str(origEPSGCode)),
+                    "TARGET_EXTENT": None,
+                    "TARGET_EXTENT_CRS": None,
+                    "TARGET_RESOLUTION": None,
+                    "OUTPUT": QgsProcessing.TEMPORARY_OUTPUT,
+                }
+                outputs["DownloadNlcd"] = processing.run(
+                    "gdal:warpreproject",
+                    alg_params,
+                    context=context,
+                    feedback=feedback,
+                    is_child_algorithm=True,
+                )
 
             # Reclassify by table
             alg_params = {
@@ -663,7 +718,7 @@ class CurveNumberGeneratorAlgorithm(QgsProcessingAlgorithm):
             alg_params = {
                 "INPUT": outputs["Clip"]["OUTPUT"],
                 "OPERATION": "",
-                "TARGET_CRS": QgsCoordinateReferenceSystem(EPSGCode),
+                "TARGET_CRS": QgsCoordinateReferenceSystem(origEPSGCode),
                 "OUTPUT": QgsProcessing.TEMPORARY_OUTPUT,
             }
             outputs["ReprojectSoil"] = processing.run(
