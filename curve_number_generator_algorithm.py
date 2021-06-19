@@ -31,14 +31,11 @@ from qgis.PyQt.QtGui import QIcon
 from qgis.PyQt.QtCore import QCoreApplication, QVariant
 from qgis.core import (
     QgsProcessing,
-    QgsFeatureSink,
     QgsProcessingAlgorithm,
     QgsProcessingParameterFeatureSource,
     QgsProcessingMultiStepFeedback,
     QgsProcessingParameterVectorLayer,
     QgsProcessingParameterBoolean,
-    QgsProcessingParameterFeatureSink,
-    QgsProcessingParameterRasterDestination,
     QgsProcessingParameterDefinition,
     QgsCoordinateReferenceSystem,
     QgsExpression,
@@ -46,27 +43,33 @@ from qgis.core import (
     QgsDistanceArea,
     QgsUnitTypes,
     QgsCoordinateTransformContext,
-    QgsProject,
     QgsGeometry,
     QgsField,
     QgsFeature,
     QgsProcessingException,
     QgsProcessingOutputHtml,
 )
+
 from tempfile import NamedTemporaryFile
 
 cmd_folder = os.path.split(inspect.getfile(inspect.currentframe()))[0]
 sys.path.append(cmd_folder)
 
-from cust_functions import check_crs_acceptable
+from cust_functions import (
+    check_crs_acceptable,
+    check_avail_plugin_version,
+    upgradeMessage,
+)
 
 __author__ = "Abdul Raheem Siddiqui"
-__date__ = "2021-02-28"
+__date__ = "2021-06-19"
 __copyright__ = "(C) 2021 by Abdul Raheem Siddiqui"
 
 # This will get replaced with a git SHA1 when you do a git archive
 
 __revision__ = "$Format:%H$"
+
+curr_version = "1.2"
 
 
 class CurveNumberGeneratorAlgorithm(QgsProcessingAlgorithm):
@@ -79,6 +82,7 @@ class CurveNumberGeneratorAlgorithm(QgsProcessingAlgorithm):
     INPUT = "INPUT"
 
     def initAlgorithm(self, config=None):
+
         self.addParameter(
             QgsProcessingParameterVectorLayer(
                 "areaboundary",
@@ -145,6 +149,14 @@ class CurveNumberGeneratorAlgorithm(QgsProcessingAlgorithm):
         if (counter + 1) % 25 == 0:
             self.addOutput(QgsProcessingOutputHtml("Message", "Curve Number Generator"))
 
+        # check if new version is available of the plugin
+        try:  # try except because this is not a critical part
+            avail_version = check_avail_plugin_version("Curve Number Generator")
+            if avail_version != curr_version:
+                upgradeMessage()
+        except:
+            pass
+
     def processAlgorithm(self, parameters, context, model_feedback):
         # Use a multi-step feedback, so that individual child algorithm progress reports are adjusted for the
         # overall progress through the model
@@ -173,10 +185,13 @@ class CurveNumberGeneratorAlgorithm(QgsProcessingAlgorithm):
             )
             csv = QgsVectorLayer(csv_uri, "CN_Lookup.csv", "delimitedtext")
             parameters["cnlookup"] = csv
-            # feedback.pushInfo(str(csv_uri))
 
         area_layer = self.parameterAsVectorLayer(parameters, "areaboundary", context)
+
         EPSGCode = area_layer.crs().authid()
+        origEPSGCode = EPSGCode  # preserve orignal EPSGCode to project back to it
+        # feedback.pushInfo(str(EPSGCode))
+
         if check_crs_acceptable(EPSGCode):
             pass
         else:
@@ -197,6 +212,7 @@ class CurveNumberGeneratorAlgorithm(QgsProcessingAlgorithm):
             area_layer = context.takeResultLayer(
                 outputs["ReprojectLayer5070"]["OUTPUT"]
             )
+
             EPSGCode = area_layer.crs().authid()
 
         # Check if area of the extent is less than 100,000 Acres
@@ -266,6 +282,32 @@ class CurveNumberGeneratorAlgorithm(QgsProcessingAlgorithm):
             if feedback.isCanceled():
                 return {}
 
+            # reproject to original crs
+            # Warp (reproject)
+            if EPSGCode != origEPSGCode:
+                alg_params = {
+                    "DATA_TYPE": 0,
+                    "EXTRA": "",
+                    "INPUT": outputs["DownloadNlcdImp"]["OUTPUT"],
+                    "MULTITHREADING": False,
+                    "NODATA": None,
+                    "OPTIONS": "",
+                    "RESAMPLING": 0,
+                    "SOURCE_CRS": None,
+                    "TARGET_CRS": QgsCoordinateReferenceSystem(str(origEPSGCode)),
+                    "TARGET_EXTENT": None,
+                    "TARGET_EXTENT_CRS": None,
+                    "TARGET_RESOLUTION": None,
+                    "OUTPUT": QgsProcessing.TEMPORARY_OUTPUT,
+                }
+                outputs["DownloadNlcdImp"] = processing.run(
+                    "gdal:warpreproject",
+                    alg_params,
+                    context=context,
+                    feedback=feedback,
+                    is_child_algorithm=True,
+                )
+
             # Set layer style
             alg_params = {
                 "INPUT": outputs["DownloadNlcdImp"]["OUTPUT"],
@@ -328,6 +370,32 @@ class CurveNumberGeneratorAlgorithm(QgsProcessingAlgorithm):
             feedback.setCurrentStep(3)
             if feedback.isCanceled():
                 return {}
+
+            # reproject to original crs
+            # Warp (reproject)
+            if EPSGCode != origEPSGCode:
+                alg_params = {
+                    "DATA_TYPE": 0,
+                    "EXTRA": "",
+                    "INPUT": outputs["DownloadNlcd"]["OUTPUT"],
+                    "MULTITHREADING": False,
+                    "NODATA": None,
+                    "OPTIONS": "",
+                    "RESAMPLING": 0,
+                    "SOURCE_CRS": None,
+                    "TARGET_CRS": QgsCoordinateReferenceSystem(str(origEPSGCode)),
+                    "TARGET_EXTENT": None,
+                    "TARGET_EXTENT_CRS": None,
+                    "TARGET_RESOLUTION": None,
+                    "OUTPUT": QgsProcessing.TEMPORARY_OUTPUT,
+                }
+                outputs["DownloadNlcd"] = processing.run(
+                    "gdal:warpreproject",
+                    alg_params,
+                    context=context,
+                    feedback=feedback,
+                    is_child_algorithm=True,
+                )
 
             # Reclassify by table
             alg_params = {
@@ -649,7 +717,7 @@ class CurveNumberGeneratorAlgorithm(QgsProcessingAlgorithm):
             alg_params = {
                 "INPUT": outputs["Clip"]["OUTPUT"],
                 "OPERATION": "",
-                "TARGET_CRS": QgsCoordinateReferenceSystem(EPSGCode),
+                "TARGET_CRS": QgsCoordinateReferenceSystem(origEPSGCode),
                 "OUTPUT": QgsProcessing.TEMPORARY_OUTPUT,
             }
             outputs["ReprojectSoil"] = processing.run(
@@ -1023,7 +1091,7 @@ class CurveNumberGeneratorAlgorithm(QgsProcessingAlgorithm):
 <h3>Area Boundary</h3>
 <p>Area of Interest</p>
 <h3>CN_Lookup.csv [optional]</h3>
-<p>Optional Table to relate NLCD Land Use Value and HSG Value to a particular curve number. By default the algorithm uses pre defined table. The table must have two columns 'GDCode' and 'CN_Join'. GDCode is concatenation of NLCD Land Use code and Hydrologic Soil Group. <a href="https://drive.google.com/file/d/1NwFzP8mBObrxkzt_QZCdeAQXQPQQENUZ/view">Template to create custom table.</a></p>
+<p>Optional Table to relate NLCD Land Use Value and HSG Value to a particular curve number. By default the algorithm uses pre defined table. The table must have two columns 'GDCode' and 'CN_Join'. GDCode is concatenation of NLCD Land Use code and Hydrologic Soil Group. <a href="https://raw.githubusercontent.com/ar-siddiqui/curve_number_generator/development/CN_Lookup.csv">Template csv file to create custom table.</a></p>
 <h3>Drained Soils? [leave unchecked if not sure]</h3>
 <p>Certain Soils are categorized as dual category in SSURGO dataset. They have Hydrologic Soil Group D for Undrained Conditions and Hydrologic Soil Group A/B/C for Drained Conditions.
 
@@ -1041,7 +1109,7 @@ If checked the algorithm will assume HSG A/B/C for each dual category soil.</p>
 <p>SSURGO Extended Soil Dataset </p>
 <h3>Curve Number Layer</h3>
 <p>Generated Curve Number Layer based on Land Cover and HSG values.</p>
-<br><p align="right">Algorithm author: Abdul Raheem Siddiqui</p><p align="right">Help author: Abdul Raheem Siddiqui</p><p align="right">Algorithm version: 1.1</p><p align="right">Contact email: ars.work.ce@gmail.com</p><p>Disclaimer: The curve numbers generated with this algorithm are high level estimates and should be reviewed in detail before being used for detailed modeling or construction projects.</p></body></html>"""
+<br><p align="right">Algorithm author: Abdul Raheem Siddiqui</p><p align="right">Help author: Abdul Raheem Siddiqui</p><p align="right">Algorithm version: 1.2</p><p align="right">Contact email: ars.work.ce@gmail.com</p><p>Disclaimer: The curve numbers generated with this algorithm are high level estimates and should be reviewed in detail before being used for detailed modeling or construction projects.</p></body></html>"""
 
     def helpUrl(self):
         return "mailto:ars.work.ce@gmail.com"

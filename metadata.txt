@@ -6,7 +6,7 @@
 name=Curve Number Generator
 qgisMinimumVersion=3.6
 description=This plugin generates a Curve Number layer for the given Area of Interest within the contiguous United States. It can also download Soil, Land Cover, and Impervious Surface datasets for the same area.
-version=1.1
+version=1.2
 author=Abdul Raheem Siddiqui
 email=ars.work.ce@gmail.com
 
@@ -21,10 +21,10 @@ repository=https://github.com/ar-siddiqui/curve_number_generator
 
 hasProcessingProvider=yes
 # Uncomment the following line and add your changelog:
-changelog= Version 1.1 - 2021-02-28
-	- New functionality to download Impervious Surface raster
-	- Error handling for server issues of www.mrlc.gov
-	- Increase AOI limit to 500,000 acres.
+changelog= Version 1.2 - 2021-06-19
+	- Return layers in CRS of input layer
+	- Check for the availability of the latest version of the plugin
+	- Fix error in default CN lookup table
 
 
 # Tags are comma separated with spaces allowed
