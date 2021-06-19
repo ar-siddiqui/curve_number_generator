@@ -53,12 +53,17 @@ from qgis.core import (
     QgsProcessingException,
     QgsProcessingOutputHtml,
 )
+
 from tempfile import NamedTemporaryFile
 
 cmd_folder = os.path.split(inspect.getfile(inspect.currentframe()))[0]
 sys.path.append(cmd_folder)
 
-from cust_functions import check_crs_acceptable
+from cust_functions import (
+    check_crs_acceptable,
+    check_avail_plugin_version,
+    upgradeMessage,
+)
 
 __author__ = "Abdul Raheem Siddiqui"
 __date__ = "2021-02-28"
@@ -67,6 +72,8 @@ __copyright__ = "(C) 2021 by Abdul Raheem Siddiqui"
 # This will get replaced with a git SHA1 when you do a git archive
 
 __revision__ = "$Format:%H$"
+
+curr_version = "1.1"
 
 
 class CurveNumberGeneratorAlgorithm(QgsProcessingAlgorithm):
@@ -79,6 +86,7 @@ class CurveNumberGeneratorAlgorithm(QgsProcessingAlgorithm):
     INPUT = "INPUT"
 
     def initAlgorithm(self, config=None):
+
         self.addParameter(
             QgsProcessingParameterVectorLayer(
                 "areaboundary",
@@ -144,6 +152,12 @@ class CurveNumberGeneratorAlgorithm(QgsProcessingAlgorithm):
         # check if counter is milestone
         if (counter + 1) % 25 == 0:
             self.addOutput(QgsProcessingOutputHtml("Message", "Curve Number Generator"))
+
+        # check if counter is milestone
+        if (counter + 1) % 4 == 0:
+            avail_version = check_avail_plugin_version("Curve Number Generator")
+            if avail_version == curr_version:
+                upgradeMessage()
 
     def processAlgorithm(self, parameters, context, model_feedback):
         # Use a multi-step feedback, so that individual child algorithm progress reports are adjusted for the
