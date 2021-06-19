@@ -62,14 +62,14 @@ from cust_functions import (
 )
 
 __author__ = "Abdul Raheem Siddiqui"
-__date__ = "2021-02-28"
+__date__ = "2021-06-19"
 __copyright__ = "(C) 2021 by Abdul Raheem Siddiqui"
 
 # This will get replaced with a git SHA1 when you do a git archive
 
 __revision__ = "$Format:%H$"
 
-curr_version = "1.1"
+curr_version = "1.2"
 
 
 class CurveNumberGeneratorAlgorithm(QgsProcessingAlgorithm):
@@ -1110,7 +1110,7 @@ If checked the algorithm will assume HSG A/B/C for each dual category soil.</p>
 <p>SSURGO Extended Soil Dataset </p>
 <h3>Curve Number Layer</h3>
 <p>Generated Curve Number Layer based on Land Cover and HSG values.</p>
-<br><p align="right">Algorithm author: Abdul Raheem Siddiqui</p><p align="right">Help author: Abdul Raheem Siddiqui</p><p align="right">Algorithm version: 1.1</p><p align="right">Contact email: ars.work.ce@gmail.com</p><p>Disclaimer: The curve numbers generated with this algorithm are high level estimates and should be reviewed in detail before being used for detailed modeling or construction projects.</p></body></html>"""
+<br><p align="right">Algorithm author: Abdul Raheem Siddiqui</p><p align="right">Help author: Abdul Raheem Siddiqui</p><p align="right">Algorithm version: 1.2</p><p align="right">Contact email: ars.work.ce@gmail.com</p><p>Disclaimer: The curve numbers generated with this algorithm are high level estimates and should be reviewed in detail before being used for detailed modeling or construction projects.</p></body></html>"""
 
     def helpUrl(self):
         return "mailto:ars.work.ce@gmail.com"
