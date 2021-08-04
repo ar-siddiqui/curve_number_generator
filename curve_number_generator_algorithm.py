@@ -30,6 +30,7 @@ import processing
 from qgis.PyQt.QtGui import QIcon
 from qgis.PyQt.QtCore import QCoreApplication, QVariant
 from qgis.core import (
+    QgsApplication,
     QgsProcessing,
     QgsProcessingAlgorithm,
     QgsProcessingParameterFeatureSource,
@@ -54,6 +55,8 @@ from tempfile import NamedTemporaryFile
 
 cmd_folder = os.path.split(inspect.getfile(inspect.currentframe()))[0]
 sys.path.append(cmd_folder)
+qgis_settings_path = QgsApplication.qgisSettingsDirPath().replace("\\", "/")
+cn_log_path = os.path.join(qgis_settings_path, "curve_number_generator.log")
 
 from cust_functions import (
     check_crs_acceptable,
@@ -141,13 +144,24 @@ class CurveNumberGeneratorAlgorithm(QgsProcessingAlgorithm):
             )
         )
 
-        # read usage
-        with open(os.path.join(cmd_folder, "usage_counter.log"), "r+") as f:
-            counter = int(f.readline())
+        # read usage to add HTML Output option
 
-        # check if counter is milestone
-        if (counter + 1) % 25 == 0:
-            self.addOutput(QgsProcessingOutputHtml("Message", "Curve Number Generator"))
+        try:  # try-except because trivial feature
+            if os.path.exists(cn_log_path):
+                with open(cn_log_path, "r+") as f:
+                    counter = int(f.readline())
+
+                # check if counter is milestone
+                if (counter + 1) % 25 == 0:
+                    self.addOutput(
+                        QgsProcessingOutputHtml("Message", "Curve Number Generator")
+                    )
+
+            else:  # for the first time create file
+                with open(cn_log_path, "w") as f:
+                    f.write(str(0))
+        except:
+            pass
 
         # check if new version is available of the plugin
         try:  # try except because this is not a critical part
@@ -1029,7 +1043,7 @@ class CurveNumberGeneratorAlgorithm(QgsProcessingAlgorithm):
             )
 
         # log usage
-        with open(os.path.join(cmd_folder, "usage_counter.log"), "r+") as f:
+        with open(cn_log_path, "r+") as f:
             counter = int(f.readline())
             f.seek(0)
             f.write(str(counter + 1))
