@@ -1085,7 +1085,8 @@ class CurveNumberGeneratorAlgorithm(QgsProcessingAlgorithm):
         return icon
 
     def shortHelpString(self):
-        return """<html><body><h2>Algorithm description</h2>
+        return """<html><body><a "href"="https://github.com/ar-siddiqui/curve_number_generator/wiki/Tutorials">Video Tutorials</a></h3>
+<h2>Algorithm description</h2>
 <p>This algorithm generates Curve Number layer for the given Area of Interest within the contiguous United States. It can also download Soil, Land Cover, and Impervious Surface datasets for the same area.</p>
 <h2>Input parameters</h2>
 <h3>Area Boundary</h3>
