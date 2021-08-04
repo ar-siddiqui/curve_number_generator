@@ -30,6 +30,7 @@ import processing
 from qgis.PyQt.QtGui import QIcon
 from qgis.PyQt.QtCore import QCoreApplication, QVariant
 from qgis.core import (
+    QgsApplication,
     QgsProcessing,
     QgsProcessingAlgorithm,
     QgsProcessingParameterFeatureSource,
@@ -54,6 +55,8 @@ from tempfile import NamedTemporaryFile
 
 cmd_folder = os.path.split(inspect.getfile(inspect.currentframe()))[0]
 sys.path.append(cmd_folder)
+qgis_settings_path = QgsApplication.qgisSettingsDirPath().replace("\\", "/")
+cn_log_path = os.path.join(qgis_settings_path, "curve_number_generator.log")
 
 from cust_functions import (
     check_crs_acceptable,
@@ -62,14 +65,14 @@ from cust_functions import (
 )
 
 __author__ = "Abdul Raheem Siddiqui"
-__date__ = "2021-06-19"
+__date__ = "2021-08-04"
 __copyright__ = "(C) 2021 by Abdul Raheem Siddiqui"
 
 # This will get replaced with a git SHA1 when you do a git archive
 
 __revision__ = "$Format:%H$"
 
-curr_version = "1.2"
+curr_version = "1.3"
 
 
 class CurveNumberGeneratorAlgorithm(QgsProcessingAlgorithm):
@@ -141,13 +144,24 @@ class CurveNumberGeneratorAlgorithm(QgsProcessingAlgorithm):
             )
         )
 
-        # read usage
-        with open(os.path.join(cmd_folder, "usage_counter.log"), "r+") as f:
-            counter = int(f.readline())
+        # read usage to add HTML Output option
 
-        # check if counter is milestone
-        if (counter + 1) % 25 == 0:
-            self.addOutput(QgsProcessingOutputHtml("Message", "Curve Number Generator"))
+        try:  # try-except because trivial feature
+            if os.path.exists(cn_log_path):
+                with open(cn_log_path, "r+") as f:
+                    counter = int(f.readline())
+
+                # check if counter is milestone
+                if (counter + 1) % 25 == 0:
+                    self.addOutput(
+                        QgsProcessingOutputHtml("Message", "Curve Number Generator")
+                    )
+
+            else:  # for the first time create file
+                with open(cn_log_path, "w") as f:
+                    f.write(str(0))
+        except:
+            pass
 
         # check if new version is available of the plugin
         try:  # try except because this is not a critical part
@@ -252,11 +266,11 @@ class CurveNumberGeneratorAlgorithm(QgsProcessingAlgorithm):
 
         # NLCD Impervious Raster
         if nlcd_rast_imp_output == True:
-            request_URL = f"https://www.mrlc.gov/geoserver/mrlc_display/NLCD_2016_Impervious_L48/ows?version=1.3.0&service=WMS&layers=NLCD_2016_Impervious_L48&styles&crs={str(EPSGCode)}&format=image/geotiff&request=GetMap&width={str(BBOX_width_int)}&height={str(BBOX_height_int)}&BBOX={str(xmin)},{str(ymin)},{str(xmax)},{str(ymax)}&"
+            request_URL = f"https://www.mrlc.gov/geoserver/mrlc_display/NLCD_2019_Impervious_L48/ows?version=1.3.0&service=WMS&layers=NLCD_2019_Impervious_L48&styles&crs={str(EPSGCode)}&format=image/geotiff&request=GetMap&width={str(BBOX_width_int)}&height={str(BBOX_height_int)}&BBOX={str(xmin)},{str(ymin)},{str(xmax)},{str(ymax)}&"
 
             # Download NLCD Impervious Raster
             try:
-                ping_URL = "https://www.mrlc.gov/geoserver/mrlc_display/NLCD_2016_Impervious_L48/ows"
+                ping_URL = "https://www.mrlc.gov/geoserver/mrlc_display/NLCD_2019_Impervious_L48/ows"
                 r = requests.head(ping_URL, verify=False)
                 r.raise_for_status()
 
@@ -341,11 +355,11 @@ class CurveNumberGeneratorAlgorithm(QgsProcessingAlgorithm):
             or nlcd_vect_output == True
             or nlcd_rast_output == True
         ):
-            request_URL = f"https://www.mrlc.gov/geoserver/mrlc_display/NLCD_2016_Land_Cover_L48/ows?version=1.3.0&service=WMS&layers=NLCD_2016_Land_Cover_L48&styles&crs={str(EPSGCode)}&format=image/geotiff&request=GetMap&width={str(BBOX_width_int)}&height={str(BBOX_height_int)}&BBOX={str(xmin)},{str(ymin)},{str(xmax)},{str(ymax)}&"
+            request_URL = f"https://www.mrlc.gov/geoserver/mrlc_display/NLCD_2019_Land_Cover_L48/ows?version=1.3.0&service=WMS&layers=NLCD_2019_Land_Cover_L48&styles&crs={str(EPSGCode)}&format=image/geotiff&request=GetMap&width={str(BBOX_width_int)}&height={str(BBOX_height_int)}&BBOX={str(xmin)},{str(ymin)},{str(xmax)},{str(ymax)}&"
 
             # Download NLCD
             try:
-                ping_URL = "https://www.mrlc.gov/geoserver/mrlc_display/NLCD_2016_Land_Cover_L48/ows"
+                ping_URL = "https://www.mrlc.gov/geoserver/mrlc_display/NLCD_2019_Land_Cover_L48/ows"
                 r = requests.head(ping_URL, verify=False)
                 r.raise_for_status()
 
@@ -1029,7 +1043,7 @@ class CurveNumberGeneratorAlgorithm(QgsProcessingAlgorithm):
             )
 
         # log usage
-        with open(os.path.join(cmd_folder, "usage_counter.log"), "r+") as f:
+        with open(cn_log_path, "r+") as f:
             counter = int(f.readline())
             f.seek(0)
             f.write(str(counter + 1))
@@ -1085,7 +1099,8 @@ class CurveNumberGeneratorAlgorithm(QgsProcessingAlgorithm):
         return icon
 
     def shortHelpString(self):
-        return """<html><body><h2>Algorithm description</h2>
+        return """<html><body><a "href"="https://github.com/ar-siddiqui/curve_number_generator/wiki/Tutorials">Video Tutorials</a></h3>
+<h2>Algorithm description</h2>
 <p>This algorithm generates Curve Number layer for the given Area of Interest within the contiguous United States. It can also download Soil, Land Cover, and Impervious Surface datasets for the same area.</p>
 <h2>Input parameters</h2>
 <h3>Area Boundary</h3>
@@ -1100,16 +1115,16 @@ If left unchecked, the algorithm will assume HSG D for all dual category soils.
 If checked the algorithm will assume HSG A/B/C for each dual category soil.</p>
 <h2>Outputs</h2>
 <h3>NLCD Land Cover Vector</h3>
-<p>NLCD 2016 Land Cover Dataset Vectorized</p>
+<p>NLCD 2019 Land Cover Dataset Vectorized</p>
 <h3>NLCD Land Cover Raster</h3>
-<p>NLCD 2016 Land Cover Dataset</p>
+<p>NLCD 2019 Land Cover Dataset</p>
 <h3>NLCD Impervious Surface Raster</h3>
-<p>NLCD 2016 Impervious Surface Dataset</p>
+<p>NLCD 2019 Impervious Surface Dataset</p>
 <h3>Soil Layer</h3>
 <p>SSURGO Extended Soil Dataset </p>
 <h3>Curve Number Layer</h3>
 <p>Generated Curve Number Layer based on Land Cover and HSG values.</p>
-<br><p align="right">Algorithm author: Abdul Raheem Siddiqui</p><p align="right">Help author: Abdul Raheem Siddiqui</p><p align="right">Algorithm version: 1.2</p><p align="right">Contact email: ars.work.ce@gmail.com</p><p>Disclaimer: The curve numbers generated with this algorithm are high level estimates and should be reviewed in detail before being used for detailed modeling or construction projects.</p></body></html>"""
+<br><p align="right">Algorithm author: Abdul Raheem Siddiqui</p><p align="right">Help author: Abdul Raheem Siddiqui</p><p align="right">Algorithm version: 1.3</p><p align="right">Contact email: ars.work.ce@gmail.com</p><p>Disclaimer: The curve numbers generated with this algorithm are high level estimates and should be reviewed in detail before being used for detailed modeling or construction projects.</p></body></html>"""
 
     def helpUrl(self):
         return "mailto:ars.work.ce@gmail.com"
