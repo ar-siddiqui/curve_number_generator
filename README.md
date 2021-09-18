@@ -6,10 +6,11 @@ QGIS Plugin to generate Curve Number layer for any Area of Interest within the c
 ## Installation & Use
 Curve Number Generator Plugin can be downloaded from from official QGIS plugin repository(see the demo below) or from https://github.com/ar-siddiqui/curve_number_generator/releases
 
-![ezgif com-gif-maker (7)](https://user-images.githubusercontent.com/53625184/133893999-85e738ca-3e33-474e-b4e4-ea2a001300d0.gif)
+![ezgif com-gif-maker (7)](https://user-images.githubusercontent.com/53625184/133893999-85e738ca-3e33-474e-b4e4-ea2a001300d0.gif)  
+[High Quality](https://www.linkedin.com/posts/abdulraheemsiddiqui_qgis-plugin-impervious-activity-6774360869229924352-laS1/)
 
 ## Algorithm Description
-This algorithm generates Curve Number layer for the given Area of Interest within the contiguous United States. It can also download Soil, Land Cover, and Impervious Surface datasets for the same area.
+This algorithm gets land use data from NLCD web server and soil data from SSURGO database and intersects these datasets to create a combined land use & soil layer. This layer is then joined to a lookup table that provides unique relationship between land use, soil and Curve Number. The final output is a Curve Number layer for the area of interest. 
 
 ## Input Parameters
 
