@@ -8,10 +8,10 @@ Curve Number Generator Plugin can be downloaded from from official QGIS plugin r
 
 ![ezgif com-gif-maker (7)](https://user-images.githubusercontent.com/53625184/133893999-85e738ca-3e33-474e-b4e4-ea2a001300d0.gif)
 
-## Algorithm description
+## Algorithm Description
 This algorithm generates Curve Number layer for the given Area of Interest within the contiguous United States. It can also download Soil, Land Cover, and Impervious Surface datasets for the same area.
 
-## Input parameters
+## Input Parameters
 
 - Area Boundary:  
     Area of Interest
