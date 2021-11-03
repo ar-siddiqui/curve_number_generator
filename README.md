@@ -49,7 +49,7 @@ Contact email: ars.work.ce@gmail.com
 Disclaimer: The curve number generated with this algorithm is a high level estimate and should be used with caution for detailed modeling or construction projects.
 
 ## Citation
-Siddiqui, Abdul Raheem. 2019. “Curve Number Generator: A QGIS Plugin to Generate Curve Number Layer from Land Use and Soil.” Accessed [Month Year] at https://github.com/ar-siddiqui/curve_number_generator.
+Siddiqui, Abdul Raheem. 2020. “Curve Number Generator: A QGIS Plugin to Generate Curve Number Layer from Land Use and Soil.” Accessed [Month Year] at https://github.com/ar-siddiqui/curve_number_generator.
 
 ## Donate
   
