@@ -37,4 +37,4 @@ Algorithm author: Abdul Raheem Siddiqui
 Help author: Abdul Raheem Siddiqui
 Algorithm version: 1.3
 Contact email: ars.work.ce@gmail.com
-Disclaimer: The curve number generated with this algorithm is a high level estimate and should not be used for detailed modeling or construction projects.
+Disclaimer: The curve number generated with this algorithm is a high level estimate and should be used with caution for detailed modeling or construction projects.
