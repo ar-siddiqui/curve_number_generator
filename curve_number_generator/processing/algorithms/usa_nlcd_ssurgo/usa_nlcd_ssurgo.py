@@ -88,15 +88,15 @@ class CurveNumberGeneratorAlgorithm(QgsProcessingAlgorithm):
 
         self.addParameter(
             QgsProcessingParameterVectorLayer(
-                "areaboundary",
-                "Area Boundary",
+                "aoi",
+                "Area of Interest",
                 types=[QgsProcessing.TypeVectorPolygon],
                 defaultValue=None,
             )
         )
-        param = QgsProcessingParameterFeatureSource(
+        param = QgsProcessingParameterVectorLayer(
             "cnlookup",
-            "CN_Lookup.csv",
+            "Lookup Table",
             optional=True,
             types=[QgsProcessing.TypeVector],
             defaultValue="",
@@ -111,65 +111,51 @@ class CurveNumberGeneratorAlgorithm(QgsProcessingAlgorithm):
         param.setFlags(param.flags() | QgsProcessingParameterDefinition.FlagAdvanced)
         self.addParameter(param)
         self.addParameter(
-            QgsProcessingParameterBoolean(
-                "OutputNLCDLandCoverRaster",
-                "Output NLCD Land Cover Raster",
-                defaultValue=False,
+            QgsProcessingParameterRasterDestination(
+                "NLCDLandCoverRaster",
+                "NLCD Land Cover Raster",
+                optional=True,
+                createByDefault=False,
+                defaultValue=None,
             )
-        )
+        )        
         self.addParameter(
-            QgsProcessingParameterBoolean(
+            QgsProcessingParameterVectorDestination(
                 "OutputNLCDLandCoverVector",
                 "Output NLCD Land Cover Vector",
-                defaultValue=False,
+                optional=True,
+                createByDefault=False,
+                defaultValue=None,
             )
         )
         self.addParameter(
-            QgsProcessingParameterBoolean(
-                "OutputNLCDImperviousRaster",
-                "Output NLCD Impervious Surface Raster",
-                defaultValue=False,
+            QgsProcessingParameterRasterDestination(
+                "NLCDImperviousRaster",
+                "NLCD Impervious Surface Raster",
+                optional=True,
+                createByDefault=False,
+                defaultValue=None,
             )
         )
         self.addParameter(
-            QgsProcessingParameterBoolean(
-                "OutputSoilLayer", "Output Soil Layer", defaultValue=False
+            QgsProcessingParameterVectorDestination(
+                "Soils", "Soils",
+                optional=True,
+                createByDefault=False,
+                defaultValue=None,                
             )
         )
         self.addParameter(
-            QgsProcessingParameterBoolean(
-                "OutputCurveNumberLayer",
-                "Output Curve Number Layer",
-                defaultValue=False,
+            QgsProcessingParameterVectorDestination(
+                "CurveNumber",
+                "Curve Number",
+                optional=True,
+                createByDefault=False,
+                defaultValue=None,
             )
         )
 
-        # read usage to add HTML Output option
-
-        try:  # try-except because trivial feature
-            if os.path.exists(cn_log_path):
-                with open(cn_log_path, "r+") as f:
-                    counter = int(f.readline())
-
-                # check if counter is milestone
-                if (counter + 1) % 25 == 0:
-                    self.addOutput(
-                        QgsProcessingOutputHtml("Message", "Curve Number Generator")
-                    )
-
-            else:  # for the first time create file
-                with open(cn_log_path, "w") as f:
-                    f.write(str(0))
-        except:
-            pass
-
-        # check if new version is available of the plugin
-        try:  # try except because this is not a critical part
-            avail_version = check_avail_plugin_version("Curve Number Generator")
-            if avail_version != curr_version:
-                upgradeMessage()
-        except:
-            pass
+        # read usage logs to add HTML Output option
 
     def processAlgorithm(self, parameters, context, model_feedback):
         # Use a multi-step feedback, so that individual child algorithm progress reports are adjusted for the
@@ -178,29 +164,15 @@ class CurveNumberGeneratorAlgorithm(QgsProcessingAlgorithm):
         results = {}
         outputs = {}
 
-        nlcd_rast_output = self.parameterAsBool(
-            parameters, "OutputNLCDLandCoverRaster", context
-        )
-        nlcd_vect_output = self.parameterAsBool(
-            parameters, "OutputNLCDLandCoverVector", context
-        )
-        nlcd_rast_imp_output = self.parameterAsBool(
-            parameters, "OutputNLCDImperviousRaster", context
-        )
-        soil_output = self.parameterAsBool(parameters, "OutputSoilLayer", context)
-        curve_number_output = self.parameterAsBool(
-            parameters, "OutputCurveNumberLayer", context
-        )
-
         # Assiging Default CN_Lookup Table
         if parameters["cnlookup"] == None:
             csv_uri = (
-                "file:///" + os.path.join(cmd_folder, "CN_Lookup.csv") + "?delimiter=,"
+                "file:///" + os.path.join(cmd_folder, "default_lookup.csv") + "?delimiter=,"
             )
-            csv = QgsVectorLayer(csv_uri, "CN_Lookup.csv", "delimitedtext")
+            csv = QgsVectorLayer(csv_uri, "default_lookup.csv", "delimitedtext")
             parameters["cnlookup"] = csv
 
-        area_layer = self.parameterAsVectorLayer(parameters, "areaboundary", context)
+        area_layer = self.parameterAsVectorLayer(parameters, "aoi", context)
 
         EPSGCode = area_layer.crs().authid()
         origEPSGCode = EPSGCode  # preserve orignal EPSGCode to project back to it
@@ -211,7 +183,7 @@ class CurveNumberGeneratorAlgorithm(QgsProcessingAlgorithm):
         else:
             # Reproject layer to EPSG:5070
             alg_params = {
-                "INPUT": parameters["areaboundary"],
+                "INPUT": parameters["aoi"],
                 "OPERATION": "",
                 "TARGET_CRS": QgsCoordinateReferenceSystem("EPSG:5070"),
                 "OUTPUT": QgsProcessing.TEMPORARY_OUTPUT,
@@ -533,7 +505,7 @@ class CurveNumberGeneratorAlgorithm(QgsProcessingAlgorithm):
 
             # Reproject layer
             alg_params = {
-                "INPUT": parameters["areaboundary"],
+                "INPUT": parameters["aoi"],
                 "OPERATION": "",
                 "TARGET_CRS": QgsCoordinateReferenceSystem("EPSG:4326"),
                 "OUTPUT": QgsProcessing.TEMPORARY_OUTPUT,
@@ -712,7 +684,7 @@ class CurveNumberGeneratorAlgorithm(QgsProcessingAlgorithm):
             # Clip Soil Layer
             alg_params = {
                 "INPUT": outputs["FixGeometries2"]["OUTPUT"],
-                "OVERLAY": parameters["areaboundary"],
+                "OVERLAY": parameters["aoi"],
                 "OUTPUT": QgsProcessing.TEMPORARY_OUTPUT,
             }
             outputs["Clip"] = processing.run(

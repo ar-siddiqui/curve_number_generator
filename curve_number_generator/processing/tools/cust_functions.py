@@ -49,3 +49,54 @@ def upgradeMessage():
     button.pressed.connect(installPlugin)
     widget.layout().addWidget(button)
     iface.messageBar().pushWidget(widget, duration=10)
+
+
+def createDefaultLookup(cmd_folder) -> QgsVectorLayer:
+    """Expects a default_lookup.csv" file in the cmd_folder."""
+    csv_uri = (
+        "file:///" + os.path.join(cmd_folder, "CN_Lookup.csv") + "?delimiter=,"
+    )
+    csv = QgsVectorLayer(csv_uri, "CN_Lookup.csv", "delimitedtext")
+    return csv
+
+def getExtent(layer) -> tuple:
+    # Get extent of the area boundary layer
+    xmin = area_layer.extent().xMinimum()
+    ymin = area_layer.extent().yMinimum()
+    xmax = area_layer.extent().xMaximum()
+    ymax = area_layer.extent().yMaximum()
+    return xmin, ymin, xmax, ymax
+
+def createRequestBBOX(extent: tuple, cell_size) -> tuple:
+    BBOX_width = (extent[2] - extent[0]) / cell_size
+    BBOX_height = (extent[3] - extent[1]) / cell_size
+    BBOX_width_int = round(BBOX_width)
+    BBOX_height_int = round(BBOX_height)
+    return BBOX_width_int, BBOX_height_int
+
+
+
+def downloadFile(request_URL, ping_URL="", error_message="" ):
+    try:
+        if ping_URL: # first make a low cost request to check if server is live
+            ping_URL = ping_URL
+            r = requests.head(ping_URL, verify=False)
+            r.raise_for_status()
+
+        alg_params = {
+            "URL": request_URL,
+            "OUTPUT": QgsProcessing.TEMPORARY_OUTPUT,
+        }
+        return processing.run(
+            "native:filedownloader",
+            alg_params,
+            context=context,
+            feedback=feedback,
+            is_child_algorithm=True,
+        )
+    except (QgsProcessingException, requests.exceptions.HTTPError) as e:
+        feedback.reportError(
+            f"Error: {str(e)}\n\n{error_message}",
+            True,
+        )
+        return results    
