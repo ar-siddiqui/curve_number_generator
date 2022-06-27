@@ -35,7 +35,11 @@ import inspect
 from qgis.PyQt.QtGui import QIcon
 
 from qgis.core import QgsProcessingProvider
-from .curve_number_generator_algorithm import CurveNumberGeneratorAlgorithm
+
+from curve_number_generator.processing import algorithms
+from curve_number_generator.processing.curve_number_generator_algorithm import (
+    CurveNumberGeneratorAlgorithm,
+)
 
 
 class CurveNumberGeneratorProvider(QgsProcessingProvider):
@@ -56,9 +60,15 @@ class CurveNumberGeneratorProvider(QgsProcessingProvider):
         """
         Loads all algorithms belonging to this provider.
         """
-        self.addAlgorithm(CurveNumberGeneratorAlgorithm())
-        # add additional algorithms here
-        # self.addAlgorithm(MyOtherAlgorithm())
+
+        alg_classes = [
+            m[1]
+            for m in inspect.getmembers(algorithms, inspect.isclass)
+            if issubclass(m[1], CurveNumberGeneratorAlgorithm)
+        ]
+
+        for alg_class in alg_classes:
+            self.addAlgorithm(alg_class())
 
     def id(self):
         """
@@ -83,7 +93,7 @@ class CurveNumberGeneratorProvider(QgsProcessingProvider):
         the Processing toolbox.
         """
         cmd_folder = os.path.split(inspect.getfile(inspect.currentframe()))[0]
-        icon = QIcon(os.path.join(os.path.join(cmd_folder, "icon.png")))
+        icon = QIcon(os.path.join(os.path.join(os.path.dirname(cmd_folder), "icon.png")))
         return icon
 
     def longName(self):

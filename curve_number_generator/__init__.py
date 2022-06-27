@@ -35,6 +35,6 @@ def classFactory(iface):  # pylint: disable=invalid-name
     :type iface: QgsInterface
     """
     #
-    from .curve_number_generator import CurveNumberGeneratorPlugin
+    from curve_number_generator.curve_number_generator import CurveNumberGeneratorPlugin
 
     return CurveNumberGeneratorPlugin(iface)

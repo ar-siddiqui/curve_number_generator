@@ -41,7 +41,9 @@ import sys
 import inspect
 
 from qgis.core import QgsProcessingAlgorithm, QgsApplication
-from .curve_number_generator_provider import CurveNumberGeneratorProvider
+from curve_number_generator.processing.curve_number_generator_provider import (
+    CurveNumberGeneratorProvider,
+)
 
 cmd_folder = os.path.split(inspect.getfile(inspect.currentframe()))[0]
 
