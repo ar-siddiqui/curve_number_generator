@@ -40,6 +40,7 @@ from qgis.core import (
     QgsVectorLayer,
     QgsField,
     QgsFeature,
+    QgsUnitTypes,
     QgsProcessingException,
     QgsProcessingOutputHtml,
     QgsProcessingParameterRasterDestination,
@@ -90,6 +91,14 @@ class ConusNlcdSsurgo(CurveNumberGeneratorAlgorithm):
 
     def initAlgorithm(self, config=None):
 
+        self.addParameter(
+            QgsProcessingParameterFeatureSource(
+                "aoi",
+                "Area of Interest",
+                types=[QgsProcessing.TypeVectorPolygon],
+                defaultValue=None,
+            )
+        )
         self.addParameter(
             QgsProcessingParameterVectorLayer(
                 "aoi",
@@ -191,7 +200,7 @@ class ConusNlcdSsurgo(CurveNumberGeneratorAlgorithm):
         if feedback.isCanceled():
             return {}
 
-        area_acres = getExtentArea(area_layer)
+        area_acres = getExtentArea(area_layer, QgsUnitTypes.AreaAcres)
 
         checkAreaLimits(area_acres, 100000, 500000, feedback=feedback)
         extent = getExtent(area_layer)
