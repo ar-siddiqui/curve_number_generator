@@ -13,6 +13,7 @@ from qgis.core import (
 )    
 
 
+
 def check_avail_plugin_version(plugin_name: str) -> str:
     import requests
     import xml.etree.ElementTree as ET
@@ -105,6 +106,38 @@ def downloadFile(
         feedback.reportError(f"Error: {str(e)}\n\n{error_message}", True)
 
 
+def fixGeometries(
+    input,
+    output=QgsProcessing.TEMPORARY_OUTPUT,
+    context=None,
+    feedback=None,
+) -> str:    
+    alg_params = {"INPUT": input, "OUTPUT": output}
+    return processing.run(
+        "native:fixgeometries",
+        alg_params,
+        context=context,
+        feedback=feedback,
+        is_child_algorithm=True,
+    )["OUTPUT"]
+
+def clip(
+    input,
+    overlay,
+    output=QgsProcessing.TEMPORARY_OUTPUT,
+    context=None,
+    feedback=None,
+) -> str:    
+    alg_params = {"INPUT": input, "OVERLAY": overlay,
+"OUTPUT": output}
+    return processing.run(
+        "native:clip",
+        alg_params,
+        context=context,
+        feedback=feedback,
+        is_child_algorithm=True,
+    )["OUTPUT"]
+
 def reprojectLayer(
     input,
     target_crs,
@@ -127,28 +160,28 @@ def reprojectLayer(
     )["OUTPUT"]
 
 
-def checkAreaLimits(area_acres, soft_limit, hard_limit, feedback=None):
+def checkAreaLimits(area_acres, soft_limit, hard_limit, unit="acres", feedback=None) -> None:
     if area_acres > hard_limit:
         raise QgsProcessingException(
-            f"Area Boundary layer extent area should be less than 500,000 acres.\nArea Boundary layer extent area is {round(area_acres,4):,} acres.\n\nExecution Failed"
+            f"Area Boundary layer extent area should be less than {hard_limit} {unit}.\nArea Boundary layer extent area is {round(area_acres,4):,} {unit}.\n\nExecution Failed"
         )
     elif area_acres > soft_limit:
         feedback.pushWarning(
-            f"Your Area Boundary layer extent area is {round(area_acres,4):,} acres. The recommended extent area is 100,000 acres or less. If the Algorithm fails, rerun with a smaller input layer.\n"
+            f"Your Area Boundary layer extent area is {round(area_acres,4):,} {unit}. The recommended extent area is {soft_limit} {unit} or less. If the Algorithm fails, rerun with a smaller input layer.\n"
         )
     else:
         feedback.pushInfo(
-            f"Area Boundary layer extent area is {round(area_acres,4):,} acres\n"
+            f"Area Boundary layer extent area is {round(area_acres,4):,} {unit}\n"
         )
 
-def getExtentArea(layer):
+def getExtentArea(layer: QgsVectorLayer, unit_type):
     d = QgsDistanceArea()
     tr_cont = QgsCoordinateTransformContext()
     d.setSourceCrs(layer.crs(), tr_cont)
     # d.setEllipsoid(area_layer.crs().ellipsoidAcronym())
     extent_area = d.measureArea(QgsGeometry().fromRect(layer.extent()))
-    area_acres = d.convertAreaMeasurement(extent_area, QgsUnitTypes.AreaAcres)
-    return area_acres
+    area = d.convertAreaMeasurement(extent_area, unit_type)
+    return area
 
 
 def gdalWarp(
