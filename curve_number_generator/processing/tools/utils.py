@@ -2,7 +2,15 @@ import requests
 import os
 import processing
 
-from qgis.core import QgsProcessing, QgsVectorLayer, QgsProcessingException
+from qgis.core import (
+    QgsProcessing,
+    QgsVectorLayer,
+    QgsProcessingException,
+    QgsDistanceArea,
+    QgsUnitTypes,
+    QgsCoordinateTransformContext,
+    QgsGeometry,
+)    
 
 
 def check_avail_plugin_version(plugin_name: str) -> str:
@@ -132,6 +140,15 @@ def checkAreaLimits(area_acres, soft_limit, hard_limit, feedback=None):
         feedback.pushInfo(
             f"Area Boundary layer extent area is {round(area_acres,4):,} acres\n"
         )
+
+def getExtentArea(layer):
+    d = QgsDistanceArea()
+    tr_cont = QgsCoordinateTransformContext()
+    d.setSourceCrs(layer.crs(), tr_cont)
+    # d.setEllipsoid(area_layer.crs().ellipsoidAcronym())
+    extent_area = d.measureArea(QgsGeometry().fromRect(layer.extent()))
+    area_acres = d.convertAreaMeasurement(extent_area, QgsUnitTypes.AreaAcres)
+    return area_acres
 
 
 def gdalWarp(

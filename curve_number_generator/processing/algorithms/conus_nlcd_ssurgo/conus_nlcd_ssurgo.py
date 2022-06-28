@@ -38,10 +38,6 @@ from qgis.core import (
     QgsCoordinateReferenceSystem,
     QgsExpression,
     QgsVectorLayer,
-    QgsDistanceArea,
-    QgsUnitTypes,
-    QgsCoordinateTransformContext,
-    QgsGeometry,
     QgsField,
     QgsFeature,
     QgsProcessingException,
@@ -58,6 +54,7 @@ from curve_number_generator.processing.tools.utils import (
     downloadFile,
     gdalWarp,
     getExtent,
+    getExtentArea,
     reprojectLayer,
 )
 from curve_number_generator.processing.config import CONUS_NLCD_SSURGO
@@ -102,7 +99,7 @@ class ConusNlcdSsurgo(CurveNumberGeneratorAlgorithm):
             )
         )
         param = QgsProcessingParameterVectorLayer(
-            "cnlookup",
+            "CnLookup",
             "Lookup Table",
             optional=True,
             types=[QgsProcessing.TypeVector],
@@ -164,14 +161,14 @@ class ConusNlcdSsurgo(CurveNumberGeneratorAlgorithm):
 
 
         # Assiging Default CN_Lookup Table
-        if parameters["cnlookup"] == None:
+        if parameters["CnLookup"] == None:
             csv_uri = (
                 "file:///"
                 + os.path.join(cmd_folder, "default_lookup.csv")
                 + "?delimiter=,"
             )
             csv = QgsVectorLayer(csv_uri, "default_lookup.csv", "delimitedtext")
-            parameters["cnlookup"] = csv
+            parameters["CnLookup"] = csv
 
         area_layer = self.parameterAsVectorLayer(parameters, "aoi", context)
         orig_epsg_code = (
@@ -194,12 +191,7 @@ class ConusNlcdSsurgo(CurveNumberGeneratorAlgorithm):
         if feedback.isCanceled():
             return {}
 
-        d = QgsDistanceArea()
-        tr_cont = QgsCoordinateTransformContext()
-        d.setSourceCrs(area_layer.crs(), tr_cont)
-        # d.setEllipsoid(area_layer.crs().ellipsoidAcronym())
-        extent_area = d.measureArea(QgsGeometry().fromRect(area_layer.extent()))
-        area_acres = d.convertAreaMeasurement(extent_area, QgsUnitTypes.AreaAcres)
+        area_acres = getExtentArea(area_layer)
 
         checkAreaLimits(area_acres, 100000, 500000, feedback=feedback)
         extent = getExtent(area_layer)
@@ -702,19 +694,19 @@ class ConusNlcdSsurgo(CurveNumberGeneratorAlgorithm):
         #     if feedback.isCanceled():
         #         return {}
 
-        #     # Join with CNLookup
+        #     # Join with CnLookup
         #     alg_params = {
         #         "DISCARD_NONMATCHING": False,
         #         "FIELD": "GDCode",
         #         "FIELDS_TO_COPY": ["CN_Join"],
         #         "FIELD_2": "GDCode",
         #         "INPUT": outputs["CreateNlcd_lu"]["OUTPUT"],
-        #         "INPUT_2": parameters["cnlookup"],
+        #         "INPUT_2": parameters["CnLookup"],
         #         "METHOD": 1,
         #         "PREFIX": "",
         #         "OUTPUT": QgsProcessing.TEMPORARY_OUTPUT,
         #     }
-        #     outputs["JoinWithCnlookup"] = processing.run(
+        #     outputs["JoinWithCnLookup"] = processing.run(
         #         "native:joinattributestable",
         #         alg_params,
         #         context=context,
@@ -733,7 +725,7 @@ class ConusNlcdSsurgo(CurveNumberGeneratorAlgorithm):
         #         "FIELD_PRECISION": 0,
         #         "FIELD_TYPE": 1,
         #         "FORMULA": "CN_Join  * 1",
-        #         "INPUT": outputs["JoinWithCnlookup"]["OUTPUT"],
+        #         "INPUT": outputs["JoinWithCnLookup"]["OUTPUT"],
         #         "NEW_FIELD": True,
         #         "OUTPUT": QgsProcessing.TEMPORARY_OUTPUT,
         #     }
