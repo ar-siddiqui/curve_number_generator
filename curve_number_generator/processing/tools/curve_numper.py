@@ -24,9 +24,6 @@ from qgis.core import (
 import processing
 
 
-debug = True
-
-
 class CurveNumber:
     """Class to generate curve number from soil and land_cover layer."""
 
@@ -48,6 +45,7 @@ class CurveNumber:
     def generateCurveNumber(
         self,
         soil_fields_to_keep: list,
+        fields_to_drop_in_result: list,
         gdcode_formula: str,
         land_cover_field: str = "land_cover",
         start_step: int = 0,
@@ -80,10 +78,10 @@ class CurveNumber:
         if self.feedback.isCanceled():
             return {}
 
-        # Create GDCodeTemp
+        # Create GDCode
         alg_params = {
             "FIELD_LENGTH": 5,
-            "FIELD_NAME": "_gdcode_",
+            "FIELD_NAME": "grid_code",
             "FIELD_PRECISION": 3,
             "FIELD_TYPE": 2,
             "FORMULA": gdcode_formula,
@@ -91,7 +89,7 @@ class CurveNumber:
             "NEW_FIELD": True,
             "OUTPUT": QgsProcessing.TEMPORARY_OUTPUT,
         }
-        self.outputs["GDCodeTemp"] = processing.run(
+        self.outputs["GDCode"] = processing.run(
             "qgis:fieldcalculator",
             alg_params,
             context=self.context,
@@ -103,25 +101,6 @@ class CurveNumber:
         self.feedback.setCurrentStep(step)
         if self.feedback.isCanceled():
             return {}
-
-        # Create GDCode
-        alg_params = {
-            "FIELD_LENGTH": 5,
-            "FIELD_NAME": "grid_code",
-            "FIELD_PRECISION": 3,
-            "FIELD_TYPE": 2,
-            "FORMULA": "if( var('drainedsoilsleaveuncheckedifnotsure') = True,replace(\"_gdcode_\", '/D', ''),replace(\"_gdcode_\", map('A/', '', 'B/', '', 'C/', '')))",
-            "INPUT": self.outputs["GDCodeTemp"],
-            "NEW_FIELD": True,
-            "OUTPUT": QgsProcessing.TEMPORARY_OUTPUT,
-        }
-        self.outputs["GDCode"] = processing.run(
-            "qgis:fieldcalculator",
-            alg_params,
-            context=self.context,
-            feedback=self.feedback,
-            is_child_algorithm=True,
-        )["OUTPUT"]
 
         step += 1
         self.feedback.setCurrentStep(step)
@@ -153,15 +132,16 @@ class CurveNumber:
         if self.feedback.isCanceled():
             return {}
 
+        # calc_layer = self.context.takeResultLayer(self.outputs["GDCode"])
+        # QgsProject.instance().addMapLayer(calc_layer)
+
         # Drop field(s)
         alg_params = {
-            "COLUMN": ["_gdcode_"],
+            "COLUMN": fields_to_drop_in_result,
             "INPUT": self.outputs["CNJoin"],
             "OUTPUT": output,
         }
 
-        if debug:
-            self.feedback.pushWarning(str(self.outputs))
         return (
             processing.run(
                 "qgis:deletecolumn",

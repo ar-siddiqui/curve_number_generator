@@ -387,6 +387,7 @@ class ConusNlcdSsurgo(CurveNumberGeneratorAlgorithm):
         # # Curve Number Calculations
         if parameters.get("CurveNumber", None):
 
+            # Prepare Land Cover for Curve Number Calculation
             # Polygonize (raster to vector)
             outputs["NLCDLandCoverPolygonize"] = gdalPolygonize(
                 results["NLCDLandCover"],
@@ -407,9 +408,28 @@ class ConusNlcdSsurgo(CurveNumberGeneratorAlgorithm):
                 feedback=feedback,
             )
 
+            # Prepare Soil for Curve Number Calculation by turning dual soil to single soil
+            alg_params = {
+                "FIELD_LENGTH": 5,
+                "FIELD_NAME": "_hsg_single_",
+                "FIELD_PRECISION": 3,
+                "FIELD_TYPE": 2,
+                "FORMULA": "if( var('drainedsoilsleaveuncheckedifnotsure') = True,replace(\"HYDGRPDCD\", '/D', ''),replace(\"HYDGRPDCD\", map('A/', '', 'B/', '', 'C/', '')))",
+                "INPUT": results["Soils"],
+                "NEW_FIELD": True,
+                "OUTPUT": QgsProcessing.TEMPORARY_OUTPUT,
+            }
+            outputs["SoilsSingle"] = processing.run(
+                "qgis:fieldcalculator",
+                alg_params,
+                context=context,
+                feedback=feedback,
+                is_child_algorithm=True,
+            )["OUTPUT"]
+
             curve_number = CurveNumber(
                 outputs["NLCDLandCoverVector"],
-                results["Soils"],
+                outputs["SoilsSingle"],
                 parameters["CnLookup"],
                 context=context,
                 feedback=feedback,
@@ -421,8 +441,9 @@ class ConusNlcdSsurgo(CurveNumberGeneratorAlgorithm):
                 pass
 
             results["CurveNumber"], step = curve_number.generateCurveNumber(
-                ["MUSYM", "HYDGRPDCD", "MUNAME"],
-                'IF ("HYDGRPDCD" IS NOT NULL, "land_cover" || "HYDGRPDCD", IF (("MUSYM" = \'W\' OR lower("MUSYM") = \'water\' OR lower("MUNAME") = \'water\' OR "MUNAME" = \'W\'), 11, "land_cover"))',
+                ["MUSYM", "HYDGRPDCD", "MUNAME", "_hsg_single_"],
+                ["MUSYM", "MUNAME", "_hsg_single_"],
+                'IF ("_hsg_single_" IS NOT NULL, "land_cover" || "_hsg_single_", IF (("MUSYM" = \'W\' OR lower("MUSYM") = \'water\' OR lower("MUNAME") = \'water\' OR "MUNAME" = \'W\'), 11, "land_cover"))',
                 start_step=step + 1,
                 output=parameters["CurveNumber"],
             )
@@ -431,9 +452,6 @@ class ConusNlcdSsurgo(CurveNumberGeneratorAlgorithm):
             feedback.setCurrentStep(step)
             if feedback.isCanceled():
                 return {}
-
-        if debug:
-            feedback.pushWarning(str(outputs))
 
         # # log usage
         # with open(cn_log_path, "r+") as f:
