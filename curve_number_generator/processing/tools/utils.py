@@ -10,8 +10,7 @@ from qgis.core import (
     QgsUnitTypes,
     QgsCoordinateTransformContext,
     QgsGeometry,
-)    
-
+)
 
 
 def check_avail_plugin_version(plugin_name: str) -> str:
@@ -111,7 +110,7 @@ def fixGeometries(
     output=QgsProcessing.TEMPORARY_OUTPUT,
     context=None,
     feedback=None,
-) -> str:    
+) -> str:
     alg_params = {"INPUT": input, "OUTPUT": output}
     return processing.run(
         "native:fixgeometries",
@@ -121,15 +120,15 @@ def fixGeometries(
         is_child_algorithm=True,
     )["OUTPUT"]
 
+
 def clip(
     input,
     overlay,
     output=QgsProcessing.TEMPORARY_OUTPUT,
     context=None,
     feedback=None,
-) -> str:    
-    alg_params = {"INPUT": input, "OVERLAY": overlay,
-"OUTPUT": output}
+) -> str:
+    alg_params = {"INPUT": input, "OVERLAY": overlay, "OUTPUT": output}
     return processing.run(
         "native:clip",
         alg_params,
@@ -137,6 +136,7 @@ def clip(
         feedback=feedback,
         is_child_algorithm=True,
     )["OUTPUT"]
+
 
 def reprojectLayer(
     input,
@@ -160,7 +160,9 @@ def reprojectLayer(
     )["OUTPUT"]
 
 
-def checkAreaLimits(area_acres, soft_limit, hard_limit, unit="acres", feedback=None) -> None:
+def checkAreaLimits(
+    area_acres, soft_limit, hard_limit, unit="acres", feedback=None
+) -> None:
     if area_acres > hard_limit:
         raise QgsProcessingException(
             f"Area Boundary layer extent area should be less than {hard_limit} {unit}.\nArea Boundary layer extent area is {round(area_acres,4):,} {unit}.\n\nExecution Failed"
@@ -173,6 +175,7 @@ def checkAreaLimits(area_acres, soft_limit, hard_limit, unit="acres", feedback=N
         feedback.pushInfo(
             f"Area Boundary layer extent area is {round(area_acres,4):,} {unit}\n"
         )
+
 
 def getExtentArea(layer: QgsVectorLayer, unit_type):
     d = QgsDistanceArea()
@@ -210,6 +213,31 @@ def gdalWarp(
     }
     return processing.run(
         "gdal:warpreproject",
+        alg_params,
+        context=context,
+        feedback=feedback,
+        is_child_algorithm=True,
+    )["OUTPUT"]
+
+
+def gdalPolygonize(
+    input,
+    field="value",
+    output=QgsProcessing.TEMPORARY_OUTPUT,
+    context=None,
+    feedback=None,
+):
+    # Polygonize (raster to vector)
+    alg_params = {
+        "BAND": 1,
+        "EIGHT_CONNECTEDNESS": False,
+        "EXTRA": "",
+        "FIELD": field,
+        "INPUT": input,
+        "OUTPUT": output,
+    }
+    return processing.run(
+        "gdal:polygonize",
         alg_params,
         context=context,
         feedback=feedback,

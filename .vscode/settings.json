@@ -1,3 +1,4 @@
 {
-    "workbench.colorTheme": "Solarized Dark"
+    "workbench.colorTheme": "Solarized Dark",
+    "python.formatting.provider": "black"
 }

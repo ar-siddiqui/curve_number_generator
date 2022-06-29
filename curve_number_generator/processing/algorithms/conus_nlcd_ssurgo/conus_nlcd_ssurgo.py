@@ -25,7 +25,9 @@ import sys
 import inspect
 import codecs
 import os
-from curve_number_generator.processing.algorithms.conus_nlcd_ssurgo.ssurgo_soil import SsurgoSoil
+from curve_number_generator.processing.algorithms.conus_nlcd_ssurgo.ssurgo_soil import (
+    SsurgoSoil,
+)
 import processing
 from qgis.PyQt.QtGui import QIcon
 from qgis.core import (
@@ -59,7 +61,11 @@ from curve_number_generator.processing.tools.utils import (
     getExtent,
     getExtentArea,
     reprojectLayer,
+    gdalPolygonize,
 )
+
+from curve_number_generator.processing.tools.curve_numper import CurveNumber
+
 from curve_number_generator.processing.config import CONUS_NLCD_SSURGO
 from curve_number_generator.processing.curve_number_generator_algorithm import (
     CurveNumberGeneratorAlgorithm,
@@ -80,6 +86,8 @@ __copyright__ = "(C) 2021 by Abdul Raheem Siddiqui"
 __revision__ = "$Format:%H$"
 
 curr_version = "1.3"
+
+debug = True
 
 
 class ConusNlcdSsurgo(CurveNumberGeneratorAlgorithm):
@@ -142,7 +150,7 @@ class ConusNlcdSsurgo(CurveNumberGeneratorAlgorithm):
                 createByDefault=False,
                 defaultValue=None,
             )
-        )              
+        )
         self.addParameter(
             QgsProcessingParameterVectorDestination(
                 "Soils",
@@ -151,7 +159,7 @@ class ConusNlcdSsurgo(CurveNumberGeneratorAlgorithm):
                 createByDefault=False,
                 defaultValue=None,
             )
-        )  
+        )
         self.addParameter(
             QgsProcessingParameterVectorDestination(
                 "CurveNumber",
@@ -168,8 +176,6 @@ class ConusNlcdSsurgo(CurveNumberGeneratorAlgorithm):
         feedback = QgsProcessingMultiStepFeedback(25, model_feedback)
         results = {}
         outputs = {}
-
-
 
         # Assiging Default CN_Lookup Table
         if parameters["CnLookup"] == None:
@@ -208,7 +214,6 @@ class ConusNlcdSsurgo(CurveNumberGeneratorAlgorithm):
         extent = getExtent(area_layer)
         bbox_dim = createRequestBBOXDim(extent, 30)
 
-
         # NLCD Impervious Raster
         if parameters.get("NLCDImpervious", None):
             outputs["DownloadNlcdImp"] = downloadFile(
@@ -242,7 +247,7 @@ class ConusNlcdSsurgo(CurveNumberGeneratorAlgorithm):
                 QgsCoordinateReferenceSystem(str(orig_epsg_code)),
                 parameters["NLCDImpervious"],
                 context=context,
-                feedback=feedback,                
+                feedback=feedback,
             )
 
             step += 1
@@ -251,7 +256,9 @@ class ConusNlcdSsurgo(CurveNumberGeneratorAlgorithm):
                 return {}
 
         # NLCD Land Cover Data
-        if any([parameters.get("NLCDLandCover", None), parameters.get("CurveNumber", None)]):
+        if any(
+            [parameters.get("NLCDLandCover", None), parameters.get("CurveNumber", None)]
+        ):
             outputs["DownloadNlcdLC"] = downloadFile(
                 CONUS_NLCD_SSURGO["NLCD_LC_2019"].format(
                     epsg_code,
@@ -270,19 +277,24 @@ class ConusNlcdSsurgo(CurveNumberGeneratorAlgorithm):
             if feedback.isCanceled():
                 return {}
 
-            try:
-                parameters["NLCDLandCover"].destinationName = "NLCD Land Cover"
-            except AttributeError:
-                pass
+            if parameters.get("NLCDLandCover", None):
+                try:
+                    parameters["NLCDLandCover"].destinationName = "NLCD Land Cover"
+                except AttributeError:
+                    pass
+
+                lc_output = parameters["NLCDLandCover"]
+            else:
+                lc_output = QgsProcessing.TEMPORARY_OUTPUT
 
             # reproject to original crs
             # Warp (reproject)
             results["NLCDLandCover"] = gdalWarp(
                 outputs["DownloadNlcdLC"],
                 QgsCoordinateReferenceSystem(str(orig_epsg_code)),
-                parameters["NLCDLandCover"],
+                lc_output,
                 context=context,
-                feedback=feedback,                
+                feedback=feedback,
             )
 
             step += 1
@@ -295,7 +307,7 @@ class ConusNlcdSsurgo(CurveNumberGeneratorAlgorithm):
             ssurgoSoil = SsurgoSoil(
                 parameters["aoi"],
                 context=context,
-                feedback=feedback,                           
+                feedback=feedback,
             )
             # Call class method in required sequence
             ssurgoSoil.reprojectTo4326()
@@ -309,7 +321,7 @@ class ConusNlcdSsurgo(CurveNumberGeneratorAlgorithm):
                 step += 1
                 feedback.setCurrentStep(step)
                 if feedback.isCanceled():
-                    return {}                
+                    return {}
             except:
                 feedback.pushWarning(
                     "Error getting soil data through post request. Your input layer maybe too large. Trying WFS download now.\nIf the Algorithm get stuck during download. Terminate the Algorithm and rerun with a smaller input layer.",
@@ -331,7 +343,7 @@ class ConusNlcdSsurgo(CurveNumberGeneratorAlgorithm):
             step += 1
             feedback.setCurrentStep(step)
             if feedback.isCanceled():
-                return {}                
+                return {}
 
             ssurgoSoil.clipSoilLayer()
             step += 1
@@ -352,185 +364,76 @@ class ConusNlcdSsurgo(CurveNumberGeneratorAlgorithm):
                 return {}
 
             # final result
+            if parameters.get("Soils", None):
+                try:
+                    parameters["Soils"].destinationName = "SSURGO Soils"
+                except AttributeError:
+                    pass
+                soils_output = parameters["Soils"]
+            else:
+                soils_output = QgsProcessing.TEMPORARY_OUTPUT
 
-            try:
-                parameters["Soils"].destinationName = "SSURGO Soils"
-            except AttributeError:
-                pass
-            
             results["Soils"] = fixGeometries(
                 outputs["ReprojectedSoils"],
-                parameters["Soils"],
+                soils_output,
                 context=context,
                 feedback=feedback,
             )
             step += 1
             feedback.setCurrentStep(step)
             if feedback.isCanceled():
-                return {}            
-
+                return {}
 
         # # Curve Number Calculations
-        # if curve_number_output == True:
+        if parameters.get("CurveNumber", None):
 
-        #     feedback.pushInfo(
-        #         "Generating Curve Number Layer. This may take a while. Do not cancel."
-        #     )
-        #     # Intersection
-        #     alg_params = {
-        #         "INPUT": outputs["FixGeometries3"]["OUTPUT"],
-        #         "INPUT_FIELDS": ["MUSYM", "HYDGRPDCD", "MUNAME"],
-        #         "OVERLAY": outputs["FixGeometries"]["OUTPUT"],
-        #         "OVERLAY_FIELDS": ["VALUE"],
-        #         "OVERLAY_FIELDS_PREFIX": "",
-        #         "OUTPUT": QgsProcessing.TEMPORARY_OUTPUT,
-        #     }
-        #     outputs["Intersection"] = processing.run(
-        #         "native:intersection",
-        #         alg_params,
-        #         context=context,
-        #         feedback=feedback,
-        #         is_child_algorithm=True,
-        #     )
+            # Polygonize (raster to vector)
+            outputs["NLCDLandCoverPolygonize"] = gdalPolygonize(
+                results["NLCDLandCover"],
+                "land_cover",
+                context=context,
+                feedback=feedback,
+            )
 
-        #     feedback.setCurrentStep(19)
-        #     if feedback.isCanceled():
-        #         return {}
+            step += 1
+            feedback.setCurrentStep(step)
+            if feedback.isCanceled():
+                return {}
 
-        #     # Create GDCodeTemp
-        #     alg_params = {
-        #         "FIELD_LENGTH": 5,
-        #         "FIELD_NAME": "GDCodeTemp",
-        #         "FIELD_PRECISION": 3,
-        #         "FIELD_TYPE": 2,
-        #         "FORMULA": 'IF ("HYDGRPDCD" IS NOT NULL, "Value" || "HYDGRPDCD", IF (("MUSYM" = \'W\' OR lower("MUSYM") = \'water\' OR lower("MUNAME") = \'water\' OR "MUNAME" = \'W\'), 11, "VALUE"))',
-        #         "INPUT": outputs["Intersection"]["OUTPUT"],
-        #         "NEW_FIELD": True,
-        #         "OUTPUT": QgsProcessing.TEMPORARY_OUTPUT,
-        #     }
-        #     outputs["CreateGdcodetemp"] = processing.run(
-        #         "qgis:fieldcalculator",
-        #         alg_params,
-        #         context=context,
-        #         feedback=feedback,
-        #         is_child_algorithm=True,
-        #     )
+            # Fix geometries
+            outputs["NLCDLandCoverVector"] = fixGeometries(
+                outputs["NLCDLandCoverPolygonize"],
+                context=context,
+                feedback=feedback,
+            )
 
-        #     feedback.setCurrentStep(20)
-        #     if feedback.isCanceled():
-        #         return {}
+            curve_number = CurveNumber(
+                outputs["NLCDLandCoverVector"],
+                results["Soils"],
+                parameters["CnLookup"],
+                context=context,
+                feedback=feedback,
+            )
 
-        #     # Create GDCode
-        #     alg_params = {
-        #         "FIELD_LENGTH": 5,
-        #         "FIELD_NAME": "GDCode",
-        #         "FIELD_PRECISION": 3,
-        #         "FIELD_TYPE": 2,
-        #         "FORMULA": "if( var('drainedsoilsleaveuncheckedifnotsure') = True,replace(\"GDCodeTemp\", '/D', ''),replace(\"GDCodeTemp\", map('A/', '', 'B/', '', 'C/', '')))",
-        #         "INPUT": outputs["CreateGdcodetemp"]["OUTPUT"],
-        #         "NEW_FIELD": True,
-        #         "OUTPUT": QgsProcessing.TEMPORARY_OUTPUT,
-        #     }
-        #     outputs["CreateGdcode"] = processing.run(
-        #         "qgis:fieldcalculator",
-        #         alg_params,
-        #         context=context,
-        #         feedback=feedback,
-        #         is_child_algorithm=True,
-        #     )
+            try:
+                parameters["CurveNumber"].destinationName = "Curve Number Layer"
+            except AttributeError:
+                pass
 
-        #     feedback.setCurrentStep(21)
-        #     if feedback.isCanceled():
-        #         return {}
+            results["CurveNumber"], step = curve_number.generateCurveNumber(
+                ["MUSYM", "HYDGRPDCD", "MUNAME"],
+                'IF ("HYDGRPDCD" IS NOT NULL, "land_cover" || "HYDGRPDCD", IF (("MUSYM" = \'W\' OR lower("MUSYM") = \'water\' OR lower("MUNAME") = \'water\' OR "MUNAME" = \'W\'), 11, "land_cover"))',
+                start_step=step + 1,
+                output=parameters["CurveNumber"],
+            )
 
-        #     # Create NLCD_LU
-        #     alg_params = {
-        #         "FIELD_LENGTH": 2,
-        #         "FIELD_NAME": "NLCD_LU",
-        #         "FIELD_PRECISION": 3,
-        #         "FIELD_TYPE": 1,
-        #         "FORMULA": '"Value"',
-        #         "INPUT": outputs["CreateGdcode"]["OUTPUT"],
-        #         "NEW_FIELD": True,
-        #         "OUTPUT": QgsProcessing.TEMPORARY_OUTPUT,
-        #     }
-        #     outputs["CreateNlcd_lu"] = processing.run(
-        #         "qgis:fieldcalculator",
-        #         alg_params,
-        #         context=context,
-        #         feedback=feedback,
-        #         is_child_algorithm=True,
-        #     )
+            step += 1
+            feedback.setCurrentStep(step)
+            if feedback.isCanceled():
+                return {}
 
-        #     feedback.setCurrentStep(22)
-        #     if feedback.isCanceled():
-        #         return {}
-
-        #     # Join with CnLookup
-        #     alg_params = {
-        #         "DISCARD_NONMATCHING": False,
-        #         "FIELD": "GDCode",
-        #         "FIELDS_TO_COPY": ["CN_Join"],
-        #         "FIELD_2": "GDCode",
-        #         "INPUT": outputs["CreateNlcd_lu"]["OUTPUT"],
-        #         "INPUT_2": parameters["CnLookup"],
-        #         "METHOD": 1,
-        #         "PREFIX": "",
-        #         "OUTPUT": QgsProcessing.TEMPORARY_OUTPUT,
-        #     }
-        #     outputs["JoinWithCnLookup"] = processing.run(
-        #         "native:joinattributestable",
-        #         alg_params,
-        #         context=context,
-        #         feedback=feedback,
-        #         is_child_algorithm=True,
-        #     )
-
-        #     feedback.setCurrentStep(23)
-        #     if feedback.isCanceled():
-        #         return {}
-
-        #     # Create Integer CN
-        #     alg_params = {
-        #         "FIELD_LENGTH": 3,
-        #         "FIELD_NAME": "CN",
-        #         "FIELD_PRECISION": 0,
-        #         "FIELD_TYPE": 1,
-        #         "FORMULA": "CN_Join  * 1",
-        #         "INPUT": outputs["JoinWithCnLookup"]["OUTPUT"],
-        #         "NEW_FIELD": True,
-        #         "OUTPUT": QgsProcessing.TEMPORARY_OUTPUT,
-        #     }
-        #     outputs["CreateIntegerCn"] = processing.run(
-        #         "qgis:fieldcalculator",
-        #         alg_params,
-        #         context=context,
-        #         feedback=feedback,
-        #         is_child_algorithm=True,
-        #     )
-
-        #     feedback.setCurrentStep(24)
-        #     if feedback.isCanceled():
-        #         return {}
-
-        #     # Drop field(s)
-        #     alg_params = {
-        #         "COLUMN": ["VALUE", "GDCodeTemp", "CN_Join"],
-        #         "INPUT": outputs["CreateIntegerCn"]["OUTPUT"],
-        #         "OUTPUT": QgsProcessing.TEMPORARY_OUTPUT,
-        #     }
-        #     outputs["DropFields"] = processing.run(
-        #         "qgis:deletecolumn",
-        #         alg_params,
-        #         context=context,
-        #         feedback=feedback,
-        #         is_child_algorithm=True,
-        #     )
-
-        #     feedback.setCurrentStep(25)
-        #     if feedback.isCanceled():
-        #         return {}
-
+        if debug:
+            feedback.pushWarning(str(outputs))
 
         # # log usage
         # with open(cn_log_path, "r+") as f:
