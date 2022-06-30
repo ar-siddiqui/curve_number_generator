@@ -25,7 +25,8 @@ import processing
 
 
 class CurveNumber:
-    """Class to generate curve number from soil and land_cover layer."""
+    """Class to generate curve number from soil and land_cover layer.
+    Consumes 4 feedback step"""
 
     def __init__(
         self,
