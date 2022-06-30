@@ -162,7 +162,7 @@ class Custom(CurveNumberGeneratorAlgorithm):
             return {}
 
         curve_number = CurveNumber(
-            outputs["LandCoverVector"],
+            outputs["LandCoverClipped"],
             parameters["Soils"],
             parameters["CnLookup"],
             context=context,
@@ -186,6 +186,9 @@ class Custom(CurveNumberGeneratorAlgorithm):
         feedback.setCurrentStep(step)
         if feedback.isCanceled():
             return {}
+
+        cn_style_path = os.path.join(os.path.dirname(cmd_folder), "curve_number.qml")
+        self.handle_post_processing(results["CurveNumber"], cn_style_path, context)
 
         return results
 

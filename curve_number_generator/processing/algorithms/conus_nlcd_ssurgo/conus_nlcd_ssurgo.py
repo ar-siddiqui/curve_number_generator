@@ -229,6 +229,11 @@ class ConusNlcdSsurgo(CurveNumberGeneratorAlgorithm):
             if feedback.isCanceled():
                 return {}
 
+            imp_style_path = os.path.join(cmd_folder, "nlcd_impervious.qml")
+            self.handle_post_processing(
+                results["NLCDImpervious"], imp_style_path, context
+            )
+
         # NLCD Land Cover Data
         if any(
             [parameters.get("NLCDLandCover", None), parameters.get("CurveNumber", None)]
@@ -275,6 +280,11 @@ class ConusNlcdSsurgo(CurveNumberGeneratorAlgorithm):
             feedback.setCurrentStep(step)
             if feedback.isCanceled():
                 return {}
+
+            lc_style_path = os.path.join(cmd_folder, "nlcd_land_cover.qml")
+            self.handle_post_processing(
+                results["NLCDLandCover"], lc_style_path, context
+            )
 
         # Soil Layer
         if any([parameters.get("Soils", None), parameters.get("CurveNumber", None)]):
@@ -358,6 +368,9 @@ class ConusNlcdSsurgo(CurveNumberGeneratorAlgorithm):
             if feedback.isCanceled():
                 return {}
 
+            soils_style_path = os.path.join(cmd_folder, "soils.qml")
+            self.handle_post_processing(results["Soils"], soils_style_path, context)
+
         # # Curve Number Calculations
         if parameters.get("CurveNumber", None):
 
@@ -426,6 +439,11 @@ class ConusNlcdSsurgo(CurveNumberGeneratorAlgorithm):
             feedback.setCurrentStep(step)
             if feedback.isCanceled():
                 return {}
+
+            cn_style_path = os.path.join(
+                os.path.dirname(cmd_folder), "curve_number.qml"
+            )
+            self.handle_post_processing(results["CurveNumber"], cn_style_path, context)
 
         return results
 
