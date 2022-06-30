@@ -23,7 +23,6 @@
 """
 import sys
 import inspect
-import codecs
 import os
 from curve_number_generator.processing.algorithms.conus_nlcd_ssurgo.ssurgo_soil import (
     SsurgoSoil,
@@ -49,8 +48,6 @@ from qgis.core import (
     QgsProcessingParameterVectorDestination,
 )
 
-from tempfile import NamedTemporaryFile
-
 from curve_number_generator.processing.tools.utils import (
     checkAreaLimits,
     createRequestBBOXDim,
@@ -70,11 +67,9 @@ from curve_number_generator.processing.curve_number_generator_algorithm import (
     CurveNumberGeneratorAlgorithm,
 )
 
-
 cmd_folder = os.path.split(inspect.getfile(inspect.currentframe()))[0]
-sys.path.append(cmd_folder)
-qgis_settings_path = QgsApplication.qgisSettingsDirPath().replace("\\", "/")
-cn_log_path = os.path.join(qgis_settings_path, "curve_number_generator.log")
+if cmd_folder not in sys.path:
+    sys.path.insert(0, cmd_folder)
 
 __author__ = "Abdul Raheem Siddiqui"
 __date__ = "2021-08-04"
@@ -83,10 +78,6 @@ __copyright__ = "(C) 2021 by Abdul Raheem Siddiqui"
 # This will get replaced with a git SHA1 when you do a git archive
 
 __revision__ = "$Format:%H$"
-
-curr_version = "1.3"
-
-debug = True
 
 
 class ConusNlcdSsurgo(CurveNumberGeneratorAlgorithm):
@@ -444,18 +435,6 @@ class ConusNlcdSsurgo(CurveNumberGeneratorAlgorithm):
             if feedback.isCanceled():
                 return {}
 
-        # # log usage
-        # with open(cn_log_path, "r+") as f:
-        #     counter = int(f.readline())
-        #     f.seek(0)
-        #     f.write(str(counter + 1))
-
-        # # check if counter is milestone
-        # if (counter + 1) % 25 == 0:
-        #     appeal_file = NamedTemporaryFile("w", suffix=".html", delete=False)
-        #     self.createHTML(appeal_file.name, counter + 1)
-        #     results["Message"] = appeal_file.name
-
         return results
 
     def name(self):
@@ -466,14 +445,14 @@ class ConusNlcdSsurgo(CurveNumberGeneratorAlgorithm):
         lowercase alphanumeric characters only and no spaces or other
         formatting characters.
         """
-        return "CONUS (NLCD & SSURGO)"
+        return "conusnlcdssurgo"
 
     def displayName(self):
         """
         Returns the translated algorithm name, which should be used for any
         user-visible display of the algorithm name.
         """
-        return self.tr(self.name())
+        return self.tr("Curve Number Generator (CONUS) (NLCD & SSURGO)")
 
     def shortHelpString(self):
         return """<html><body><a "href"="https://github.com/ar-siddiqui/curve_number_generator/wiki/Tutorials">Video Tutorials</a></h3>
@@ -505,34 +484,3 @@ If checked the algorithm will assume HSG A/B/C for each dual category soil.</p>
 
     def createInstance(self):
         return ConusNlcdSsurgo()
-
-    def createHTML(self, outputFile, counter):
-        with codecs.open(outputFile, "w", encoding="utf-8") as f:
-            f.write(
-                f"""
-<html>
-
-<head>
-    <meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
-</head>
-
-<body>
-    <p style="font-size:21px;line-height: 1.5;text-align:center;"><br>WOW! You have used the Curve Number Generator
-        Plugin <b>{counter}</b>
-        times already.<br />If you would like to get any GIS task automated for your organization please contact me at
-        ars.work.ce@gmail.com<br />
-        If this plugin has saved your time, please consider making a personal or organizational donation of any value to
-        the developer.</p>
-    <br>
-    <form action="https://www.paypal.com/donate" method="post" target="_top" style="text-align: center;">
-        <input type="hidden" name="business" value="T25JMRWJAL5SQ" />
-        <input type="hidden" name="item_name" value="For Curve Number Generator" />
-        <input type="hidden" name="currency_code" value="USD" />
-        <input type="image" src="https://www.paypalobjects.com/en_US/i/btn/btn_donateCC_LG.gif" border="0" name="submit"
-            title="PayPal - The safer, easier way to pay online!" alt="Donate with PayPal button" />
-        <img alt="" border="0" src="https://www.paypal.com/en_US/i/scr/pixel.gif" width="1" height="1" />
-    </form>
-</body>
-
-</html>"""
-            )

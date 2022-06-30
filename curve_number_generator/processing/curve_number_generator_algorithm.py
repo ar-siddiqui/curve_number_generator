@@ -23,13 +23,17 @@
 """
 import sys
 import inspect
-import codecs
 import os
 from qgis.PyQt.QtGui import QIcon
 from qgis.PyQt.QtCore import QCoreApplication
 from qgis.core import QgsApplication, QgsProcessingAlgorithm
 
-from tempfile import NamedTemporaryFile
+
+from curve_number_generator.processing.tools.utils import (
+    incrementUsageCounter,
+    checkPluginUptodate,
+    displayUsageMessage,
+)
 
 cmd_folder = os.path.split(inspect.getfile(inspect.currentframe()))[0]
 sys.path.append(cmd_folder)
@@ -55,6 +59,26 @@ class CurveNumberGeneratorAlgorithm(QgsProcessingAlgorithm):
 
     OUTPUT = "OUTPUT"
     INPUT = "INPUT"
+
+    def postProcessAlgorithm(self, context, feedback):
+        try:  # try-except because trivial features
+            counter = incrementUsageCounter()
+
+            # check if counter is milestone for plugin version check
+            if (counter) % 4 == 0:
+                checkPluginUptodate("Curve Number Generator")
+
+            # check if counter is milestone for usage message
+            if (counter) % 25 == 0:
+                displayUsageMessage(counter)
+
+        except Exception as e:
+            feedback.reportError(
+                f"Algorithm finished successfully but post processing failed. {e}",
+                False,
+            )
+
+        return {}
 
     def group(self):
         """
@@ -85,34 +109,3 @@ class CurveNumberGeneratorAlgorithm(QgsProcessingAlgorithm):
 
     def helpUrl(self):
         return "mailto:ars.work.ce@gmail.com"
-
-    def createHTML(self, outputFile, counter):
-        with codecs.open(outputFile, "w", encoding="utf-8") as f:
-            f.write(
-                f"""
-<html>
-
-<head>
-    <meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
-</head>
-
-<body>
-    <p style="font-size:21px;line-height: 1.5;text-align:center;"><br>WOW! You have used the Curve Number Generator
-        Plugin <b>{counter}</b>
-        times already.<br />If you would like to get any GIS task automated for your organization please contact me at
-        ars.work.ce@gmail.com<br />
-        If this plugin has saved your time, please consider making a personal or organizational donation of any value to
-        the developer.</p>
-    <br>
-    <form action="https://www.paypal.com/donate" method="post" target="_top" style="text-align: center;">
-        <input type="hidden" name="business" value="T25JMRWJAL5SQ" />
-        <input type="hidden" name="item_name" value="For Curve Number Generator" />
-        <input type="hidden" name="currency_code" value="USD" />
-        <input type="image" src="https://www.paypalobjects.com/en_US/i/btn/btn_donateCC_LG.gif" border="0" name="submit"
-            title="PayPal - The safer, easier way to pay online!" alt="Donate with PayPal button" />
-        <img alt="" border="0" src="https://www.paypal.com/en_US/i/scr/pixel.gif" width="1" height="1" />
-    </form>
-</body>
-
-</html>"""
-            )

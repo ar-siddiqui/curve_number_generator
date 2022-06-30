@@ -46,7 +46,6 @@ from curve_number_generator.processing.curve_number_generator_provider import (
 )
 
 cmd_folder = os.path.split(inspect.getfile(inspect.currentframe()))[0]
-
 if cmd_folder not in sys.path:
     sys.path.insert(0, cmd_folder)
 
@@ -66,14 +65,14 @@ class CurveNumberGeneratorPlugin(object):
 
         icon = os.path.join(os.path.join(cmd_folder, "icon.png"))
         self.action = QAction(
-            QIcon(icon), u"Curve Number Generator", self.iface.mainWindow()
+            QIcon(icon), "Curve Number Generator", self.iface.mainWindow()
         )
         self.action.triggered.connect(self.run)
-        self.iface.addPluginToMenu(u"&CurveNumberGenerator", self.action)
+        self.iface.addPluginToMenu("&CurveNumberGenerator", self.action)
 
     def unload(self):
         QgsApplication.processingRegistry().removeProvider(self.provider)
-        self.iface.removePluginMenu(u"&CurveNumberGenerator", self.action)
+        self.iface.removePluginMenu("&CurveNumberGenerator", self.action)
 
     def run(self):
         processing.execAlgorithmDialog("Curve Number Generator:Curve Number Generator")

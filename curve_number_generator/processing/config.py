@@ -1,4 +1,6 @@
 # Constants
+PLUGIN_VERSION = "2.0.0"
+
 CONUS_NLCD_SSURGO = {
     # urls
     "NLCD_IMP_2019": "https://www.mrlc.gov/geoserver/ows?version=1.1.0&SERVICE=WCS&VERSION=1.0.0&REQUEST=GetCoverage&FORMAT=GeoTIFF&COVERAGE=mrlc_download:NLCD_2019_Impervious_L48&CRS={}&WIDTH={}&HEIGHT={}&BBOX={}&",

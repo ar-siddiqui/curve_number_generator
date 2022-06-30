@@ -4,7 +4,7 @@
 
 [general]
 name=Curve Number Generator
-qgisMinimumVersion=3.6
+qgisMinimumVersion=3.18
 description=This plugin generates a Curve Number layer for the given Area of Interest within the contiguous United States. It can also download Soil, Land Cover, and Impervious Surface datasets for the same area.
 version=1.3
 author=Abdul Raheem Siddiqui

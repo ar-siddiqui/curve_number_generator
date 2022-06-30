@@ -76,7 +76,7 @@ class CurveNumberGeneratorProvider(QgsProcessingProvider):
         string should be a unique, short, character only string, eg "qgis" or
         "gdal". This string should not be localised.
         """
-        return "Curve Number Generator"
+        return "curvenumbergenerator"
 
     def name(self):
         """
@@ -93,7 +93,9 @@ class CurveNumberGeneratorProvider(QgsProcessingProvider):
         the Processing toolbox.
         """
         cmd_folder = os.path.split(inspect.getfile(inspect.currentframe()))[0]
-        icon = QIcon(os.path.join(os.path.join(os.path.dirname(cmd_folder), "icon.png")))
+        icon = QIcon(
+            os.path.join(os.path.join(os.path.dirname(cmd_folder), "icon.png"))
+        )
         return icon
 
     def longName(self):

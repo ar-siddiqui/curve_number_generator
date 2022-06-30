@@ -23,7 +23,6 @@
 """
 import sys
 import inspect
-import codecs
 import os
 from curve_number_generator.processing.algorithms.conus_nlcd_ssurgo.ssurgo_soil import (
     SsurgoSoil,
@@ -51,8 +50,6 @@ from qgis.core import (
     QgsProcessingParameterRasterLayer,
 )
 
-from tempfile import NamedTemporaryFile
-
 from curve_number_generator.processing.tools.curve_numper import CurveNumber
 
 from curve_number_generator.processing.tools.utils import (
@@ -74,8 +71,6 @@ from curve_number_generator.processing.curve_number_generator_algorithm import (
 
 cmd_folder = os.path.split(inspect.getfile(inspect.currentframe()))[0]
 sys.path.append(cmd_folder)
-qgis_settings_path = QgsApplication.qgisSettingsDirPath().replace("\\", "/")
-cn_log_path = os.path.join(qgis_settings_path, "curve_number_generator.log")
 
 __author__ = "Abdul Raheem Siddiqui"
 __date__ = "2021-08-04"
@@ -204,18 +199,6 @@ class Custom(CurveNumberGeneratorAlgorithm):
         if feedback.isCanceled():
             return {}
 
-        # # log usage
-        # with open(cn_log_path, "r+") as f:
-        #     counter = int(f.readline())
-        #     f.seek(0)
-        #     f.write(str(counter + 1))
-
-        # # check if counter is milestone
-        # if (counter + 1) % 25 == 0:
-        #     appeal_file = NamedTemporaryFile("w", suffix=".html", delete=False)
-        #     self.createHTML(appeal_file.name, counter + 1)
-        #     results["Message"] = appeal_file.name
-
         return results
 
     def name(self):
@@ -226,14 +209,14 @@ class Custom(CurveNumberGeneratorAlgorithm):
         lowercase alphanumeric characters only and no spaces or other
         formatting characters.
         """
-        return "Curve Number Generator (Custom)"
+        return "custom"
 
     def displayName(self):
         """
         Returns the translated algorithm name, which should be used for any
         user-visible display of the algorithm name.
         """
-        return self.tr(self.name())
+        return self.tr("Curve Number Generator (Custom)")
 
     def shortHelpString(self):
         return """"""
