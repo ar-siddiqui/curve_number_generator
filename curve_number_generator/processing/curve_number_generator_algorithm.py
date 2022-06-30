@@ -24,6 +24,9 @@
 import inspect
 import os
 import sys
+from curve_number_generator.processing.tools.layer_post_processor import (
+    LayerPostProcessor,
+)
 
 from curve_number_generator.processing.tools.utils import (
     checkPluginUptodate,
@@ -59,6 +62,11 @@ class CurveNumberGeneratorAlgorithm(QgsProcessingAlgorithm):
     OUTPUT = "OUTPUT"
     INPUT = "INPUT"
 
+    def __init__(self):
+        super().__init__()
+        # necessary to store LayerPostProcessor instances in class variable because of scoping issue
+        self.styler_dict = {}
+
     def postProcessAlgorithm(self, context, feedback):
         try:  # try-except because trivial features
             counter = incrementUsageCounter()
@@ -78,6 +86,13 @@ class CurveNumberGeneratorAlgorithm(QgsProcessingAlgorithm):
             )
 
         return {}
+
+    def handle_post_processing(self, layer, style_file, context) -> None:
+        if context.willLoadLayerOnCompletion(layer):
+            self.styler_dict[layer] = LayerPostProcessor(style_file)
+            context.layerToLoadOnCompletionDetails(layer).setPostProcessor(
+                self.styler_dict[layer]
+            )
 
     def group(self):
         """
