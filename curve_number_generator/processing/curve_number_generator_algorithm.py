@@ -25,6 +25,7 @@ import sys
 import inspect
 import codecs
 import os
+from qgis.PyQt.QtGui import QIcon
 from qgis.PyQt.QtCore import QCoreApplication
 from qgis.core import QgsApplication, QgsProcessingAlgorithm
 
@@ -71,6 +72,13 @@ class CurveNumberGeneratorAlgorithm(QgsProcessingAlgorithm):
         formatting characters.
         """
         return ""
+
+    def icon(self):
+        cmd_folder = os.path.split(inspect.getfile(inspect.currentframe()))[0]
+        icon = QIcon(
+            os.path.join(os.path.join(os.path.dirname(cmd_folder), "icon.png"))
+        )
+        return icon
 
     def tr(self, string):
         return QCoreApplication.translate("Processing", string)
