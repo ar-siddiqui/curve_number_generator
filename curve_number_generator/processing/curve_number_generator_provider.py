@@ -30,16 +30,15 @@ __copyright__ = "(C) 2021 by Abdul Raheem Siddiqui"
 
 __revision__ = "$Format:%H$"
 
-import os
 import inspect
-from qgis.PyQt.QtGui import QIcon
-
-from qgis.core import QgsProcessingProvider
+import os
 
 from curve_number_generator.processing import algorithms
 from curve_number_generator.processing.curve_number_generator_algorithm import (
     CurveNumberGeneratorAlgorithm,
 )
+from qgis.core import QgsProcessingProvider
+from qgis.PyQt.QtGui import QIcon
 
 
 class CurveNumberGeneratorProvider(QgsProcessingProvider):
@@ -54,7 +53,6 @@ class CurveNumberGeneratorProvider(QgsProcessingProvider):
         Unloads the provider. Any tear-down steps required by the provider
         should be implemented here.
         """
-        pass
 
     def loadAlgorithms(self):
         """

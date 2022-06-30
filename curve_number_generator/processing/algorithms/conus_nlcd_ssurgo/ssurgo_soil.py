@@ -1,25 +1,28 @@
-import requests
 import processing
-
-from qgis.PyQt.QtCore import QVariant
-
+import requests
+from curve_number_generator.processing.config import CONUS_NLCD_SSURGO
+from curve_number_generator.processing.tools.utils import (
+    clip,
+    downloadFile,
+    fixGeometries,
+    getExtent,
+    reprojectLayer,
+)
 from qgis.core import (
+    QgsCoordinateReferenceSystem,
+    QgsFeature,
+    QgsField,
+    QgsGeometry,
     QgsProcessing,
     QgsVectorLayer,
-    QgsCoordinateReferenceSystem,
-    QgsField,
-    QgsFeature,
-    QgsGeometry
 )
-from curve_number_generator.processing.config import CONUS_NLCD_SSURGO
-
-from curve_number_generator.processing.tools.utils import clip, downloadFile, fixGeometries, getExtent, reprojectLayer
+from qgis.PyQt.QtCore import QVariant
 
 
 class SsurgoSoil:
     """Class to get SSURGO soil data"""
 
-    def __init__(self, aoi_layer: QgsVectorLayer, context=None, feedback=None ):
+    def __init__(self, aoi_layer: QgsVectorLayer, context=None, feedback=None):
         self.aoi_layer = aoi_layer
         self.context = context
         self.feedback = feedback
@@ -40,7 +43,7 @@ class SsurgoSoil:
             self.outputs["ReprojectLayer4326"]
         )
 
-        return 
+        return
 
     def postRequest(self):
         """Download soil for AOI using post request and populate self.soil_layer"""
@@ -125,20 +128,21 @@ class SsurgoSoil:
                 else:
                     feat.setGeometry(QgsGeometry.fromWkt(col))
             provider.addFeatures([feat])
-        
-        return
 
+        return
 
     def wfsRequest(self):
         """Download soil for AOI using post request and populate self.soil_layer"""
 
         self.outputs["WFSDownload"] = downloadFile(
-            CONUS_NLCD_SSURGO["SSURGO_Soil"].format(",".join([str(item) for item in getExtent(self.aoi_layer_4326)])),
-            error_message= "Error getting soil data through WFS request. Your input layer maybe too large.\nTry rerunning with a smaller aoi layer.",
+            CONUS_NLCD_SSURGO["SSURGO_Soil"].format(
+                ",".join([str(item) for item in getExtent(self.aoi_layer_4326)])
+            ),
+            error_message="Error getting soil data through WFS request. Your input layer maybe too large.\nTry rerunning with a smaller aoi layer.",
             context=self.context,
-            feedback=self.feedback
+            feedback=self.feedback,
         )
-        return 
+        return
 
     def swapXY(self):
         """Swap X and Y coordinates of WFS Download"""
@@ -167,7 +171,10 @@ class SsurgoSoil:
         self.soil_layer = self.outputs["FixedGeoms"]
 
     def clipSoilLayer(self):
-        self.outputs["clip"] = clip(self.soil_layer, self.aoi_layer,
+        self.outputs["clip"] = clip(
+            self.soil_layer,
+            self.aoi_layer,
             context=self.context,
-            feedback=self.feedback,)
+            feedback=self.feedback,
+        )
         self.soil_layer = self.outputs["clip"]

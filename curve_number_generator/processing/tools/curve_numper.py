@@ -1,27 +1,10 @@
-from qgis.core import (
-    QgsApplication,
-    QgsProcessing,
-    QgsProcessingAlgorithm,
-    QgsProcessingParameterFeatureSource,
-    QgsProcessingMultiStepFeedback,
-    QgsProcessingParameterVectorLayer,
-    QgsProcessingParameterBoolean,
-    QgsProcessingParameterDefinition,
-    QgsCoordinateReferenceSystem,
-    QgsExpression,
-    QgsVectorLayer,
-    QgsDistanceArea,
-    QgsUnitTypes,
-    QgsCoordinateTransformContext,
-    QgsGeometry,
-    QgsField,
-    QgsFeature,
-    QgsProcessingException,
-    QgsProcessingOutputHtml,
-    QgsProcessingContext,
-    QgsProject,
-)
 import processing
+from qgis.core import (
+    QgsProcessing,
+    QgsProcessingContext,
+    QgsProcessingMultiStepFeedback,
+    QgsVectorLayer,
+)
 
 
 class CurveNumber:

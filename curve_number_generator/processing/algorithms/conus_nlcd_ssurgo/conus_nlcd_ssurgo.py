@@ -21,50 +21,42 @@
  *                                                                         *
  ***************************************************************************/
 """
-import sys
 import inspect
 import os
+import sys
+
+import processing
 from curve_number_generator.processing.algorithms.conus_nlcd_ssurgo.ssurgo_soil import (
     SsurgoSoil,
 )
-import processing
-from qgis.core import (
-    QgsApplication,
-    QgsProcessing,
-    QgsProcessingParameterFeatureSource,
-    QgsProcessingMultiStepFeedback,
-    QgsProcessingParameterVectorLayer,
-    QgsProcessingParameterBoolean,
-    QgsProcessingParameterDefinition,
-    QgsCoordinateReferenceSystem,
-    QgsExpression,
-    QgsVectorLayer,
-    QgsField,
-    QgsFeature,
-    QgsUnitTypes,
-    QgsProcessingException,
-    QgsProcessingOutputHtml,
-    QgsProcessingParameterRasterDestination,
-    QgsProcessingParameterVectorDestination,
+from curve_number_generator.processing.config import CONUS_NLCD_SSURGO
+from curve_number_generator.processing.curve_number_generator_algorithm import (
+    CurveNumberGeneratorAlgorithm,
 )
-
+from curve_number_generator.processing.tools.curve_numper import CurveNumber
 from curve_number_generator.processing.tools.utils import (
     checkAreaLimits,
     createRequestBBOXDim,
     downloadFile,
     fixGeometries,
+    gdalPolygonize,
     gdalWarp,
     getExtent,
     getExtentArea,
     reprojectLayer,
-    gdalPolygonize,
 )
-
-from curve_number_generator.processing.tools.curve_numper import CurveNumber
-
-from curve_number_generator.processing.config import CONUS_NLCD_SSURGO
-from curve_number_generator.processing.curve_number_generator_algorithm import (
-    CurveNumberGeneratorAlgorithm,
+from qgis.core import (
+    QgsCoordinateReferenceSystem,
+    QgsProcessing,
+    QgsProcessingMultiStepFeedback,
+    QgsProcessingParameterBoolean,
+    QgsProcessingParameterDefinition,
+    QgsProcessingParameterFeatureSource,
+    QgsProcessingParameterRasterDestination,
+    QgsProcessingParameterVectorDestination,
+    QgsProcessingParameterVectorLayer,
+    QgsUnitTypes,
+    QgsVectorLayer,
 )
 
 cmd_folder = os.path.split(inspect.getfile(inspect.currentframe()))[0]

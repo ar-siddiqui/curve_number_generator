@@ -21,53 +21,30 @@
  *                                                                         *
  ***************************************************************************/
 """
-import sys
 import inspect
 import os
-from curve_number_generator.processing.algorithms.conus_nlcd_ssurgo.ssurgo_soil import (
-    SsurgoSoil,
-)
+import sys
+
 import processing
-from qgis.core import (
-    QgsApplication,
-    QgsProcessing,
-    QgsProcessingParameterFeatureSource,
-    QgsProcessingMultiStepFeedback,
-    QgsProcessingParameterVectorLayer,
-    QgsProcessingParameterBoolean,
-    QgsProcessingParameterDefinition,
-    QgsCoordinateReferenceSystem,
-    QgsExpression,
-    QgsVectorLayer,
-    QgsField,
-    QgsFeature,
-    QgsUnitTypes,
-    QgsProcessingException,
-    QgsProcessingOutputHtml,
-    QgsProcessingParameterRasterDestination,
-    QgsProcessingParameterVectorDestination,
-    QgsProcessingParameterField,
-    QgsProcessingParameterRasterLayer,
-)
 
-from curve_number_generator.processing.tools.curve_numper import CurveNumber
-
-from curve_number_generator.processing.tools.utils import (
-    checkAreaLimits,
-    createRequestBBOXDim,
-    downloadFile,
-    fixGeometries,
-    gdalWarp,
-    getExtent,
-    getExtentArea,
-    reprojectLayer,
-    clip,
-    gdalPolygonize,
-)
 from curve_number_generator.processing.curve_number_generator_algorithm import (
     CurveNumberGeneratorAlgorithm,
 )
-
+from curve_number_generator.processing.tools.curve_numper import CurveNumber
+from curve_number_generator.processing.tools.utils import (
+    clip,
+    fixGeometries,
+    gdalPolygonize,
+)
+from qgis.core import (
+    QgsProcessing,
+    QgsProcessingMultiStepFeedback,
+    QgsProcessingParameterFeatureSource,
+    QgsProcessingParameterField,
+    QgsProcessingParameterRasterLayer,
+    QgsProcessingParameterVectorDestination,
+    QgsProcessingParameterVectorLayer,
+)
 
 cmd_folder = os.path.split(inspect.getfile(inspect.currentframe()))[0]
 sys.path.append(cmd_folder)
@@ -141,7 +118,7 @@ class Custom(CurveNumberGeneratorAlgorithm):
     def processAlgorithm(self, parameters, context, model_feedback):
         # Use a multi-step feedback, so that individual child algorithm progress reports are adjusted for the
         # overall progress through the model
-        feedback = QgsProcessingMultiStepFeedback(19, model_feedback)
+        feedback = QgsProcessingMultiStepFeedback(8, model_feedback)
         results = {}
         outputs = {}
 
@@ -165,6 +142,12 @@ class Custom(CurveNumberGeneratorAlgorithm):
             context=context,
             feedback=feedback,
         )
+
+        step += 1
+        feedback.setCurrentStep(step)
+        if feedback.isCanceled():
+            return {}
+
         # Clip to AOI
         outputs["LandCoverClipped"] = clip(
             outputs["LandCoverVector"],
@@ -172,6 +155,11 @@ class Custom(CurveNumberGeneratorAlgorithm):
             context=context,
             feedback=feedback,
         )
+
+        step += 1
+        feedback.setCurrentStep(step)
+        if feedback.isCanceled():
+            return {}
 
         curve_number = CurveNumber(
             outputs["LandCoverVector"],

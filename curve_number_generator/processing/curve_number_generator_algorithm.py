@@ -21,19 +21,18 @@
  *                                                                         *
  ***************************************************************************/
 """
-import sys
 import inspect
 import os
-from qgis.PyQt.QtGui import QIcon
-from qgis.PyQt.QtCore import QCoreApplication
-from qgis.core import QgsApplication, QgsProcessingAlgorithm
-
+import sys
 
 from curve_number_generator.processing.tools.utils import (
-    incrementUsageCounter,
     checkPluginUptodate,
     displayUsageMessage,
+    incrementUsageCounter,
 )
+from qgis.core import QgsApplication, QgsProcessingAlgorithm
+from qgis.PyQt.QtCore import QCoreApplication
+from qgis.PyQt.QtGui import QIcon
 
 cmd_folder = os.path.split(inspect.getfile(inspect.currentframe()))[0]
 sys.path.append(cmd_folder)

@@ -1,22 +1,19 @@
-import requests
 import os
-import processing
 
-from qgis.core import QgsApplication
+import processing
+import requests
+from curve_number_generator.processing.config import PLUGIN_VERSION
 from qgis.core import (
-    QgsProcessing,
-    QgsVectorLayer,
-    QgsProcessingException,
-    QgsDistanceArea,
-    QgsUnitTypes,
+    QgsApplication,
     QgsCoordinateTransformContext,
+    QgsDistanceArea,
     QgsGeometry,
+    QgsProcessing,
+    QgsProcessingException,
+    QgsVectorLayer,
 )
 
-from curve_number_generator.processing.config import PLUGIN_VERSION
 
-# cmd_folder = os.path.split(inspect.getfile(inspect.currentframe()))[0]
-# sys.path.append(cmd_folder)
 qgis_settings_path = QgsApplication.qgisSettingsDirPath().replace("\\", "/")
 cn_log_path = os.path.join(qgis_settings_path, "curve_number_generator.log")
 
@@ -99,8 +96,9 @@ def checkPluginUptodate(plugin_name: str) -> None:
 
 
 def checkAvailPluginVersion(plugin_name: str) -> str:
-    import requests
     import xml.etree.ElementTree as ET
+
+    import requests
     from qgis.core import Qgis
 
     qgis_version = Qgis.QGIS_VERSION.replace("-", ".").split(".")
@@ -129,9 +127,9 @@ def installPlugin():
 
 
 def displayMessage(message, button_text, button_func):
-    from qgis.utils import iface
-    from qgis.PyQt.QtWidgets import QPushButton
     from qgis.core import Qgis
+    from qgis.PyQt.QtWidgets import QPushButton
+    from qgis.utils import iface
 
     widget = iface.messageBar().createMessage("Curve Number Generator Plugin", message)
     button = QPushButton(widget)
