@@ -98,10 +98,8 @@ class CurveNumber:
             is_child_algorithm=True,
         )["OUTPUT"]
 
-        step += 1
-        self.feedback.setCurrentStep(step)
-        if self.feedback.isCanceled():
-            return {}
+        # calc_layer = self.context.takeResultLayer(self.outputs["GDCode"])
+        # QgsProject.instance().addMapLayer(calc_layer)
 
         step += 1
         self.feedback.setCurrentStep(step)
@@ -118,7 +116,9 @@ class CurveNumber:
             "INPUT_2": self.lookup_layer,
             "METHOD": 1,
             "PREFIX": "",
-            "OUTPUT": QgsProcessing.TEMPORARY_OUTPUT,
+            "OUTPUT": QgsProcessing.TEMPORARY_OUTPUT
+            if fields_to_drop_in_result
+            else output,
         }
         self.outputs["CNJoin"] = processing.run(
             "native:joinattributestable",
@@ -127,6 +127,9 @@ class CurveNumber:
             feedback=self.feedback,
             is_child_algorithm=True,
         )["OUTPUT"]
+
+        if not fields_to_drop_in_result:
+            return self.outputs["CNJoin"], step
 
         step += 1
         self.feedback.setCurrentStep(step)
