@@ -29,7 +29,6 @@ from curve_number_generator.processing.algorithms.conus_nlcd_ssurgo.ssurgo_soil 
     SsurgoSoil,
 )
 import processing
-from qgis.PyQt.QtGui import QIcon
 from qgis.core import (
     QgsApplication,
     QgsProcessing,
@@ -109,14 +108,6 @@ class ConusNlcdSsurgo(CurveNumberGeneratorAlgorithm):
                 defaultValue=None,
             )
         )
-        self.addParameter(
-            QgsProcessingParameterVectorLayer(
-                "aoi",
-                "Area of Interest",
-                types=[QgsProcessing.TypeVectorPolygon],
-                defaultValue=None,
-            )
-        )
         param = QgsProcessingParameterVectorLayer(
             "CnLookup",
             "Lookup Table",
@@ -127,7 +118,7 @@ class ConusNlcdSsurgo(CurveNumberGeneratorAlgorithm):
         param.setFlags(param.flags() | QgsProcessingParameterDefinition.FlagAdvanced)
         self.addParameter(param)
         param = QgsProcessingParameterBoolean(
-            "drainedsoilsleaveuncheckedifnotsure",
+            "DrainedSoils",
             "Drained Soils? [leave unchecked if not sure]",
             defaultValue=False,
         )
@@ -173,7 +164,7 @@ class ConusNlcdSsurgo(CurveNumberGeneratorAlgorithm):
     def processAlgorithm(self, parameters, context, model_feedback):
         # Use a multi-step feedback, so that individual child algorithm progress reports are adjusted for the
         # overall progress through the model
-        feedback = QgsProcessingMultiStepFeedback(25, model_feedback)
+        feedback = QgsProcessingMultiStepFeedback(19, model_feedback)
         results = {}
         outputs = {}
 
@@ -414,7 +405,7 @@ class ConusNlcdSsurgo(CurveNumberGeneratorAlgorithm):
                 "FIELD_NAME": "_hsg_single_",
                 "FIELD_PRECISION": 3,
                 "FIELD_TYPE": 2,
-                "FORMULA": "if( var('drainedsoilsleaveuncheckedifnotsure') = True,replace(\"HYDGRPDCD\", '/D', ''),replace(\"HYDGRPDCD\", map('A/', '', 'B/', '', 'C/', '')))",
+                "FORMULA": "if( var('DrainedSoils') = True,replace(\"HYDGRPDCD\", '/D', ''),replace(\"HYDGRPDCD\", map('A/', '', 'B/', '', 'C/', '')))",
                 "INPUT": results["Soils"],
                 "NEW_FIELD": True,
                 "OUTPUT": QgsProcessing.TEMPORARY_OUTPUT,
@@ -436,7 +427,7 @@ class ConusNlcdSsurgo(CurveNumberGeneratorAlgorithm):
             )
 
             try:
-                parameters["CurveNumber"].destinationName = "Curve Number Layer"
+                parameters["CurveNumber"].destinationName = "Curve Number"
             except AttributeError:
                 pass
 
@@ -483,11 +474,6 @@ class ConusNlcdSsurgo(CurveNumberGeneratorAlgorithm):
         user-visible display of the algorithm name.
         """
         return self.tr(self.name())
-
-    def icon(self):
-        cmd_folder = os.path.split(inspect.getfile(inspect.currentframe()))[0]
-        icon = QIcon(os.path.join(os.path.join(cmd_folder, "icon.png")))
-        return icon
 
     def shortHelpString(self):
         return """<html><body><a "href"="https://github.com/ar-siddiqui/curve_number_generator/wiki/Tutorials">Video Tutorials</a></h3>
