@@ -23,8 +23,8 @@
 """
 
 __author__ = "Abdul Raheem Siddiqui"
-__date__ = "2021-08-04"
-__copyright__ = "(C) 2021 by Abdul Raheem Siddiqui"
+__date__ = "2022-07-22"
+__copyright__ = "(C) 2022 by Abdul Raheem Siddiqui"
 
 # This will get replaced with a git SHA1 when you do a git archive
 
@@ -34,9 +34,8 @@ import inspect
 import os
 
 from curve_number_generator.processing import algorithms
-from curve_number_generator.processing.curve_number_generator_algorithm import (
-    CurveNumberGeneratorAlgorithm,
-)
+from curve_number_generator.processing.curve_number_generator_algorithm import \
+    CurveNumberGeneratorAlgorithm
 from qgis.core import QgsProcessingProvider
 from qgis.PyQt.QtGui import QIcon
 

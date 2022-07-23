@@ -1,21 +1,34 @@
+# -*- coding: utf-8 -*-
+
+"""
+/***************************************************************************
+ *                                                                         *
+ *   This program is free software; you can redistribute it and/or modify  *
+ *   it under the terms of the GNU General Public License as published by  *
+ *   the Free Software Foundation; either version 2 of the License, or     *
+ *   (at your option) any later version.                                   *
+ *                                                                         *
+ ***************************************************************************/
+"""
+
+__author__ = "Abdul Raheem Siddiqui"
+__date__ = "2022-07-22"
+__copyright__ = "(C) 2022 by Abdul Raheem Siddiqui"
+
+# This will get replaced with a git SHA1 when you do a git archive
+
+__revision__ = "$Format:%H$"
+
+
 import processing
 import requests
 from curve_number_generator.processing.config import CONUS_NLCD_SSURGO
-from curve_number_generator.processing.tools.utils import (
-    clip,
-    downloadFile,
-    fixGeometries,
-    getExtent,
-    reprojectLayer,
-)
-from qgis.core import (
-    QgsCoordinateReferenceSystem,
-    QgsFeature,
-    QgsField,
-    QgsGeometry,
-    QgsProcessing,
-    QgsVectorLayer,
-)
+from curve_number_generator.processing.tools.utils import (clip, downloadFile,
+                                                           fixGeometries,
+                                                           getExtent,
+                                                           reprojectLayer)
+from qgis.core import (QgsCoordinateReferenceSystem, QgsFeature, QgsField,
+                       QgsGeometry, QgsProcessing, QgsVectorLayer)
 from qgis.PyQt.QtCore import QVariant
 
 
@@ -164,9 +177,7 @@ class SsurgoSoil:
         """Fix soil layer geometries"""
 
         self.outputs[f"FixedGeoms"] = fixGeometries(
-            self.soil_layer,
-            context=self.context,
-            feedback=self.feedback,
+            self.soil_layer, context=self.context, feedback=self.feedback
         )
         self.soil_layer = self.outputs["FixedGeoms"]
 

@@ -3,16 +3,9 @@ import os
 import processing
 import requests
 from curve_number_generator.processing.config import PLUGIN_VERSION
-from qgis.core import (
-    QgsApplication,
-    QgsCoordinateTransformContext,
-    QgsDistanceArea,
-    QgsGeometry,
-    QgsProcessing,
-    QgsProcessingException,
-    QgsVectorLayer,
-)
-
+from qgis.core import (QgsApplication, QgsCoordinateTransformContext,
+                       QgsDistanceArea, QgsGeometry, QgsProcessing,
+                       QgsProcessingException, QgsVectorLayer)
 
 qgis_settings_path = QgsApplication.qgisSettingsDirPath().replace("\\", "/")
 cn_log_path = os.path.join(qgis_settings_path, "curve_number_generator.log")
@@ -187,10 +180,7 @@ def downloadFile(
 
 
 def fixGeometries(
-    input,
-    output=QgsProcessing.TEMPORARY_OUTPUT,
-    context=None,
-    feedback=None,
+    input, output=QgsProcessing.TEMPORARY_OUTPUT, context=None, feedback=None
 ) -> str:
     alg_params = {"INPUT": input, "OUTPUT": output}
     return processing.run(
@@ -203,11 +193,7 @@ def fixGeometries(
 
 
 def clip(
-    input,
-    overlay,
-    output=QgsProcessing.TEMPORARY_OUTPUT,
-    context=None,
-    feedback=None,
+    input, overlay, output=QgsProcessing.TEMPORARY_OUTPUT, context=None, feedback=None
 ) -> str:
     alg_params = {"INPUT": input, "OVERLAY": overlay, "OUTPUT": output}
     return processing.run(

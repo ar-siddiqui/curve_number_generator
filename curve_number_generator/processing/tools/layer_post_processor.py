@@ -1,7 +1,4 @@
-from qgis.core import (
-    QgsProcessingLayerPostProcessorInterface,
-)
-
+from qgis.core import QgsProcessingLayerPostProcessorInterface
 from qgis.utils import iface
 
 
