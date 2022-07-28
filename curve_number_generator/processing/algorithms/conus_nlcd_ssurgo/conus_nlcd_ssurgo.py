@@ -139,7 +139,7 @@ class ConusNlcdSsurgo(CurveNumberGeneratorAlgorithm):
         outputs = {}
 
         # Assiging Default CN_Lookup Table
-        if parameters["CnLookup"] == None:
+        if parameters.get("CnLookup", None):
             csv_uri = (
                 "file:///"
                 + os.path.join(cmd_folder, "default_lookup.csv")
