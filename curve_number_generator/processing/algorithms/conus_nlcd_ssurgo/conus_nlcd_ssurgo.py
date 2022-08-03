@@ -32,6 +32,7 @@ from curve_number_generator.processing.curve_number_generator_algorithm import C
 from curve_number_generator.processing.tools.curve_numper import CurveNumber
 from curve_number_generator.processing.tools.utils import (
     checkAreaLimits,
+    createDefaultLookup,
     createRequestBBOXDim,
     downloadFile,
     fixGeometries,
@@ -148,10 +149,8 @@ class ConusNlcdSsurgo(CurveNumberGeneratorAlgorithm):
         outputs = {}
 
         # Assiging Default CN_Lookup Table
-        if parameters.get("CnLookup", None):
-            csv_uri = "file:///" + os.path.join(cmd_folder, "default_lookup.csv") + "?delimiter=,"
-            csv = QgsVectorLayer(csv_uri, "default_lookup.csv", "delimitedtext")
-            parameters["CnLookup"] = csv
+        if not parameters.get("CnLookup", None):
+            parameters["CnLookup"] = createDefaultLookup(cmd_folder)
 
         area_layer = self.parameterAsVectorLayer(parameters, "aoi", context)
         orig_epsg_code = area_layer.crs().authid()  # preserve orignal epsg_code to project back to it

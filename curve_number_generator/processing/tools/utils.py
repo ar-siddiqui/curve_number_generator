@@ -3,9 +3,15 @@ import os
 import processing
 import requests
 from curve_number_generator.processing.config import PLUGIN_VERSION
-from qgis.core import (QgsApplication, QgsCoordinateTransformContext,
-                       QgsDistanceArea, QgsGeometry, QgsProcessing,
-                       QgsProcessingException, QgsVectorLayer)
+from qgis.core import (
+    QgsApplication,
+    QgsCoordinateTransformContext,
+    QgsDistanceArea,
+    QgsGeometry,
+    QgsProcessing,
+    QgsProcessingException,
+    QgsVectorLayer,
+)
 
 qgis_settings_path = QgsApplication.qgisSettingsDirPath().replace("\\", "/")
 cn_log_path = os.path.join(qgis_settings_path, "curve_number_generator.log")
@@ -83,9 +89,7 @@ def checkPluginUptodate(plugin_name: str) -> None:
     # check if new version is available of the plugin
     avail_version = checkAvailPluginVersion(plugin_name)
     if avail_version != PLUGIN_VERSION:
-        displayMessage(
-            "Newer version of the plugin is available.", "Upgrade", installPlugin
-        )
+        displayMessage("Newer version of the plugin is available.", "Upgrade", installPlugin)
 
 
 def checkAvailPluginVersion(plugin_name: str) -> str:
@@ -97,9 +101,7 @@ def checkAvailPluginVersion(plugin_name: str) -> str:
     qgis_version = Qgis.QGIS_VERSION.replace("-", ".").split(".")
     qgis_version = qgis_version[0] + "." + qgis_version[1]
 
-    r = requests.get(
-        f"https://plugins.qgis.org/plugins/plugins.xml?qgis={qgis_version}"
-    )
+    r = requests.get(f"https://plugins.qgis.org/plugins/plugins.xml?qgis={qgis_version}")
 
     xml_str = r.text
     root = ET.fromstring(xml_str)
@@ -134,8 +136,8 @@ def displayMessage(message, button_text, button_func):
 
 def createDefaultLookup(cmd_folder) -> QgsVectorLayer:
     """Expects a default_lookup.csv" file in the cmd_folder."""
-    csv_uri = "file:///" + os.path.join(cmd_folder, "CN_Lookup.csv") + "?delimiter=,"
-    csv = QgsVectorLayer(csv_uri, "CN_Lookup.csv", "delimitedtext")
+    csv_uri = "file:///" + os.path.join(cmd_folder, "default_lookup.csv") + "?delimiter=,"
+    csv = QgsVectorLayer(csv_uri, "default_lookup.csv", "delimitedtext")
     return csv
 
 
@@ -157,9 +159,7 @@ def createRequestBBOXDim(extent: tuple, cell_size: int) -> tuple:
     return BBOX_width_int, BBOX_height_int
 
 
-def downloadFile(
-    request_URL, ping_URL="", error_message="", context=None, feedback=None
-):
+def downloadFile(request_URL, ping_URL="", error_message="", context=None, feedback=None):
     try:
         if ping_URL:  # first make a low cost request to check if server is live
             ping_URL = ping_URL
@@ -179,9 +179,7 @@ def downloadFile(
         feedback.reportError(f"Error: {str(e)}\n\n{error_message}", True)
 
 
-def fixGeometries(
-    input, output=QgsProcessing.TEMPORARY_OUTPUT, context=None, feedback=None
-) -> str:
+def fixGeometries(input, output=QgsProcessing.TEMPORARY_OUTPUT, context=None, feedback=None) -> str:
     alg_params = {"INPUT": input, "OUTPUT": output}
     return processing.run(
         "native:fixgeometries",
@@ -192,9 +190,7 @@ def fixGeometries(
     )["OUTPUT"]
 
 
-def clip(
-    input, overlay, output=QgsProcessing.TEMPORARY_OUTPUT, context=None, feedback=None
-) -> str:
+def clip(input, overlay, output=QgsProcessing.TEMPORARY_OUTPUT, context=None, feedback=None) -> str:
     alg_params = {"INPUT": input, "OVERLAY": overlay, "OUTPUT": output}
     return processing.run(
         "native:clip",
@@ -227,9 +223,7 @@ def reprojectLayer(
     )["OUTPUT"]
 
 
-def checkAreaLimits(
-    area_acres, soft_limit, hard_limit, unit="acres", feedback=None
-) -> None:
+def checkAreaLimits(area_acres, soft_limit, hard_limit, unit="acres", feedback=None) -> None:
     if area_acres > hard_limit:
         raise QgsProcessingException(
             f"Area Boundary layer extent area should be less than {hard_limit} {unit}.\nArea Boundary layer extent area is {round(area_acres,4):,} {unit}.\n\nExecution Failed"
@@ -239,9 +233,7 @@ def checkAreaLimits(
             f"Your Area Boundary layer extent area is {round(area_acres,4):,} {unit}. The recommended extent area is {soft_limit} {unit} or less. If the Algorithm fails, rerun with a smaller input layer.\n"
         )
     else:
-        feedback.pushInfo(
-            f"Area Boundary layer extent area is {round(area_acres,4):,} {unit}\n"
-        )
+        feedback.pushInfo(f"Area Boundary layer extent area is {round(area_acres,4):,} {unit}\n")
 
 
 def getExtentArea(layer: QgsVectorLayer, unit_type):
