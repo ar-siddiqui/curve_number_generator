@@ -26,25 +26,34 @@ import os
 import sys
 
 import processing
-from curve_number_generator.processing.algorithms.conus_nlcd_ssurgo.ssurgo_soil import \
-    SsurgoSoil
-from curve_number_generator.processing.config import (CONUS_NLCD_SSURGO,
-                                                      PLUGIN_VERSION)
-from curve_number_generator.processing.curve_number_generator_algorithm import \
-    CurveNumberGeneratorAlgorithm
+from curve_number_generator.processing.algorithms.conus_nlcd_ssurgo.ssurgo_soil import SsurgoSoil
+from curve_number_generator.processing.config import CONUS_NLCD_SSURGO, PLUGIN_VERSION
+from curve_number_generator.processing.curve_number_generator_algorithm import CurveNumberGeneratorAlgorithm
 from curve_number_generator.processing.tools.curve_numper import CurveNumber
 from curve_number_generator.processing.tools.utils import (
-    checkAreaLimits, createRequestBBOXDim, downloadFile, fixGeometries,
-    gdalPolygonize, gdalWarp, getExtent, getExtentArea, reprojectLayer)
-from qgis.core import (QgsCoordinateReferenceSystem, QgsProcessing,
-                       QgsProcessingMultiStepFeedback,
-                       QgsProcessingParameterBoolean,
-                       QgsProcessingParameterDefinition,
-                       QgsProcessingParameterFeatureSource,
-                       QgsProcessingParameterRasterDestination,
-                       QgsProcessingParameterVectorDestination,
-                       QgsProcessingParameterVectorLayer, QgsUnitTypes,
-                       QgsVectorLayer)
+    checkAreaLimits,
+    createRequestBBOXDim,
+    downloadFile,
+    fixGeometries,
+    gdalPolygonize,
+    gdalWarp,
+    getExtent,
+    getExtentArea,
+    reprojectLayer,
+)
+from qgis.core import (
+    QgsCoordinateReferenceSystem,
+    QgsProcessing,
+    QgsProcessingMultiStepFeedback,
+    QgsProcessingParameterBoolean,
+    QgsProcessingParameterDefinition,
+    QgsProcessingParameterFeatureSource,
+    QgsProcessingParameterRasterDestination,
+    QgsProcessingParameterVectorDestination,
+    QgsProcessingParameterVectorLayer,
+    QgsUnitTypes,
+    QgsVectorLayer,
+)
 
 cmd_folder = os.path.split(inspect.getfile(inspect.currentframe()))[0]
 if cmd_folder not in sys.path:
@@ -140,18 +149,12 @@ class ConusNlcdSsurgo(CurveNumberGeneratorAlgorithm):
 
         # Assiging Default CN_Lookup Table
         if parameters.get("CnLookup", None):
-            csv_uri = (
-                "file:///"
-                + os.path.join(cmd_folder, "default_lookup.csv")
-                + "?delimiter=,"
-            )
+            csv_uri = "file:///" + os.path.join(cmd_folder, "default_lookup.csv") + "?delimiter=,"
             csv = QgsVectorLayer(csv_uri, "default_lookup.csv", "delimitedtext")
             parameters["CnLookup"] = csv
 
         area_layer = self.parameterAsVectorLayer(parameters, "aoi", context)
-        orig_epsg_code = (
-            area_layer.crs().authid()
-        )  # preserve orignal epsg_code to project back to it
+        orig_epsg_code = area_layer.crs().authid()  # preserve orignal epsg_code to project back to it
 
         # Reproject layer to EPSG:5070
         outputs["ReprojectLayer5070"] = reprojectLayer(
@@ -217,14 +220,10 @@ class ConusNlcdSsurgo(CurveNumberGeneratorAlgorithm):
                 return {}
 
             imp_style_path = os.path.join(cmd_folder, "nlcd_impervious.qml")
-            self.handle_post_processing(
-                results["NLCDImpervious"], imp_style_path, context
-            )
+            self.handle_post_processing(results["NLCDImpervious"], imp_style_path, context)
 
         # NLCD Land Cover Data
-        if any(
-            [parameters.get("NLCDLandCover", None), parameters.get("CurveNumber", None)]
-        ):
+        if any([parameters.get("NLCDLandCover", None), parameters.get("CurveNumber", None)]):
             outputs["DownloadNlcdLC"] = downloadFile(
                 CONUS_NLCD_SSURGO["NLCD_LC_2019"].format(
                     epsg_code,
@@ -255,7 +254,7 @@ class ConusNlcdSsurgo(CurveNumberGeneratorAlgorithm):
 
             # reproject to original crs
             # Warp (reproject)
-            results["NLCDLandCover"] = gdalWarp(
+            outputs["NLCDLandCover"] = gdalWarp(
                 outputs["DownloadNlcdLC"],
                 QgsCoordinateReferenceSystem(str(orig_epsg_code)),
                 lc_output,
@@ -268,16 +267,14 @@ class ConusNlcdSsurgo(CurveNumberGeneratorAlgorithm):
             if feedback.isCanceled():
                 return {}
 
-            lc_style_path = os.path.join(cmd_folder, "nlcd_land_cover.qml")
-            self.handle_post_processing(
-                results["NLCDLandCover"], lc_style_path, context
-            )
+            if parameters.get("NLCDLandCover", None):
+                lc_style_path = os.path.join(cmd_folder, "nlcd_land_cover.qml")
+                results["NLCDLandCover"] = outputs["NLCDLandCover"]
+                self.handle_post_processing(results["NLCDLandCover"], lc_style_path, context)
 
         # Soil Layer
         if any([parameters.get("Soils", None), parameters.get("CurveNumber", None)]):
-            ssurgoSoil = SsurgoSoil(
-                parameters["aoi"], context=context, feedback=feedback
-            )
+            ssurgoSoil = SsurgoSoil(parameters["aoi"], context=context, feedback=feedback)
             # Call class method in required sequence
             ssurgoSoil.reprojectTo4326()
             step += 1
@@ -342,7 +339,7 @@ class ConusNlcdSsurgo(CurveNumberGeneratorAlgorithm):
             else:
                 soils_output = QgsProcessing.TEMPORARY_OUTPUT
 
-            results["Soils"] = fixGeometries(
+            outputs["Soils"] = fixGeometries(
                 outputs["ReprojectedSoils"],
                 soils_output,
                 context=context,
@@ -353,8 +350,10 @@ class ConusNlcdSsurgo(CurveNumberGeneratorAlgorithm):
             if feedback.isCanceled():
                 return {}
 
-            soils_style_path = os.path.join(cmd_folder, "soils.qml")
-            self.handle_post_processing(results["Soils"], soils_style_path, context)
+            if parameters.get("Soils", None):
+                soils_style_path = os.path.join(cmd_folder, "soils.qml")
+                results["Soils"] = outputs["Soils"]
+                self.handle_post_processing(results["Soils"], soils_style_path, context)
 
         # # Curve Number Calculations
         if parameters.get("CurveNumber", None):
@@ -362,7 +361,7 @@ class ConusNlcdSsurgo(CurveNumberGeneratorAlgorithm):
             # Prepare Land Cover for Curve Number Calculation
             # Polygonize (raster to vector)
             outputs["NLCDLandCoverPolygonize"] = gdalPolygonize(
-                results["NLCDLandCover"],
+                outputs["NLCDLandCover"],
                 "land_cover",
                 context=context,
                 feedback=feedback,
@@ -385,7 +384,7 @@ class ConusNlcdSsurgo(CurveNumberGeneratorAlgorithm):
                 "FIELD_PRECISION": 3,
                 "FIELD_TYPE": 2,
                 "FORMULA": "if( var('DrainedSoils') = True,replace(\"HYDGRPDCD\", '/D', ''),replace(\"HYDGRPDCD\", map('A/', '', 'B/', '', 'C/', '')))",
-                "INPUT": results["Soils"],
+                "INPUT": outputs["Soils"],
                 "NEW_FIELD": True,
                 "OUTPUT": QgsProcessing.TEMPORARY_OUTPUT,
             }
@@ -423,9 +422,7 @@ class ConusNlcdSsurgo(CurveNumberGeneratorAlgorithm):
             if feedback.isCanceled():
                 return {}
 
-            cn_style_path = os.path.join(
-                os.path.dirname(cmd_folder), "curve_number.qml"
-            )
+            cn_style_path = os.path.join(os.path.dirname(cmd_folder), "curve_number.qml")
             self.handle_post_processing(results["CurveNumber"], cn_style_path, context)
 
         return results
@@ -459,7 +456,7 @@ class ConusNlcdSsurgo(CurveNumberGeneratorAlgorithm):
 <h3>Drained Soils? [leave unchecked if not sure]</h3>
 <p>Certain Soils are categorized as dual category in SSURGO dataset. They have Hydrologic Soil Group D for Undrained Conditions and Hydrologic Soil Group A/B/C for Drained Conditions.
 
-If left unchecked, the algorithm will assume HSG D for all dual category soils. 
+If left unchecked, the algorithm will assume HSG D for all dual category soils.
 
 If checked the algorithm will assume HSG A/B/C for each dual category soil.</p>
 <h2>Outputs</h2>
