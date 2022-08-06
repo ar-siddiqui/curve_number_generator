@@ -1,4 +1,4 @@
-![curve number generator icon](icon.png)
+![curve number generator icon](curve_number_generator/icon.png)
 
 # Curve-Number-Generator
 
