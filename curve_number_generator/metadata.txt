@@ -4,13 +4,13 @@
 
 [general]
 name=Curve Number Generator
-qgisMinimumVersion=3.6
-description=This plugin generates a Curve Number layer for the given Area of Interest within the contiguous United States. It can also download Soil, Land Cover, and Impervious Surface datasets for the same area.
-version=1.3
+qgisMinimumVersion=3.18
+description=Curve Number Generator plugin has multiple algorithms to generate the curve number layer for any area of interest using different datasets.
+version=2.0.0
 author=Abdul Raheem Siddiqui
 email=ars.work.ce@gmail.com
 
-about=This plugin generates a Curve Number layer for the given Area of Interest within the contiguous United States. It can also download Soil, Land Cover, and Impervious Surface datasets for the same area.
+about=Curve Number Generator plugin has multiple algorithms to generate the curve number layer for any area of interest using different datasets.
 
 
 tracker=https://github.com/ar-siddiqui/curve_number_generator/issues
@@ -21,19 +21,19 @@ repository=https://github.com/ar-siddiqui/curve_number_generator
 
 hasProcessingProvider=yes
 # Uncomment the following line and add your changelog:
-changelog= Version 1.3 - 2021-08-04
-	- Change NLCD LU to 2019
-	- Change NLCD Impervious Raster to 2019
+changelog= Version 2.0.0 - 2022-07-24
+	- New algorithm to create curve number layer using local datasets
+	- Algorithms outputs are now proper QGIS destination sinks, thus allowing better batch processing and calls from command line
 
 
 # Tags are comma separated with spaces allowed
-tags=curve number, CN, NLCD Land Cover, SSURGO, Soil, Hydrologic Soil Group, HSG, WFS, WMS, Hydrology, SCS, Impervious Surface
+tags=curve number, CN, NLCD Land Cover, SSURGO, Soil, Hydrologic Soil Group, HSG, Hydrology, SCS, Impervious Surface
 
 homepage=https://github.com/ar-siddiqui/curve_number_generator
 category=Analysis
 icon=icon.png
 # experimental flag
-experimental=False
+experimental=True
 
 # deprecated flag (applies to the whole plugin, not just a single version)
 deprecated=False

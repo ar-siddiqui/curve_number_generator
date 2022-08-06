@@ -23,19 +23,21 @@
 """
 
 __author__ = "Abdul Raheem Siddiqui"
-__date__ = "2021-08-04"
-__copyright__ = "(C) 2021 by Abdul Raheem Siddiqui"
+__date__ = "2022-07-22"
+__copyright__ = "(C) 2022 by Abdul Raheem Siddiqui"
 
 # This will get replaced with a git SHA1 when you do a git archive
 
 __revision__ = "$Format:%H$"
 
-import os
 import inspect
-from qgis.PyQt.QtGui import QIcon
+import os
 
+from curve_number_generator.processing import algorithms
+from curve_number_generator.processing.curve_number_generator_algorithm import \
+    CurveNumberGeneratorAlgorithm
 from qgis.core import QgsProcessingProvider
-from .curve_number_generator_algorithm import CurveNumberGeneratorAlgorithm
+from qgis.PyQt.QtGui import QIcon
 
 
 class CurveNumberGeneratorProvider(QgsProcessingProvider):
@@ -50,15 +52,20 @@ class CurveNumberGeneratorProvider(QgsProcessingProvider):
         Unloads the provider. Any tear-down steps required by the provider
         should be implemented here.
         """
-        pass
 
     def loadAlgorithms(self):
         """
         Loads all algorithms belonging to this provider.
         """
-        self.addAlgorithm(CurveNumberGeneratorAlgorithm())
-        # add additional algorithms here
-        # self.addAlgorithm(MyOtherAlgorithm())
+
+        alg_classes = [
+            m[1]
+            for m in inspect.getmembers(algorithms, inspect.isclass)
+            if issubclass(m[1], CurveNumberGeneratorAlgorithm)
+        ]
+
+        for alg_class in alg_classes:
+            self.addAlgorithm(alg_class())
 
     def id(self):
         """
@@ -66,7 +73,7 @@ class CurveNumberGeneratorProvider(QgsProcessingProvider):
         string should be a unique, short, character only string, eg "qgis" or
         "gdal". This string should not be localised.
         """
-        return "Curve Number Generator"
+        return "curvenumbergenerator"
 
     def name(self):
         """
@@ -83,7 +90,9 @@ class CurveNumberGeneratorProvider(QgsProcessingProvider):
         the Processing toolbox.
         """
         cmd_folder = os.path.split(inspect.getfile(inspect.currentframe()))[0]
-        icon = QIcon(os.path.join(os.path.join(cmd_folder, "icon.png")))
+        icon = QIcon(
+            os.path.join(os.path.join(os.path.dirname(cmd_folder), "icon.png"))
+        )
         return icon
 
     def longName(self):
