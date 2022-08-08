@@ -85,11 +85,16 @@ def displayUsageMessage(counter):
     )
 
 
-def checkPluginUptodate(plugin_name: str) -> None:
+def checkPluginUptodate(plugin_name: str):
     # check if new version is available of the plugin
     avail_version = checkAvailPluginVersion(plugin_name)
-    if avail_version != PLUGIN_VERSION:
-        displayMessage("Newer version of the plugin is available.", "Upgrade", installPlugin)
+    version_comp = zip(avail_version.split("."), PLUGIN_VERSION.split("."))
+    for level in version_comp:
+        if int(level[0]) > int(level[1]):
+            displayMessage("Newer version of the plugin is available.", "Upgrade", installPlugin)
+            return
+        elif int(level[0]) < int(level[1]):
+            break
 
 
 def checkAvailPluginVersion(plugin_name: str) -> str:
