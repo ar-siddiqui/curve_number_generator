@@ -1,9 +1,11 @@
 import os
+import xml.etree.ElementTree as ET
 
 import processing
 import requests
 from curve_number_generator.processing.config import PLUGIN_VERSION
 from qgis.core import (
+    Qgis,
     QgsApplication,
     QgsCoordinateTransformContext,
     QgsDistanceArea,
@@ -12,6 +14,8 @@ from qgis.core import (
     QgsProcessingException,
     QgsVectorLayer,
 )
+from qgis.PyQt.QtWidgets import QPushButton
+from qgis.utils import iface
 
 qgis_settings_path = QgsApplication.qgisSettingsDirPath().replace("\\", "/")
 cn_log_path = os.path.join(qgis_settings_path, "curve_number_generator.log")
@@ -78,11 +82,12 @@ def displayUsageMessage(counter):
 
         webbrowser.open_new_tab(appeal_file.name)
 
-    displayMessage(
+    widget = getMessageWidget(
         f"🎉 WOW! You have used the Curve Number Generator Plugin {counter} times already 🎉.",
         "View Message",
         openFileInBrowser,
     )
+    displayMessageWidget(widget)
 
 
 def checkPluginUptodate(plugin_name: str):
@@ -91,18 +96,14 @@ def checkPluginUptodate(plugin_name: str):
     version_comp = zip(avail_version.split("."), PLUGIN_VERSION.split("."))
     for level in version_comp:
         if int(level[0]) > int(level[1]):
-            displayMessage("Newer version of the plugin is available.", "Upgrade", installPlugin)
+            widget = getMessageWidget("Newer version of the plugin is available.", "Upgrade", installPlugin)
+            displayMessageWidget(widget)
             return
         elif int(level[0]) < int(level[1]):
             break
 
 
 def checkAvailPluginVersion(plugin_name: str) -> str:
-    import xml.etree.ElementTree as ET
-
-    import requests
-    from qgis.core import Qgis
-
     qgis_version = Qgis.QGIS_VERSION.replace("-", ".").split(".")
     qgis_version = qgis_version[0] + "." + qgis_version[1]
 
@@ -126,17 +127,20 @@ def installPlugin():
     pyplugin_installer.instance().installPlugin("curve_number_generator")
 
 
-def displayMessage(message, button_text, button_func):
-    from qgis.core import Qgis
-    from qgis.PyQt.QtWidgets import QPushButton
-    from qgis.utils import iface
+def getMessageWidget(message, button_text="", button_func=None):
 
-    widget = iface.messageBar().createMessage("Curve Number Generator Plugin", message)
-    button = QPushButton(widget)
-    button.setText(button_text)
-    button.pressed.connect(button_func)
-    widget.layout().addWidget(button)
-    iface.messageBar().pushWidget(widget, duration=10)
+    widget = iface.messageBar().createMessage("Curve Number Generator", message)
+    if button_text and button_func:
+        button = QPushButton(widget)
+        button.setText(button_text)
+        button.pressed.connect(button_func)
+        widget.layout().addWidget(button)
+
+    return widget
+
+
+def displayMessageWidget(widget, level: int = 0, duration: int = 10):
+    iface.messageBar().pushWidget(widget, level=level, duration=duration)
 
 
 def createDefaultLookup(cmd_folder) -> QgsVectorLayer:
