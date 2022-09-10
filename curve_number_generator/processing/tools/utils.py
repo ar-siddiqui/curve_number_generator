@@ -66,6 +66,26 @@ def incrementUsageCounter() -> int:
         return 1
 
 
+def getRegistrationStatus() -> bool:
+    with open(cn_json_path, "r") as f:
+        # Reading from json file
+        profile_data = load(f)
+        return profile_data["registered"]
+
+
+def setRegistrationTrue() -> None:
+    with open(cn_json_path, "r") as f:
+        # Reading from json file
+        profile_data = load(f)
+        profile_data["registered"] = True
+
+    with open(cn_json_path, "w") as f:
+        profile_json_str = dumps(profile_data, indent=4)
+        f.write(profile_json_str)
+
+        return
+
+
 def createHTML(outputFile, counter) -> None:
     import codecs
 
