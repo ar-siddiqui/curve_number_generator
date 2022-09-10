@@ -1,9 +1,10 @@
 import os
 import xml.etree.ElementTree as ET
+from json import dumps, load
 
 import processing
 import requests
-from curve_number_generator.processing.config import PLUGIN_VERSION
+from curve_number_generator.processing.config import PLUGIN_VERSION, PROFILE_JSON
 from qgis.core import (
     Qgis,
     QgsApplication,
@@ -19,22 +20,50 @@ from qgis.utils import iface
 
 qgis_settings_path = QgsApplication.qgisSettingsDirPath().replace("\\", "/")
 cn_log_path = os.path.join(qgis_settings_path, "curve_number_generator.log")
+cn_json_path = os.path.join(qgis_settings_path, "curve_number_generator_profile.json")
 
 
 def incrementUsageCounter() -> int:
     # log usage
-    if os.path.exists(cn_log_path):
+
+    if os.path.exists(cn_log_path):  # old cn_log file exist # to be deleted in version 4.0.0
         with open(cn_log_path, "r+") as f:
             counter = int(f.readline())
             f.seek(0)
             counter += 1
             f.write(str(counter))
-            return counter
+
+        with open(cn_json_path, "w") as f:
+            profile_data = PROFILE_JSON.copy()
+            profile_data["usage_counter"] = counter
+
+            profile_json_str = dumps(profile_data, indent=4)
+            f.write(profile_json_str)
+
+        os.remove(cn_log_path)
+        return counter
+
+    elif os.path.exists(cn_json_path):  # update existing profile json
+        with open(cn_json_path, "r") as f:
+            # Reading from json file
+            profile_data = load(f)
+            profile_data["usage_counter"] += 1
+
+        with open(cn_json_path, "w") as f:
+            profile_json_str = dumps(profile_data, indent=4)
+            f.write(profile_json_str)
+
+        return profile_data["usage_counter"]
 
     else:  # for the first time create file
-        with open(cn_log_path, "w") as f:
-            f.write(str(1))
-            return 1
+        with open(cn_json_path, "w") as f:
+            profile_data = PROFILE_JSON.copy()
+            profile_data["usage_counter"] = 1
+
+            profile_json_str = dumps(profile_data, indent=4)
+            f.write(profile_json_str)
+
+        return 1
 
 
 def createHTML(outputFile, counter) -> None:
