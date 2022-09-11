@@ -47,7 +47,7 @@ class RegisterForm(QDialog):
         self.countryComboBox.addItems(LIST_OF_COUNTRIES)
 
         self.privacyText = QLabel(
-            "Your email will be used to inform you about the newer releases of this plugin and more usefult tools developed by us. Read full privacy policy at https://github.com/ar-siddiqui/curve_number_generator/wiki/Privacy-Policy/"
+            "Your email will be used to inform you in the rare events of release of newer version of the plugin or a launch of a new tool. Read full privacy policy at https://github.com/ar-siddiqui/curve_number_generator/wiki/Privacy-Policy/"
         )
         self.privacyText.setWordWrap(True)
         self.privacyText.setAlignment(Qt.AlignCenter | Qt.AlignVCenter)
