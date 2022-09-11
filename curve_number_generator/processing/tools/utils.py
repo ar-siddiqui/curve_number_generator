@@ -1,9 +1,12 @@
 import os
+import pickle
+import xml.etree.ElementTree as ET
 
 import processing
 import requests
-from curve_number_generator.processing.config import PLUGIN_VERSION
+from curve_number_generator.processing.config import PLUGIN_VERSION, PROFILE_DICT
 from qgis.core import (
+    Qgis,
     QgsApplication,
     QgsCoordinateTransformContext,
     QgsDistanceArea,
@@ -12,25 +15,72 @@ from qgis.core import (
     QgsProcessingException,
     QgsVectorLayer,
 )
+from qgis.PyQt.QtWidgets import QPushButton
+from qgis.utils import iface
 
 qgis_settings_path = QgsApplication.qgisSettingsDirPath().replace("\\", "/")
 cn_log_path = os.path.join(qgis_settings_path, "curve_number_generator.log")
+cn_pickle_path = os.path.join(qgis_settings_path, "curve_number_generator.p")
 
 
 def incrementUsageCounter() -> int:
     # log usage
-    if os.path.exists(cn_log_path):
+
+    if os.path.exists(cn_log_path):  # old cn_log file exist # to be deleted in version 4.0.0
         with open(cn_log_path, "r+") as f:
             counter = int(f.readline())
             f.seek(0)
             counter += 1
             f.write(str(counter))
-            return counter
+
+        with open(cn_pickle_path, "wb") as f:
+            profile_data = PROFILE_DICT.copy()
+            profile_data["usage_counter"] = counter
+
+            pickle.dump(profile_data, f)
+
+        os.remove(cn_log_path)
+        return counter
+
+    elif os.path.exists(cn_pickle_path):  # update existing profile json
+        with open(cn_pickle_path, "rb") as f:
+            # Reading from json file
+            try:  # try and except to handle case where user maanually manipulate cn_pickel file content
+                profile_data = pickle.load(f)
+                profile_data["usage_counter"] += 1
+            except:
+                profile_data = PROFILE_DICT.copy()
+
+        with open(cn_pickle_path, "wb") as f:
+            pickle.dump(profile_data, f)
+
+        return profile_data["usage_counter"]
 
     else:  # for the first time create file
-        with open(cn_log_path, "w") as f:
-            f.write(str(1))
-            return 1
+        with open(cn_pickle_path, "wb") as f:
+            profile_data = PROFILE_DICT.copy()
+            pickle.dump(profile_data, f)
+
+        return 1
+
+
+def getRegistrationStatus() -> bool:
+    with open(cn_pickle_path, "rb") as f:
+        # Reading from json file
+        profile_data = pickle.load(f)
+        return profile_data["registered"]
+
+
+def setRegistrationTrue() -> None:
+    with open(cn_pickle_path, "rb") as f:
+        # Reading from json file
+        profile_data = pickle.load(f)
+        profile_data["registered"] = True
+
+    with open(cn_pickle_path, "wb") as f:
+        pickle.dump(profile_data, f)
+
+    return
 
 
 def createHTML(outputFile, counter) -> None:
@@ -78,11 +128,12 @@ def displayUsageMessage(counter):
 
         webbrowser.open_new_tab(appeal_file.name)
 
-    displayMessage(
+    widget = getMessageWidget(
         f"🎉 WOW! You have used the Curve Number Generator Plugin {counter} times already 🎉.",
         "View Message",
         openFileInBrowser,
     )
+    displayMessageWidget(widget)
 
 
 def checkPluginUptodate(plugin_name: str):
@@ -91,18 +142,14 @@ def checkPluginUptodate(plugin_name: str):
     version_comp = zip(avail_version.split("."), PLUGIN_VERSION.split("."))
     for level in version_comp:
         if int(level[0]) > int(level[1]):
-            displayMessage("Newer version of the plugin is available.", "Upgrade", installPlugin)
+            widget = getMessageWidget("Newer version of the plugin is available.", "Upgrade", installPlugin)
+            displayMessageWidget(widget)
             return
         elif int(level[0]) < int(level[1]):
             break
 
 
 def checkAvailPluginVersion(plugin_name: str) -> str:
-    import xml.etree.ElementTree as ET
-
-    import requests
-    from qgis.core import Qgis
-
     qgis_version = Qgis.QGIS_VERSION.replace("-", ".").split(".")
     qgis_version = qgis_version[0] + "." + qgis_version[1]
 
@@ -126,17 +173,20 @@ def installPlugin():
     pyplugin_installer.instance().installPlugin("curve_number_generator")
 
 
-def displayMessage(message, button_text, button_func):
-    from qgis.core import Qgis
-    from qgis.PyQt.QtWidgets import QPushButton
-    from qgis.utils import iface
+def getMessageWidget(message, button_text="", button_func=None):
 
-    widget = iface.messageBar().createMessage("Curve Number Generator Plugin", message)
-    button = QPushButton(widget)
-    button.setText(button_text)
-    button.pressed.connect(button_func)
-    widget.layout().addWidget(button)
-    iface.messageBar().pushWidget(widget, duration=10)
+    widget = iface.messageBar().createMessage("Curve Number Generator", message)
+    if button_text and button_func:
+        button = QPushButton(widget)
+        button.setText(button_text)
+        button.pressed.connect(button_func)
+        widget.layout().addWidget(button)
+
+    return widget
+
+
+def displayMessageWidget(widget, level: int = 0, duration: int = 10):
+    iface.messageBar().pushWidget(widget, level=level, duration=duration)
 
 
 def createDefaultLookup(cmd_folder) -> QgsVectorLayer:

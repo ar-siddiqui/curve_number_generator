@@ -25,10 +25,17 @@ import inspect
 import os
 import sys
 
-from curve_number_generator.processing.tools.layer_post_processor import \
-    LayerPostProcessor
+from curve_number_generator.processing.tools.layer_post_processor import LayerPostProcessor
 from curve_number_generator.processing.tools.utils import (
-    checkPluginUptodate, displayUsageMessage, incrementUsageCounter)
+    checkPluginUptodate,
+    displayUsageMessage,
+    getRegistrationStatus,
+    incrementUsageCounter,
+)
+from curve_number_generator.processing.tools.registration import RegisterForm
+
+from curve_number_generator.processing.config import REGISTRATION_FORM_ENRIES, REGISTRATION_FORM_LINK
+
 from qgis.core import QgsApplication, QgsProcessingAlgorithm
 from qgis.PyQt.QtCore import QCoreApplication
 from qgis.PyQt.QtGui import QIcon
@@ -73,6 +80,11 @@ class CurveNumberGeneratorAlgorithm(QgsProcessingAlgorithm):
             if (counter) % 25 == 0:
                 displayUsageMessage(counter)
 
+            # check if plugin is registered
+            if not getRegistrationStatus():
+                form = RegisterForm("Register Curve Number Plugin", REGISTRATION_FORM_LINK, REGISTRATION_FORM_ENRIES)
+                form.show()
+
         except Exception as e:
             feedback.reportError(
                 f"Algorithm finished successfully but post processing failed. {e}",
@@ -84,9 +96,7 @@ class CurveNumberGeneratorAlgorithm(QgsProcessingAlgorithm):
     def handle_post_processing(self, layer, style_file, context) -> None:
         if context.willLoadLayerOnCompletion(layer):
             self.styler_dict[layer] = LayerPostProcessor(style_file)
-            context.layerToLoadOnCompletionDetails(layer).setPostProcessor(
-                self.styler_dict[layer]
-            )
+            context.layerToLoadOnCompletionDetails(layer).setPostProcessor(self.styler_dict[layer])
 
     def group(self):
         """
@@ -107,9 +117,7 @@ class CurveNumberGeneratorAlgorithm(QgsProcessingAlgorithm):
 
     def icon(self):
         cmd_folder = os.path.split(inspect.getfile(inspect.currentframe()))[0]
-        icon = QIcon(
-            os.path.join(os.path.join(os.path.dirname(cmd_folder), "icon.png"))
-        )
+        icon = QIcon(os.path.join(os.path.join(os.path.dirname(cmd_folder), "icon.png")))
         return icon
 
     def tr(self, string):
