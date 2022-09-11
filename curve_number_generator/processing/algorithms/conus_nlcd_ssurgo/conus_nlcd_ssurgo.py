@@ -378,12 +378,16 @@ class ConusNlcdSsurgo(CurveNumberGeneratorAlgorithm):
             )
 
             # Prepare Soil for Curve Number Calculation by turning dual soil to single soil
+            if parameters["DrainedSoils"]:
+                single_soil_formula = "replace(\"HYDGRPDCD\", '/D', '')"
+            else:
+                single_soil_formula = "replace(\"HYDGRPDCD\", map('A/', '', 'B/', '', 'C/', ''))"
             alg_params = {
                 "FIELD_LENGTH": 5,
                 "FIELD_NAME": "_hsg_single_",
                 "FIELD_PRECISION": 3,
                 "FIELD_TYPE": 2,
-                "FORMULA": "if( var('DrainedSoils') = True,replace(\"HYDGRPDCD\", '/D', ''),replace(\"HYDGRPDCD\", map('A/', '', 'B/', '', 'C/', '')))",
+                "FORMULA": single_soil_formula,
                 "INPUT": outputs["Soils"],
                 "NEW_FIELD": True,
                 "OUTPUT": QgsProcessing.TEMPORARY_OUTPUT,
