@@ -55,6 +55,7 @@ from qgis.core import (
     QgsUnitTypes,
     QgsVectorLayer,
 )
+from qgis.PyQt.QtGui import QIcon
 
 cmd_folder = os.path.split(inspect.getfile(inspect.currentframe()))[0]
 if cmd_folder not in sys.path:
@@ -442,6 +443,10 @@ class ConusNlcdSsurgo(CurveNumberGeneratorAlgorithm):
         user-visible display of the algorithm name.
         """
         return self.tr("Curve Number Generator (CONUS) (NLCD & SSURGO)")
+
+    def icon(self):
+        icon = QIcon(os.path.join(cmd_folder, "icon.png"))
+        return icon
 
     def shortHelpString(self):
         return f"""<html><body><a "href"="https://github.com/ar-siddiqui/curve_number_generator/wiki/Tutorials#curve-number-generator-conus-nlcd--ssurgo">Video Tutorial</a></h3>

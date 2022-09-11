@@ -29,17 +29,20 @@ import sys
 
 import processing
 from curve_number_generator.processing.config import PLUGIN_VERSION
-from curve_number_generator.processing.curve_number_generator_algorithm import \
-    CurveNumberGeneratorAlgorithm
+from curve_number_generator.processing.curve_number_generator_algorithm import CurveNumberGeneratorAlgorithm
 from curve_number_generator.processing.tools.curve_numper import CurveNumber
-from curve_number_generator.processing.tools.utils import (clip, fixGeometries,
-                                                           gdalPolygonize)
-from qgis.core import (QgsProcessing, QgsProcessingMultiStepFeedback,
-                       QgsProcessingParameterFeatureSource,
-                       QgsProcessingParameterField,
-                       QgsProcessingParameterRasterLayer,
-                       QgsProcessingParameterVectorDestination,
-                       QgsProcessingParameterVectorLayer)
+from curve_number_generator.processing.tools.utils import clip, fixGeometries, gdalPolygonize
+from qgis.core import (
+    QgsProcessing,
+    QgsProcessingMultiStepFeedback,
+    QgsProcessingParameterFeatureSource,
+    QgsProcessingParameterField,
+    QgsProcessingParameterRasterLayer,
+    QgsProcessingParameterVectorDestination,
+    QgsProcessingParameterVectorLayer,
+)
+from qgis.PyQt.QtGui import QIcon
+
 
 cmd_folder = os.path.split(inspect.getfile(inspect.currentframe()))[0]
 sys.path.append(cmd_folder)
@@ -72,11 +75,7 @@ class Custom(CurveNumberGeneratorAlgorithm):
                 defaultValue=None,
             )
         )
-        self.addParameter(
-            QgsProcessingParameterRasterLayer(
-                "LandCover", "Land Cover Raster", defaultValue=None
-            )
-        )
+        self.addParameter(QgsProcessingParameterRasterLayer("LandCover", "Land Cover Raster", defaultValue=None))
         self.addParameter(
             QgsProcessingParameterVectorLayer(
                 "Soils",
@@ -102,11 +101,7 @@ class Custom(CurveNumberGeneratorAlgorithm):
                 defaultValue="",
             )
         )
-        self.addParameter(
-            QgsProcessingParameterVectorDestination(
-                "CurveNumber", "Curve Number", defaultValue=None
-            )
-        )
+        self.addParameter(QgsProcessingParameterVectorDestination("CurveNumber", "Curve Number", defaultValue=None))
 
     def processAlgorithm(self, parameters, context, model_feedback):
         # Use a multi-step feedback, so that individual child algorithm progress reports are adjusted for the
@@ -127,9 +122,7 @@ class Custom(CurveNumberGeneratorAlgorithm):
             return {}
 
         # Fix geometries
-        outputs["LandCoverVector"] = fixGeometries(
-            outputs["LandCoverPolygonize"], context=context, feedback=feedback
-        )
+        outputs["LandCoverVector"] = fixGeometries(outputs["LandCoverPolygonize"], context=context, feedback=feedback)
 
         step += 1
         feedback.setCurrentStep(step)
@@ -196,6 +189,10 @@ class Custom(CurveNumberGeneratorAlgorithm):
         user-visible display of the algorithm name.
         """
         return self.tr("Curve Number Generator (Custom)")
+
+    def icon(self):
+        icon = QIcon(os.path.join(cmd_folder, "icon.png"))
+        return icon
 
     def shortHelpString(self):
         return f"""<html><body><a "href"="https://github.com/ar-siddiqui/curve_number_generator/wiki/Tutorials#curve-number-generator-custom">Video Tutorial</a></h3>
