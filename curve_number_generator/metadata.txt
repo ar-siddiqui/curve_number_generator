@@ -6,7 +6,7 @@
 name=Curve Number Generator
 qgisMinimumVersion=3.18
 description=Curve Number Generator plugin has multiple algorithms to generate the curve number layer for any area of interest using different datasets.
-version=2.0.0
+version=2.1.0
 author=Abdul Raheem Siddiqui
 email=ars.work.ce@gmail.com
 
@@ -21,7 +21,10 @@ repository=https://github.com/ar-siddiqui/curve_number_generator
 
 hasProcessingProvider=yes
 # Uncomment the following line and add your changelog:
-changelog= Version 2.0.0 - 2022-08-06
+changelog= Version 2.1.0 - 2022-09-11
+	- Remove plugin from plugin menu
+	- Fix bug with reinstall of plugin
+	Version 2.0.0 - 2022-08-06
 	- New algorithm to create curve number layer using local datasets
 	- Algorithms outputs are now proper QGIS destination sinks, thus allowing better batch processing and calls from command line
 	- Fix bug that was causing Drained Soil variable to get ignored
@@ -34,7 +37,7 @@ homepage=https://github.com/ar-siddiqui/curve_number_generator
 category=Analysis
 icon=icon.png
 # experimental flag
-experimental=True
+experimental=False
 
 # deprecated flag (applies to the whole plugin, not just a single version)
 deprecated=False

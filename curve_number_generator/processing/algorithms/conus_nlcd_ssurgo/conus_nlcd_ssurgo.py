@@ -55,6 +55,7 @@ from qgis.core import (
     QgsUnitTypes,
     QgsVectorLayer,
 )
+from qgis.PyQt.QtGui import QIcon
 
 cmd_folder = os.path.split(inspect.getfile(inspect.currentframe()))[0]
 if cmd_folder not in sys.path:
@@ -377,12 +378,16 @@ class ConusNlcdSsurgo(CurveNumberGeneratorAlgorithm):
             )
 
             # Prepare Soil for Curve Number Calculation by turning dual soil to single soil
+            if parameters["DrainedSoils"]:
+                single_soil_formula = "replace(\"HYDGRPDCD\", '/D', '')"
+            else:
+                single_soil_formula = "replace(\"HYDGRPDCD\", map('A/', '', 'B/', '', 'C/', ''))"
             alg_params = {
                 "FIELD_LENGTH": 5,
                 "FIELD_NAME": "_hsg_single_",
                 "FIELD_PRECISION": 3,
                 "FIELD_TYPE": 2,
-                "FORMULA": "if( var('DrainedSoils') = True,replace(\"HYDGRPDCD\", '/D', ''),replace(\"HYDGRPDCD\", map('A/', '', 'B/', '', 'C/', '')))",
+                "FORMULA": single_soil_formula,
                 "INPUT": outputs["Soils"],
                 "NEW_FIELD": True,
                 "OUTPUT": QgsProcessing.TEMPORARY_OUTPUT,
@@ -411,7 +416,7 @@ class ConusNlcdSsurgo(CurveNumberGeneratorAlgorithm):
             results["CurveNumber"], step = curve_number.generateCurveNumber(
                 ["MUSYM", "HYDGRPDCD", "MUNAME", "_hsg_single_"],
                 ["MUSYM", "MUNAME", "_hsg_single_"],
-                'IF ("_hsg_single_" IS NOT NULL, "land_cover" || "_hsg_single_", IF (("MUSYM" = \'W\' OR lower("MUSYM") = \'water\' OR lower("MUNAME") = \'water\' OR "MUNAME" = \'W\'), 11, "land_cover"))',
+                'IF ("_hsg_single_" IS NOT NULL, "land_cover" || \'_\' ||  "_hsg_single_", IF (("MUSYM" = \'W\' OR lower("MUSYM") = \'water\' OR lower("MUNAME") = \'water\' OR "MUNAME" = \'W\'), \'11_\', "land_cover" || \'_\'))',
                 start_step=step + 1,
                 output=parameters["CurveNumber"],
             )
@@ -442,6 +447,10 @@ class ConusNlcdSsurgo(CurveNumberGeneratorAlgorithm):
         user-visible display of the algorithm name.
         """
         return self.tr("Curve Number Generator (CONUS) (NLCD & SSURGO)")
+
+    def icon(self):
+        icon = QIcon(os.path.join(cmd_folder, "icon.png"))
+        return icon
 
     def shortHelpString(self):
         return f"""<html><body><a "href"="https://github.com/ar-siddiqui/curve_number_generator/wiki/Tutorials#curve-number-generator-conus-nlcd--ssurgo">Video Tutorial</a></h3>

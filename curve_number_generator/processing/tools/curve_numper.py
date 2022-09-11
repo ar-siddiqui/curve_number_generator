@@ -21,8 +21,7 @@ __revision__ = "$Format:%H$"
 
 
 import processing
-from qgis.core import (QgsProcessing, QgsProcessingContext,
-                       QgsProcessingMultiStepFeedback, QgsVectorLayer)
+from qgis.core import QgsProcessing, QgsProcessingContext, QgsProcessingMultiStepFeedback, QgsVectorLayer
 
 
 class CurveNumber:
@@ -53,9 +52,7 @@ class CurveNumber:
         start_step: int = 0,
         output=QgsProcessing.TEMPORARY_OUTPUT,
     ):
-        self.feedback.pushInfo(
-            "Generating Curve Number Layer. This may take a while. Do not cancel."
-        )
+        self.feedback.pushInfo("Generating Curve Number Layer. This may take a while. Do not cancel.")
 
         # Intersection
         alg_params = {
@@ -117,9 +114,7 @@ class CurveNumber:
             "INPUT_2": self.lookup_layer,
             "METHOD": 1,
             "PREFIX": "",
-            "OUTPUT": QgsProcessing.TEMPORARY_OUTPUT
-            if fields_to_drop_in_result
-            else output,
+            "OUTPUT": QgsProcessing.TEMPORARY_OUTPUT if fields_to_drop_in_result else output,
         }
         self.outputs["CNJoin"] = processing.run(
             "native:joinattributestable",
