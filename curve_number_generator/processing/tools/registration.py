@@ -11,8 +11,10 @@ from qgis.core import (
     QgsProcessingParameterFeatureSource,
 )
 from qgis.gui import QgsMessageBar
-from qgis.PyQt.QtCore import QCoreApplication, QRegExp, pyqtSlot
+from qgis.PyQt.QtCore import QCoreApplication, QRegExp, pyqtSlot, Qt
 from qgis.PyQt.QtWidgets import *
+from qgis.PyQt.QtGui import QFont
+
 from qgis.utils import iface
 
 
@@ -44,6 +46,15 @@ class RegisterForm(QDialog):
         self.countryComboBox = QComboBox()
         self.countryComboBox.addItems(LIST_OF_COUNTRIES)
 
+        self.privacyText = QLabel(
+            "Your email will be used to inform you about the newer releases of this plugin and more usefult tools developed by us. Read full privacy policy at https://github.com/ar-siddiqui/curve_number_generator/wiki/Privacy-Policy/"
+        )
+        self.privacyText.setWordWrap(True)
+        self.privacyText.setAlignment(Qt.AlignCenter | Qt.AlignVCenter)
+        ppFont = QFont()
+        ppFont.setPointSize(6)
+        self.privacyText.setFont(ppFont)
+
         self.submitButton = QPushButton("Submit")
         self.submitButton.setDisabled(True)
         self.submitButton.clicked.connect(self.postInfo)
@@ -62,6 +73,8 @@ class RegisterForm(QDialog):
 
         # for degree and adding combo box
         formLayout.addRow(QLabel("Country"), self.countryComboBox)
+
+        formLayout.addRow(self.privacyText)
 
         formLayout.addRow(self.submitButton)
 
