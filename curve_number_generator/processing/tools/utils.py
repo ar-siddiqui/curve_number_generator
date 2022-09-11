@@ -45,8 +45,11 @@ def incrementUsageCounter() -> int:
     elif os.path.exists(cn_pickle_path):  # update existing profile json
         with open(cn_pickle_path, "rb") as f:
             # Reading from json file
-            profile_data = pickle.load(f)
-            profile_data["usage_counter"] += 1
+            try:  # try and except to handle case where user maanually manipulate cn_pickel file content
+                profile_data = pickle.load(f)
+                profile_data["usage_counter"] += 1
+            except:
+                profile_data = PROFILE_DICT.copy()
 
         with open(cn_pickle_path, "wb") as f:
             pickle.dump(profile_data, f)
@@ -56,8 +59,6 @@ def incrementUsageCounter() -> int:
     else:  # for the first time create file
         with open(cn_pickle_path, "wb") as f:
             profile_data = PROFILE_DICT.copy()
-            profile_data["usage_counter"] = 1
-
             pickle.dump(profile_data, f)
 
         return 1
