@@ -1,10 +1,10 @@
 import os
+import pickle
 import xml.etree.ElementTree as ET
-from json import dumps, load
 
 import processing
 import requests
-from curve_number_generator.processing.config import PLUGIN_VERSION, PROFILE_JSON
+from curve_number_generator.processing.config import PLUGIN_VERSION, PROFILE_DICT
 from qgis.core import (
     Qgis,
     QgsApplication,
@@ -20,7 +20,7 @@ from qgis.utils import iface
 
 qgis_settings_path = QgsApplication.qgisSettingsDirPath().replace("\\", "/")
 cn_log_path = os.path.join(qgis_settings_path, "curve_number_generator.log")
-cn_json_path = os.path.join(qgis_settings_path, "curve_number_generator_profile.json")
+cn_pickle_path = os.path.join(qgis_settings_path, "curve_number_generator.p")
 
 
 def incrementUsageCounter() -> int:
@@ -33,57 +33,53 @@ def incrementUsageCounter() -> int:
             counter += 1
             f.write(str(counter))
 
-        with open(cn_json_path, "w") as f:
-            profile_data = PROFILE_JSON.copy()
+        with open(cn_pickle_path, "wb") as f:
+            profile_data = PROFILE_DICT.copy()
             profile_data["usage_counter"] = counter
 
-            profile_json_str = dumps(profile_data, indent=4)
-            f.write(profile_json_str)
+            pickle.dump(profile_data, f)
 
         os.remove(cn_log_path)
         return counter
 
-    elif os.path.exists(cn_json_path):  # update existing profile json
-        with open(cn_json_path, "r") as f:
+    elif os.path.exists(cn_pickle_path):  # update existing profile json
+        with open(cn_pickle_path, "rb") as f:
             # Reading from json file
-            profile_data = load(f)
+            profile_data = pickle.load(f)
             profile_data["usage_counter"] += 1
 
-        with open(cn_json_path, "w") as f:
-            profile_json_str = dumps(profile_data, indent=4)
-            f.write(profile_json_str)
+        with open(cn_pickle_path, "wb") as f:
+            pickle.dump(profile_data, f)
 
         return profile_data["usage_counter"]
 
     else:  # for the first time create file
-        with open(cn_json_path, "w") as f:
-            profile_data = PROFILE_JSON.copy()
+        with open(cn_pickle_path, "wb") as f:
+            profile_data = PROFILE_DICT.copy()
             profile_data["usage_counter"] = 1
 
-            profile_json_str = dumps(profile_data, indent=4)
-            f.write(profile_json_str)
+            pickle.dump(profile_data, f)
 
         return 1
 
 
 def getRegistrationStatus() -> bool:
-    with open(cn_json_path, "r") as f:
+    with open(cn_pickle_path, "rb") as f:
         # Reading from json file
-        profile_data = load(f)
+        profile_data = pickle.load(f)
         return profile_data["registered"]
 
 
 def setRegistrationTrue() -> None:
-    with open(cn_json_path, "r") as f:
+    with open(cn_pickle_path, "rb") as f:
         # Reading from json file
-        profile_data = load(f)
+        profile_data = pickle.load(f)
         profile_data["registered"] = True
 
-    with open(cn_json_path, "w") as f:
-        profile_json_str = dumps(profile_data, indent=4)
-        f.write(profile_json_str)
+    with open(cn_pickle_path, "wb") as f:
+        pickle.dump(profile_data, f)
 
-        return
+    return
 
 
 def createHTML(outputFile, counter) -> None:

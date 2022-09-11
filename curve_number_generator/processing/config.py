@@ -12,7 +12,7 @@ REGISTRATION_FORM_ENRIES = {
     "country": "entry.1731088696",
 }
 
-PROFILE_JSON = {"usage_counter": 0, "registered": False}
+PROFILE_DICT = {"usage_counter": 0, "registered": False}
 
 CONUS_NLCD_SSURGO = {
     # urls
