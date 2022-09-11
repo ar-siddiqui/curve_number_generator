@@ -416,7 +416,7 @@ class ConusNlcdSsurgo(CurveNumberGeneratorAlgorithm):
             results["CurveNumber"], step = curve_number.generateCurveNumber(
                 ["MUSYM", "HYDGRPDCD", "MUNAME", "_hsg_single_"],
                 ["MUSYM", "MUNAME", "_hsg_single_"],
-                'IF ("_hsg_single_" IS NOT NULL, "land_cover" || "_hsg_single_", IF (("MUSYM" = \'W\' OR lower("MUSYM") = \'water\' OR lower("MUNAME") = \'water\' OR "MUNAME" = \'W\'), 11, "land_cover"))',
+                'IF ("_hsg_single_" IS NOT NULL, "land_cover" || \'_\' ||  "_hsg_single_", IF (("MUSYM" = \'W\' OR lower("MUSYM") = \'water\' OR lower("MUNAME") = \'water\' OR "MUNAME" = \'W\'), \'11_\', "land_cover" || \'_\'))',
                 start_step=step + 1,
                 output=parameters["CurveNumber"],
             )
