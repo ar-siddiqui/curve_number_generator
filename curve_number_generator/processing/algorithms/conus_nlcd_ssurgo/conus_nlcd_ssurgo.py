@@ -460,7 +460,7 @@ class ConusNlcdSsurgo(CurveNumberGeneratorAlgorithm):
 <h3>Area of Interest</h3>
 <p>Polygon layer representing area of interest</p>
 <h3>Lookup Table [optional]</h3>
-<p>Optional Table to relate NLCD Land Use Value and HSG Value to a particular curve number. By default the algorithm uses pre defined table. The table must have two columns 'grid_code' and 'cn'. grid_code is concatenation of NLCD Land Use code and Hydrologic Soil Group. <a href="https://raw.githubusercontent.com/ar-siddiqui/curve_number_generator/v{PLUGIN_VERSION}/curve_number_generator/processing/algorithms/conus_nlcd_ssurgo/default_lookup.csv">Template csv file to create custom table.</a></p>
+<p>Optional Table to relate NLCD Land Use Value and HSG Value to a particular curve number. By default the algorithm uses pre defined table. The table must have two columns 'grid_code' and 'cn'. grid_code is concatenation of NLCD Land Use code and Hydrologic Soil Group. <a href="https://raw.githubusercontent.com/ar-siddiqui/curve_number_generator/v{PLUGIN_VERSION}/curve_number_generator/processing/algorithms/conus_nlcd_ssurgo/default_lookup.csv">Template csv file to create custom table</a> (add an optional <a href="https://raw.githubusercontent.com/ar-siddiqui/curve_number_generator/v{PLUGIN_VERSION}/curve_number_generator/processing/algorithms/conus_nlcd_ssurgo/default_lookup.csvt">`.csvt`</a> file to control column data types).</p>
 <h3>Drained Soils? [leave unchecked if not sure]</h3>
 <p>Certain Soils are categorized as dual category in SSURGO dataset. They have Hydrologic Soil Group D for Undrained Conditions and Hydrologic Soil Group A/B/C for Drained Conditions.
 
