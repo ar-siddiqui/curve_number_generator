@@ -79,10 +79,10 @@ class CurveNumber:
 
         # Create GDCode
         alg_params = {
-            "FIELD_LENGTH": 5,
+            "FIELD_LENGTH": 0,
             "FIELD_NAME": "grid_code",
-            "FIELD_PRECISION": 3,
-            "FIELD_TYPE": 2,
+            "FIELD_PRECISION": 0,
+            "FIELD_TYPE": 2,  # text
             "FORMULA": gdcode_formula,
             "INPUT": self.outputs["Intersection"],
             "NEW_FIELD": True,
