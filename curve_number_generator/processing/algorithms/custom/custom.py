@@ -158,7 +158,7 @@ class Custom(CurveNumberGeneratorAlgorithm):
         results["CurveNumber"], step = curve_number.generateCurveNumber(
             [f"{parameters['SoilLookupField']}"],
             [],
-            f'''"land_cover" || "{parameters['SoilLookupField']}"''',
+            f'''"land_cover" || \'_\' || "{parameters['SoilLookupField']}"''',
             start_step=step + 1,
             output=parameters["CurveNumber"],
         )

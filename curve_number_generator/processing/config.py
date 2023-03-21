@@ -1,5 +1,5 @@
 # Constants
-PLUGIN_VERSION = "2.1.0"
+PLUGIN_VERSION = "2.1.1"
 
 REGISTRATION_FORM_LINK = (
     "https://docs.google.com/forms/d/e/1FAIpQLSe-X-OR6tFvULP6oiiPK3M49-v07sjtxTu8md9XAuBOwxk7Xg/formResponse"
