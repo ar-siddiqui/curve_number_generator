@@ -71,7 +71,6 @@ __revision__ = "$Format:%H$"
 
 
 class ConusNlcdSsurgo(CurveNumberGeneratorAlgorithm):
-
     # Constants used to refer to parameters and outputs. They will be
     # used when calling the algorithm from another algorithm, or when
     # calling from the QGIS console.
@@ -80,7 +79,6 @@ class ConusNlcdSsurgo(CurveNumberGeneratorAlgorithm):
     INPUT = "INPUT"
 
     def initAlgorithm(self, config=None):
-
         self.addParameter(
             QgsProcessingParameterFeatureSource(
                 "aoi",
@@ -176,6 +174,8 @@ class ConusNlcdSsurgo(CurveNumberGeneratorAlgorithm):
 
         checkAreaLimits(area_acres, 100000, 500000, feedback=feedback)
         extent = getExtent(area_layer)
+        # add a buffer cell on each side, refer to #49 for reasoning
+        extent = (extent[0] - 30, extent[1] - 30, extent[2] + 30, extent[3] + 30)
         bbox_dim = createRequestBBOXDim(extent, 30)
 
         # NLCD Impervious Raster
@@ -357,7 +357,6 @@ class ConusNlcdSsurgo(CurveNumberGeneratorAlgorithm):
 
         # # Curve Number Calculations
         if parameters.get("CurveNumber", None):
-
             # Prepare Land Cover for Curve Number Calculation
             # Polygonize (raster to vector)
             outputs["NLCDLandCoverPolygonize"] = gdalPolygonize(
