@@ -6,7 +6,7 @@ QGIS Plugin 'Curve Number Generator' has multiple algorithms to generate the cur
 
 ## Installation
 
-Curve Number Generator Plugin can be downloaded from from official QGIS plugin repository (see the demo below) or from https://github.com/ar-siddiqui/curve_number_generator/releases
+Curve Number Generator Plugin can be downloaded from official QGIS plugin repository (see the demo below) or from https://github.com/ar-siddiqui/curve_number_generator/releases
 
 ![ezgif com-gif-maker (9)](https://user-images.githubusercontent.com/53625184/133895988-b0fcd6dc-4133-4b6a-bf91-56ca267d57ba.gif)
 
