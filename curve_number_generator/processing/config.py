@@ -1,5 +1,5 @@
 # Constants
-PLUGIN_VERSION = "2.1.2"
+PLUGIN_VERSION = "2.1.3"
 
 REGISTRATION_FORM_LINK = (
     "https://docs.google.com/forms/d/e/1FAIpQLSe-X-OR6tFvULP6oiiPK3M49-v07sjtxTu8md9XAuBOwxk7Xg/formResponse"
@@ -16,10 +16,12 @@ PROFILE_DICT = {"usage_counter": 1, "registered": False}
 
 CONUS_NLCD_SSURGO = {
     # urls
-    "NLCD_IMP_2019": "https://www.mrlc.gov/geoserver/ows?version=1.1.0&SERVICE=WCS&VERSION=1.0.0&REQUEST=GetCoverage&FORMAT=GeoTIFF&COVERAGE=mrlc_download:NLCD_2019_Impervious_L48&CRS={}&WIDTH={}&HEIGHT={}&BBOX={}&",
-    "NLCD_LC_2019": "https://www.mrlc.gov/geoserver/ows?version=1.1.0&SERVICE=WCS&VERSION=1.0.0&REQUEST=GetCoverage&FORMAT=GeoTIFF&COVERAGE=mrlc_download:NLCD_2019_Land_Cover_L48&CRS={}&WIDTH={}&HEIGHT={}&BBOX={}&",
+    "NLCD_IMP_2021": "https://www.mrlc.gov/geoserver/ows?version=1.1.0&SERVICE=WCS&VERSION=1.0.0&REQUEST=GetCoverage&FORMAT=GeoTIFF&COVERAGE=mrlc_download:NLCD_2021_Impervious_L48&CRS={}&WIDTH={}&HEIGHT={}&BBOX={}&",
+    "NLCD_LC_2021": "https://www.mrlc.gov/geoserver/ows?version=1.1.0&SERVICE=WCS&VERSION=1.0.0&REQUEST=GetCoverage&FORMAT=GeoTIFF&COVERAGE=mrlc_download:NLCD_2021_Land_Cover_L48&CRS={}&WIDTH={}&HEIGHT={}&BBOX={}&",
     "SSURGO_Soil": "https://sdmdataaccess.sc.egov.usda.gov/Spatial/SDMWGS84GEOGRAPHIC.wfs?SERVICE=WFS&VERSION=1.1.0&REQUEST=GetFeature&TYPENAME=mapunitpolyextended&SRSNAME=EPSG:4326&BBOX={}",
 }
+
+MESSAGE_URL = "https://gist.githubusercontent.com/ar-siddiqui/2260461cfd0107150840ab6fb4f83516/raw"
 
 LIST_OF_COUNTRIES = [
     "",
