@@ -41,6 +41,7 @@ from curve_number_generator.processing.tools.utils import (
     getExtent,
     getExtentArea,
     reprojectLayer,
+    getAndUpdateMessage,
 )
 from qgis.core import (
     QgsCoordinateReferenceSystem,
@@ -181,13 +182,13 @@ class ConusNlcdSsurgo(CurveNumberGeneratorAlgorithm):
         # NLCD Impervious Raster
         if parameters.get("NLCDImpervious", None):
             outputs["DownloadNlcdImp"] = downloadFile(
-                CONUS_NLCD_SSURGO["NLCD_IMP_2019"].format(
+                CONUS_NLCD_SSURGO["NLCD_IMP_2021"].format(
                     epsg_code,
                     bbox_dim[0],
                     bbox_dim[1],
                     ",".join([str(item) for item in extent]),
                 ),
-                "https://www.mrlc.gov/geoserver/mrlc_display/NLCD_2019_Impervious_L48/ows",
+                "https://www.mrlc.gov/geoserver/mrlc_display/NLCD_2021_Impervious_L48/ows",
                 "Error requesting land use data from 'www.mrlc.gov'. Most probably because either their server is down or there is a certification issue.\nThis should be temporary. Try again later.\n",
                 context=context,
                 feedback=feedback,
@@ -225,13 +226,13 @@ class ConusNlcdSsurgo(CurveNumberGeneratorAlgorithm):
         # NLCD Land Cover Data
         if any([parameters.get("NLCDLandCover", None), parameters.get("CurveNumber", None)]):
             outputs["DownloadNlcdLC"] = downloadFile(
-                CONUS_NLCD_SSURGO["NLCD_LC_2019"].format(
+                CONUS_NLCD_SSURGO["NLCD_LC_2021"].format(
                     epsg_code,
                     bbox_dim[0],
                     bbox_dim[1],
                     ",".join([str(item) for item in extent]),
                 ),
-                "https://www.mrlc.gov/geoserver/mrlc_display/NLCD_2019_Land_Cover_L48/ows",
+                "https://www.mrlc.gov/geoserver/mrlc_display/NLCD_2021_Land_Cover_L48/ows",
                 "Error requesting land use data from 'www.mrlc.gov'. Most probably because either their server is down or there is a certification issue.\nThis should be temporary. Try again later.\n",
                 context=context,
                 feedback=feedback,
@@ -452,7 +453,13 @@ class ConusNlcdSsurgo(CurveNumberGeneratorAlgorithm):
         return icon
 
     def shortHelpString(self):
-        return f"""<html><body><a "href"="https://github.com/ar-siddiqui/curve_number_generator/wiki/Tutorials#curve-number-generator-conus-nlcd--ssurgo">Video Tutorial</a></h3>
+        msg = ""
+        try:
+            msg = getAndUpdateMessage()
+        except Exception as e:
+            print(e)
+
+        return msg + f"""<html><body><a "href"="https://github.com/ar-siddiqui/curve_number_generator/wiki/Tutorials#curve-number-generator-conus-nlcd--ssurgo">Video Tutorial</a></h3>
 <h2>Algorithm description</h2>
 <p>This algorithm generates Curve Number layer for the given Area of Interest within the contiguous United States. It can also download Soil, Land Cover, and Impervious Surface datasets for the same area.</p>
 <h2>Input parameters</h2>
@@ -468,9 +475,9 @@ If left unchecked, the algorithm will assume HSG D for all dual category soils.
 If checked the algorithm will assume HSG A/B/C for each dual category soil.</p>
 <h2>Outputs</h2>
 <h3>NLCD Land Cover</h3>
-<p>NLCD 2019 Land Cover Raster</p>
+<p>NLCD 2021 Land Cover Raster</p>
 <h3>NLCD Impervious Surface</h3>
-<p>NLCD 2019 Impervious Surface Raster</p>
+<p>NLCD 2021 Impervious Surface Raster</p>
 <h3>Soils</h3>
 <p>SSURGO Extended Soil Dataset </p>
 <h3>Curve Number</h3>

@@ -31,7 +31,7 @@ import processing
 from curve_number_generator.processing.config import PLUGIN_VERSION
 from curve_number_generator.processing.curve_number_generator_algorithm import CurveNumberGeneratorAlgorithm
 from curve_number_generator.processing.tools.curve_numper import CurveNumber
-from curve_number_generator.processing.tools.utils import clip, fixGeometries, gdalPolygonize
+from curve_number_generator.processing.tools.utils import clip, fixGeometries, gdalPolygonize, getAndUpdateMessage
 from qgis.core import (
     QgsProcessing,
     QgsProcessingMultiStepFeedback,
@@ -195,7 +195,12 @@ class Custom(CurveNumberGeneratorAlgorithm):
         return icon
 
     def shortHelpString(self):
-        return f"""<html><body><a "href"="https://github.com/ar-siddiqui/curve_number_generator/wiki/Tutorials#curve-number-generator-custom">Video Tutorial</a></h3>
+        try:
+            msg = getAndUpdateMessage()
+        except Exception as e:
+            print(e)
+
+        return msg + f"""<html><body><a "href"="https://github.com/ar-siddiqui/curve_number_generator/wiki/Tutorials#curve-number-generator-custom">Video Tutorial</a></h3>
 <h2>Algorithm description</h2>
 <p>This algorithm generates Curve Number layer for the given Area of Interest given a Land Cover Raster, Soil Layer, and a Lookup Table.</p>
 <h2>Input parameters</h2>

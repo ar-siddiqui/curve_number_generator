@@ -1,10 +1,12 @@
 import os
 import pickle
+import requests
+import time
 import xml.etree.ElementTree as ET
 
 import processing
 import requests
-from curve_number_generator.processing.config import PLUGIN_VERSION, PROFILE_DICT
+from curve_number_generator.processing.config import PLUGIN_VERSION, PROFILE_DICT, MESSAGE_URL
 from qgis.core import (
     Qgis,
     QgsApplication,
@@ -21,7 +23,41 @@ from qgis.utils import iface
 qgis_settings_path = QgsApplication.qgisSettingsDirPath().replace("\\", "/")
 cn_log_path = os.path.join(qgis_settings_path, "curve_number_generator.log")
 cn_pickle_path = os.path.join(qgis_settings_path, "curve_number_generator.p")
+cn_msg_path = os.path.join(qgis_settings_path, 'curve_number_generator_msg.html')
+cn_msg_cache_duration = 24 * 60 * 60  # 24 hours in seconds
 
+def fetchMessage(url, timeout=2) -> str:
+    response = requests.get(url, timeout=timeout)
+    response.raise_for_status()
+    return response.text
+
+
+def saveToCache(message):
+    with open(cn_msg_path, 'w') as file:
+        file.write(message)
+
+def isCacheValid():
+    if os.path.exists(cn_msg_path):
+        file_timestamp = os.path.getmtime(cn_msg_path)
+        if time.time() - file_timestamp < cn_msg_cache_duration:
+            return True
+    return False
+
+def loadMessageFromCache():
+    if isCacheValid():
+        with open(cn_msg_path, 'r') as file:
+            text = file.read()
+            return text
+    return ""
+
+def getAndUpdateMessage():
+    cached_message = loadMessageFromCache()
+    if cached_message:
+        return cached_message
+
+    fetched_message = fetchMessage(MESSAGE_URL)
+    saveToCache(fetched_message)
+    return fetched_message
 
 def incrementUsageCounter() -> int:
     # log usage

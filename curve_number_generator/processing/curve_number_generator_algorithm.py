@@ -43,7 +43,6 @@ from qgis.PyQt.QtGui import QIcon
 cmd_folder = os.path.split(inspect.getfile(inspect.currentframe()))[0]
 sys.path.append(cmd_folder)
 qgis_settings_path = QgsApplication.qgisSettingsDirPath().replace("\\", "/")
-cn_log_path = os.path.join(qgis_settings_path, "curve_number_generator.log")
 
 __author__ = "Abdul Raheem Siddiqui"
 __date__ = "2022-06-29"
