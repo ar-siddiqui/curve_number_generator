@@ -6,7 +6,11 @@ import xml.etree.ElementTree as ET
 
 import processing
 import requests
-from curve_number_generator.processing.config import PLUGIN_VERSION, PROFILE_DICT, MESSAGE_URL
+from curve_number_generator.processing.config import (
+    PLUGIN_VERSION,
+    PROFILE_DICT,
+    MESSAGE_URL,
+)
 from qgis.core import (
     Qgis,
     QgsApplication,
@@ -16,6 +20,9 @@ from qgis.core import (
     QgsProcessing,
     QgsProcessingException,
     QgsVectorLayer,
+    QgsCoordinateReferenceSystem,
+    QgsCoordinateTransform,
+    QgsProject,
 )
 from qgis.PyQt.QtWidgets import QPushButton
 from qgis.utils import iface
@@ -23,8 +30,9 @@ from qgis.utils import iface
 qgis_settings_path = QgsApplication.qgisSettingsDirPath().replace("\\", "/")
 cn_log_path = os.path.join(qgis_settings_path, "curve_number_generator.log")
 cn_pickle_path = os.path.join(qgis_settings_path, "curve_number_generator.p")
-cn_msg_path = os.path.join(qgis_settings_path, 'curve_number_generator_msg.html')
+cn_msg_path = os.path.join(qgis_settings_path, "curve_number_generator_msg.html")
 cn_msg_cache_duration = 24 * 60 * 60  # 24 hours in seconds
+
 
 def fetchMessage(url, timeout=2) -> str:
     response = requests.get(url, timeout=timeout)
@@ -33,8 +41,9 @@ def fetchMessage(url, timeout=2) -> str:
 
 
 def saveToCache(message):
-    with open(cn_msg_path, 'w') as file:
+    with open(cn_msg_path, "w") as file:
         file.write(message)
+
 
 def isCacheValid():
     if os.path.exists(cn_msg_path):
@@ -43,12 +52,14 @@ def isCacheValid():
             return True
     return False
 
+
 def loadMessageFromCache():
     if isCacheValid():
-        with open(cn_msg_path, 'r') as file:
+        with open(cn_msg_path, "r") as file:
             text = file.read()
             return text
     return ""
+
 
 def getAndUpdateMessage():
     cached_message = loadMessageFromCache()
@@ -59,10 +70,13 @@ def getAndUpdateMessage():
     saveToCache(fetched_message)
     return fetched_message
 
+
 def incrementUsageCounter() -> int:
     # log usage
 
-    if os.path.exists(cn_log_path):  # old cn_log file exist # to be deleted in version 4.0.0
+    if os.path.exists(
+        cn_log_path
+    ):  # old cn_log file exist # to be deleted in version 4.0.0
         with open(cn_log_path, "r+") as f:
             counter = int(f.readline())
             f.seek(0)
@@ -178,7 +192,9 @@ def checkPluginUptodate(plugin_name: str):
     version_comp = zip(avail_version.split("."), PLUGIN_VERSION.split("."))
     for level in version_comp:
         if int(level[0]) > int(level[1]):
-            widget = getMessageWidget("Newer version of the plugin is available.", "Upgrade", installPlugin)
+            widget = getMessageWidget(
+                "Newer version of the plugin is available.", "Upgrade", installPlugin
+            )
             displayMessageWidget(widget)
             return
         elif int(level[0]) < int(level[1]):
@@ -189,7 +205,9 @@ def checkAvailPluginVersion(plugin_name: str) -> str:
     qgis_version = Qgis.QGIS_VERSION.replace("-", ".").split(".")
     qgis_version = qgis_version[0] + "." + qgis_version[1]
 
-    r = requests.get(f"https://plugins.qgis.org/plugins/plugins.xml?qgis={qgis_version}")
+    r = requests.get(
+        f"https://plugins.qgis.org/plugins/plugins.xml?qgis={qgis_version}"
+    )
 
     xml_str = r.text
     root = ET.fromstring(xml_str)
@@ -225,11 +243,24 @@ def displayMessageWidget(widget, level: int = 0, duration: int = 10):
     iface.messageBar().pushWidget(widget, level=level, duration=duration)
 
 
-def createDefaultLookup(cmd_folder) -> QgsVectorLayer:
+def createDefaultLookup(cmd_folder, file_name="default_lookup.csv") -> QgsVectorLayer:
     """Expects a default_lookup.csv" file in the cmd_folder."""
-    csv_uri = "file:///" + os.path.join(cmd_folder, "default_lookup.csv") + "?delimiter=,"
-    csv = QgsVectorLayer(csv_uri, "default_lookup.csv", "delimitedtext")
+    csv_uri = "file:///" + os.path.join(cmd_folder, file_name) + "?delimiter=,"
+    csv = QgsVectorLayer(csv_uri, file_name, "delimitedtext")
     return csv
+
+
+def getExtentInEPSG4326(layer) -> tuple:
+    source_crs = layer.crs()
+    target_crs = QgsCoordinateReferenceSystem("EPSG:4326")
+
+    transform = QgsCoordinateTransform(source_crs, target_crs, QgsProject.instance())
+    extent = layer.extent()
+
+    xmin, ymin = transform.transform(extent.xMinimum(), extent.yMinimum())
+    xmax, ymax = transform.transform(extent.xMaximum(), extent.yMaximum())
+
+    return xmin, ymin, xmax, ymax
 
 
 def getExtent(layer) -> tuple:
@@ -250,7 +281,9 @@ def createRequestBBOXDim(extent: tuple, cell_size: int) -> tuple:
     return BBOX_width_int, BBOX_height_int
 
 
-def downloadFile(request_URL, ping_URL="", error_message="", context=None, feedback=None):
+def downloadFile(
+    request_URL, ping_URL="", error_message="", context=None, feedback=None
+):
     try:
         if ping_URL:  # first make a low cost request to check if server is live
             ping_URL = ping_URL
@@ -270,7 +303,9 @@ def downloadFile(request_URL, ping_URL="", error_message="", context=None, feedb
         feedback.reportError(f"Error: {str(e)}\n\n{error_message}", True)
 
 
-def fixGeometries(input, output=QgsProcessing.TEMPORARY_OUTPUT, context=None, feedback=None) -> str:
+def fixGeometries(
+    input, output=QgsProcessing.TEMPORARY_OUTPUT, context=None, feedback=None
+) -> str:
     alg_params = {"INPUT": input, "OUTPUT": output}
     return processing.run(
         "native:fixgeometries",
@@ -281,7 +316,9 @@ def fixGeometries(input, output=QgsProcessing.TEMPORARY_OUTPUT, context=None, fe
     )["OUTPUT"]
 
 
-def clip(input, overlay, output=QgsProcessing.TEMPORARY_OUTPUT, context=None, feedback=None) -> str:
+def clip(
+    input, overlay, output=QgsProcessing.TEMPORARY_OUTPUT, context=None, feedback=None
+) -> str:
     alg_params = {"INPUT": input, "OVERLAY": overlay, "OUTPUT": output}
     return processing.run(
         "native:clip",
@@ -314,7 +351,9 @@ def reprojectLayer(
     )["OUTPUT"]
 
 
-def checkAreaLimits(area_acres, soft_limit, hard_limit, unit="acres", feedback=None) -> None:
+def checkAreaLimits(
+    area_acres, soft_limit, hard_limit, unit="acres", feedback=None
+) -> None:
     if area_acres > hard_limit:
         raise QgsProcessingException(
             f"Area Boundary layer extent area should be less than {hard_limit} {unit}.\nArea Boundary layer extent area is {round(area_acres,4):,} {unit}.\n\nExecution Failed"
@@ -324,7 +363,9 @@ def checkAreaLimits(area_acres, soft_limit, hard_limit, unit="acres", feedback=N
             f"Your Area Boundary layer extent area is {round(area_acres,4):,} {unit}. The recommended extent area is {soft_limit} {unit} or less. If the Algorithm fails, rerun with a smaller input layer.\n"
         )
     else:
-        feedback.pushInfo(f"Area Boundary layer extent area is {round(area_acres,4):,} {unit}\n")
+        feedback.pushInfo(
+            f"Area Boundary layer extent area is {round(area_acres,4):,} {unit}\n"
+        )
 
 
 def getExtentArea(layer: QgsVectorLayer, unit_type):
