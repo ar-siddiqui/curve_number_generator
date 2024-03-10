@@ -27,7 +27,7 @@ import sys
 
 import processing
 
-from curve_number_generator.processing.config import CONUS_NLCD_SSURGO, PLUGIN_VERSION
+from curve_number_generator.processing.config import GLOBAL_ESA_ISRIC, PLUGIN_VERSION
 from curve_number_generator.processing.curve_number_generator_algorithm import (
     CurveNumberGeneratorAlgorithm,
 )
@@ -35,15 +35,14 @@ from curve_number_generator.processing.tools.curve_numper import CurveNumber
 from curve_number_generator.processing.tools.utils import (
     createDefaultLookup,
     createRequestBBOXDim,
-    downloadFile,
-    fixGeometries,
-    gdalPolygonize,
     gdalWarp,
     getExtentInEPSG4326,
     reprojectLayer,
     getAndUpdateMessage,
 )
+
 from qgis.core import (
+    QgsCoordinateReferenceSystem,
     QgsProcessing,
     QgsProcessingMultiStepFeedback,
     QgsProcessingParameterBoolean,
@@ -131,15 +130,15 @@ class GlobalEsaIsric(CurveNumberGeneratorAlgorithm):
                 defaultValue=None,
             )
         )
-        # self.addParameter(
-        #     QgsProcessingParameterRasterDestination(
-        #         "Soils",
-        #         "ISRIC Derived HSG",
-        #         optional=True,
-        #         createByDefault=False,
-        #         defaultValue=None,
-        #     )
-        # )
+        self.addParameter(
+            QgsProcessingParameterRasterDestination(
+                "Soils",
+                "ISRIC Derived HSG",
+                optional=True,
+                createByDefault=False,
+                defaultValue=None,
+            )
+        )
         # self.addParameter(
         #     QgsProcessingParameterRasterDestination(
         #         "CurveNumber",
@@ -162,7 +161,7 @@ class GlobalEsaIsric(CurveNumberGeneratorAlgorithm):
     def processAlgorithm(self, parameters, context, model_feedback):
         # Use a multi-step feedback, so that individual child algorithm progress reports are adjusted for the
         # overall progress through the model
-        feedback = QgsProcessingMultiStepFeedback(1, model_feedback)
+        feedback = QgsProcessingMultiStepFeedback(6, model_feedback)
         results = {}
         outputs = {}
 
@@ -177,20 +176,27 @@ class GlobalEsaIsric(CurveNumberGeneratorAlgorithm):
                 ),
             )
 
-        area_layer = self.parameterAsVectorLayer(parameters, "aoi", context)
+        aoi_layer = self.parameterAsVectorLayer(parameters, "aoi", context)
 
-        extent = getExtentInEPSG4326(area_layer)
+        extent = getExtentInEPSG4326(aoi_layer)
         # add a buffer cell on each side, refer to #49 for reasoning
-        extent = (
+        extent_esa = (
             extent[0] - 0.000083333333333,
             extent[1] - 0.000083333333333,
             extent[2] + 0.000083333333333,
             extent[3] + 0.000083333333333,
         )
-        bbox_dim = createRequestBBOXDim(extent, 0.000083333333333)
-        print(bbox_dim, extent)
+        extent_isric = (
+            extent[0] - 0.0026,
+            extent[1] - 0.0026,
+            extent[2] + 0.0026,
+            extent[3] + 0.0026,
+        )
 
-        # https://maps.isric.org/mapserv?map=/map/clay.map&SERVICE=WCS&VERSION=1.0.0&REQUEST=GetCoverage&FORMAT=GEOTIFF_INT16&COVERAGE=clay_0-5cm_mean&BBOX=-11859783.04920493438839912,5423227.21973272785544395,-11542789.60037019103765488,5987949.80082611925899982&CRS=EPSG:152160&RESPONSE_CRS=EPSG:152160&WIDTH=635&HEIGHT=1131
+        step = 1
+        feedback.setCurrentStep(step)
+        if feedback.isCanceled():
+            return {}
 
         if any(
             [
@@ -200,16 +206,19 @@ class GlobalEsaIsric(CurveNumberGeneratorAlgorithm):
             ]
         ):
             # ESA Land Cover Data
-            parameters["ESALandCover"].destinationName = "ESA Land Cover"
-            # Uses clip raster to get a copy of the original raster
-            # Some other method of copying in a way that allows for temporary output would be better for this part
+            if parameters.get("ESALandCover", None):
+                try:
+                    parameters["ESALandCover"].destinationName = "ESA Land Cover"
+                except AttributeError:
+                    pass
+
             alg_params = {
                 "DATA_TYPE": 0,
                 "EXTRA": "",
                 "INPUT": os.path.join(cmd_folder, "esa_worldcover_2021.vrt"),
                 "NODATA": None,
                 "OPTIONS": "",
-                "PROJWIN": parameters["aoi"],
+                "PROJWIN": f"{extent_esa[0]},{extent_esa[2]},{extent_esa[1]},{extent_esa[3]} [EPSG:4326]",
                 "OUTPUT": parameters["ESALandCover"],
             }
             outputs["ESALandCover"] = processing.run(
@@ -218,72 +227,59 @@ class GlobalEsaIsric(CurveNumberGeneratorAlgorithm):
                 context=context,
                 feedback=feedback,
                 is_child_algorithm=True,
-            )
+            )["OUTPUT"]
 
-            results["ESALandCover"] = outputs["ESALandCover"]
-
-            feedback.setCurrentStep(1)
+            step += 1
+            feedback.setCurrentStep(step)
             if feedback.isCanceled():
                 return {}
 
-        # if any(
-        #     [parameters.get("ESALandCover", None), parameters.get("CurveNumber", None), parameters.get("CurveNumberVector", None)]
-        # ):
-        #     outputs["DownloadEsaLC"] = downloadFile(
-        #         CONUS_NLCD_SSURGO["NLCD_LC_2021"].format(
-        #             epsg_code,
-        #             bbox_dim[0],
-        #             bbox_dim[1],
-        #             ",".join([str(item) for item in extent]),
-        #         ),
-        #         "https://www.mrlc.gov/geoserver/mrlc_display/NLCD_2021_Land_Cover_L48/ows",
-        #         "Error requesting land use data from 'www.mrlc.gov'. Most probably because either their server is down or there is a certification issue.\nThis should be temporary. Try again later.\n",
-        #         context=context,
-        #         feedback=feedback,
-        #     )
+            if parameters.get("ESALandCover", None):
+                lc_style_path = os.path.join(cmd_folder, "esa_land_cover.qml")
+                results["ESALandCover"] = outputs["ESALandCover"]
+                self.handle_post_processing(
+                    results["ESALandCover"], lc_style_path, context
+                )
 
-        #     step += 1
-        #     feedback.setCurrentStep(step)
-        #     if feedback.isCanceled():
-        #         return {}
+        # Soil Layer
+        if any(
+            [
+                parameters.get("Soils", None),
+                parameters.get("CurveNumber", None),
+                parameters.get("CurveNumberVector", None),
+            ]
+        ):
 
-        #     if parameters.get("NLCDLandCover", None):
-        #         try:
-        #             parameters["NLCDLandCover"].destinationName = "NLCD Land Cover"
-        #         except AttributeError:
-        #             pass
+            alg_params = {
+                "DATA_TYPE": 0,
+                "EXTRA": "",
+                "INPUT": GLOBAL_ESA_ISRIC["ISRIC_CLAY"],
+                "NODATA": None,
+                "OPTIONS": "",
+                "PROJWIN": f"{extent_isric[0]},{extent_isric[2]},{extent_isric[1]},{extent_isric[3]} [EPSG:4326]",
+                "OUTPUT": QgsProcessing.TEMPORARY_OUTPUT,
+            }
+            outputs["IsricClay"] = processing.run(
+                "gdal:cliprasterbyextent",
+                alg_params,
+                context=context,
+                feedback=feedback,
+                is_child_algorithm=True,
+            )["OUTPUT"]
 
-        #         lc_output = parameters["NLCDLandCover"]
-        #     else:
-        #         lc_output = QgsProcessing.TEMPORARY_OUTPUT
+            step += 1
+            feedback.setCurrentStep(step)
+            if feedback.isCanceled():
+                return {}
 
-        #     # reproject to original crs
-        #     # Warp (reproject)
-        #     outputs["NLCDLandCover"] = gdalWarp(
-        #         outputs["DownloadNlcdLC"],
-        #         QgsCoordinateReferenceSystem(str(orig_epsg_code)),
-        #         lc_output,
-        #         context=context,
-        #         feedback=feedback,
-        #     )
+            # reproject to 4326
+            outputs["IsricClay4326"] = gdalWarp(
+                outputs["IsricClay"],
+                QgsCoordinateReferenceSystem("EPSG:4326"),
+                context=context,
+                feedback=feedback,
+            )
 
-        #     step += 1
-        #     feedback.setCurrentStep(step)
-        #     if feedback.isCanceled():
-        #         return {}
-
-        #     if parameters.get("NLCDLandCover", None):
-        #         lc_style_path = os.path.join(cmd_folder, "nlcd_land_cover.qml")
-        #         results["NLCDLandCover"] = outputs["NLCDLandCover"]
-        #         self.handle_post_processing(
-        #             results["NLCDLandCover"], lc_style_path, context
-        #         )
-
-        # # Soil Layer
-        # if any([parameters.get("Soils", None), parameters.get("CurveNumber", None)]):
-        #     ssurgoSoil = SsurgoSoil(
-        #         parameters["aoi"], context=context, feedback=feedback
-        #     )
         #     # Call class method in required sequence
         #     ssurgoSoil.reprojectTo4326()
         #     step += 1
