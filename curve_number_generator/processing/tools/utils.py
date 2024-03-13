@@ -384,6 +384,8 @@ def gdalWarp(
     output=QgsProcessing.TEMPORARY_OUTPUT,
     context=None,
     feedback=None,
+    extent_layer=None,
+    target_resolution=None,
 ):
     # reproject to original crs
     # Warp (reproject)
@@ -397,9 +399,9 @@ def gdalWarp(
         "RESAMPLING": 0,
         "SOURCE_CRS": None,
         "TARGET_CRS": target_crs,
-        "TARGET_EXTENT": None,
+        "TARGET_EXTENT": extent_layer,
         "TARGET_EXTENT_CRS": None,
-        "TARGET_RESOLUTION": None,
+        "TARGET_RESOLUTION": target_resolution,
         "OUTPUT": output,
     }
     return processing.run(
@@ -434,3 +436,62 @@ def gdalPolygonize(
         feedback=feedback,
         is_child_algorithm=True,
     )["OUTPUT"]
+
+
+def perform_raster_math(
+    exprs,
+    input_dict,
+    context,
+    feedback,
+    no_data,
+    out_data_type,
+    output=QgsProcessing.TEMPORARY_OUTPUT,
+) -> dict:
+    """Wrapper around QGIS GDAL Raster Calculator"""
+
+    alg_params = {
+        "BAND_A": input_dict.get("band_a", None),
+        "BAND_B": input_dict.get("band_b", None),
+        "BAND_C": input_dict.get("band_c", None),
+        "BAND_D": input_dict.get("band_d", None),
+        "BAND_E": input_dict.get("band_e", None),
+        "BAND_F": input_dict.get("band_f", None),
+        "EXTRA": "--overwrite",
+        "FORMULA": exprs,
+        "INPUT_A": input_dict.get("input_a", None),
+        "INPUT_B": input_dict.get("input_b", None),
+        "INPUT_C": input_dict.get("input_c", None),
+        "INPUT_D": input_dict.get("input_d", None),
+        "INPUT_E": input_dict.get("input_e", None),
+        "INPUT_F": input_dict.get("input_f", None),
+        "NO_DATA": no_data,
+        "RTYPE": out_data_type,
+        "OPTIONS": "",
+        "OUTPUT": output,
+    }
+    return processing.run(
+        "gdal:rastercalculator",
+        alg_params,
+        context=context,
+        feedback=feedback,
+        is_child_algorithm=True,
+    )["OUTPUT"]
+
+
+def generate_cn_exprs(lookup_layer) -> str:
+    """Generate  CN expression"""
+    cn_calc_expr = []
+    hsg_map = {
+        "A": 1,
+        "B": 2,
+        "C": 3,
+        "D": 4,
+    }
+    for feat in lookup_layer.getFeatures():
+        grid_code = feat.attribute("grid_code")
+        cn = feat.attribute("cn")
+        lc, hsg = grid_code.split("_")
+        cn_calc_expr.append(f"logical_and(A=={lc},B=={hsg_map[hsg]})*{cn}")
+
+    cn_expression = " + ".join(cn_calc_expr)
+    return cn_expression
