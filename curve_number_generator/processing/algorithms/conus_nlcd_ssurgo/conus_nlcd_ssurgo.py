@@ -26,23 +26,6 @@ import os
 import sys
 
 import processing
-from curve_number_generator.processing.algorithms.conus_nlcd_ssurgo.ssurgo_soil import SsurgoSoil
-from curve_number_generator.processing.config import CONUS_NLCD_SSURGO, PLUGIN_VERSION
-from curve_number_generator.processing.curve_number_generator_algorithm import CurveNumberGeneratorAlgorithm
-from curve_number_generator.processing.tools.curve_numper import CurveNumber
-from curve_number_generator.processing.tools.utils import (
-    checkAreaLimits,
-    createDefaultLookup,
-    createRequestBBOXDim,
-    downloadFile,
-    fixGeometries,
-    gdalPolygonize,
-    gdalWarp,
-    getExtent,
-    getExtentArea,
-    reprojectLayer,
-    getAndUpdateMessage,
-)
 from qgis.core import (
     QgsCoordinateReferenceSystem,
     QgsProcessing,
@@ -57,6 +40,28 @@ from qgis.core import (
     QgsVectorLayer,
 )
 from qgis.PyQt.QtGui import QIcon
+
+from curve_number_generator.processing.algorithms.conus_nlcd_ssurgo.ssurgo_soil import (
+    SsurgoSoil,
+)
+from curve_number_generator.processing.config import CONUS_NLCD_SSURGO, PLUGIN_VERSION
+from curve_number_generator.processing.curve_number_generator_algorithm import (
+    CurveNumberGeneratorAlgorithm,
+)
+from curve_number_generator.processing.tools.curve_numper import CurveNumber
+from curve_number_generator.processing.tools.utils import (
+    checkAreaLimits,
+    createDefaultLookup,
+    createRequestBBOXDim,
+    downloadFile,
+    fixGeometries,
+    gdalPolygonize,
+    gdalWarp,
+    getAndUpdateMessage,
+    getExtent,
+    getExtentArea,
+    reprojectLayer,
+)
 
 cmd_folder = os.path.split(inspect.getfile(inspect.currentframe()))[0]
 if cmd_folder not in sys.path:
@@ -136,7 +141,7 @@ class ConusNlcdSsurgo(CurveNumberGeneratorAlgorithm):
                 "CurveNumber",
                 "Curve Number",
                 optional=True,
-                createByDefault=False,
+                createByDefault=True,
                 defaultValue=None,
             )
         )
@@ -459,7 +464,9 @@ class ConusNlcdSsurgo(CurveNumberGeneratorAlgorithm):
         except Exception as e:
             print(e)
 
-        return msg + f"""<html><body><a "href"="https://github.com/ar-siddiqui/curve_number_generator/wiki/Tutorials#curve-number-generator-conus-nlcd--ssurgo">Video Tutorial</a></h3>
+        return (
+            msg
+            + f"""<html><body><a "href"="https://github.com/ar-siddiqui/curve_number_generator/wiki/Tutorials#curve-number-generator-conus-nlcd--ssurgo">Video Tutorial</a></h3>
 <h2>Algorithm description</h2>
 <p>This algorithm generates Curve Number layer for the given Area of Interest within the contiguous United States. It can also download Soil, Land Cover, and Impervious Surface datasets for the same area.</p>
 <h2>Input parameters</h2>
@@ -483,6 +490,7 @@ If checked the algorithm will assume HSG A/B/C for each dual category soil.</p>
 <h3>Curve Number</h3>
 <p>Generated Curve Number Layer based on Land Cover and HSG values.</p>
 <br><p align="right">Algorithm author: Abdul Raheem Siddiqui</p><p align="right">Help author: Abdul Raheem Siddiqui</p><p align="right">Algorithm version: {PLUGIN_VERSION}</p><p align="right">Contact email: ars.work.ce@gmail.com</p><p>Disclaimer: The curve numbers generated with this algorithm are high level estimates and should be reviewed in detail before being used for detailed modeling or construction projects.</p></body></html>"""
+        )
 
     def createInstance(self):
         return ConusNlcdSsurgo()
