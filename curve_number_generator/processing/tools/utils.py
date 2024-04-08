@@ -1,31 +1,31 @@
 import os
 import pickle
-import requests
 import time
 import xml.etree.ElementTree as ET
 
 import processing
 import requests
-from curve_number_generator.processing.config import (
-    PLUGIN_VERSION,
-    PROFILE_DICT,
-    MESSAGE_URL,
-)
 from qgis.core import (
     Qgis,
     QgsApplication,
+    QgsCoordinateReferenceSystem,
+    QgsCoordinateTransform,
     QgsCoordinateTransformContext,
     QgsDistanceArea,
     QgsGeometry,
     QgsProcessing,
     QgsProcessingException,
-    QgsVectorLayer,
-    QgsCoordinateReferenceSystem,
-    QgsCoordinateTransform,
     QgsProject,
+    QgsVectorLayer,
 )
 from qgis.PyQt.QtWidgets import QPushButton
 from qgis.utils import iface
+
+from curve_number_generator.processing.config import (
+    MESSAGE_URL,
+    PLUGIN_VERSION,
+    PROFILE_DICT,
+)
 
 qgis_settings_path = QgsApplication.qgisSettingsDirPath().replace("\\", "/")
 cn_log_path = os.path.join(qgis_settings_path, "curve_number_generator.log")
@@ -74,9 +74,7 @@ def getAndUpdateMessage():
 def incrementUsageCounter() -> int:
     # log usage
 
-    if os.path.exists(
-        cn_log_path
-    ):  # old cn_log file exist # to be deleted in version 4.0.0
+    if os.path.exists(cn_log_path):  # old cn_log file exist # to be deleted in version 4.0.0
         with open(cn_log_path, "r+") as f:
             counter = int(f.readline())
             f.seek(0)
@@ -192,9 +190,7 @@ def checkPluginUptodate(plugin_name: str):
     version_comp = zip(avail_version.split("."), PLUGIN_VERSION.split("."))
     for level in version_comp:
         if int(level[0]) > int(level[1]):
-            widget = getMessageWidget(
-                "Newer version of the plugin is available.", "Upgrade", installPlugin
-            )
+            widget = getMessageWidget("Newer version of the plugin is available.", "Upgrade", installPlugin)
             displayMessageWidget(widget)
             return
         elif int(level[0]) < int(level[1]):
@@ -205,9 +201,7 @@ def checkAvailPluginVersion(plugin_name: str) -> str:
     qgis_version = Qgis.QGIS_VERSION.replace("-", ".").split(".")
     qgis_version = qgis_version[0] + "." + qgis_version[1]
 
-    r = requests.get(
-        f"https://plugins.qgis.org/plugins/plugins.xml?qgis={qgis_version}"
-    )
+    r = requests.get(f"https://plugins.qgis.org/plugins/plugins.xml?qgis={qgis_version}")
 
     xml_str = r.text
     root = ET.fromstring(xml_str)
@@ -281,9 +275,7 @@ def createRequestBBOXDim(extent: tuple, cell_size: int) -> tuple:
     return BBOX_width_int, BBOX_height_int
 
 
-def downloadFile(
-    request_URL, ping_URL="", error_message="", context=None, feedback=None
-):
+def downloadFile(request_URL, ping_URL="", error_message="", context=None, feedback=None):
     try:
         if ping_URL:  # first make a low cost request to check if server is live
             ping_URL = ping_URL
@@ -303,9 +295,7 @@ def downloadFile(
         feedback.reportError(f"Error: {str(e)}\n\n{error_message}", True)
 
 
-def fixGeometries(
-    input, output=QgsProcessing.TEMPORARY_OUTPUT, context=None, feedback=None
-) -> str:
+def fixGeometries(input, output=QgsProcessing.TEMPORARY_OUTPUT, context=None, feedback=None) -> str:
     alg_params = {"INPUT": input, "OUTPUT": output}
     return processing.run(
         "native:fixgeometries",
@@ -316,9 +306,7 @@ def fixGeometries(
     )["OUTPUT"]
 
 
-def clip(
-    input, overlay, output=QgsProcessing.TEMPORARY_OUTPUT, context=None, feedback=None
-) -> str:
+def clip(input, overlay, output=QgsProcessing.TEMPORARY_OUTPUT, context=None, feedback=None) -> str:
     alg_params = {"INPUT": input, "OVERLAY": overlay, "OUTPUT": output}
     return processing.run(
         "native:clip",
@@ -351,9 +339,7 @@ def reprojectLayer(
     )["OUTPUT"]
 
 
-def checkAreaLimits(
-    area_acres, soft_limit, hard_limit, unit="acres", feedback=None
-) -> None:
+def checkAreaLimits(area_acres, soft_limit, hard_limit, unit="acres", feedback=None) -> None:
     if area_acres > hard_limit:
         raise QgsProcessingException(
             f"Area Boundary layer extent area should be less than {hard_limit} {unit}.\nArea Boundary layer extent area is {round(area_acres,4):,} {unit}.\n\nExecution Failed"
@@ -363,9 +349,7 @@ def checkAreaLimits(
             f"Your Area Boundary layer extent area is {round(area_acres,4):,} {unit}. The recommended extent area is {soft_limit} {unit} or less. If the Algorithm fails, rerun with a smaller input layer.\n"
         )
     else:
-        feedback.pushInfo(
-            f"Area Boundary layer extent area is {round(area_acres,4):,} {unit}\n"
-        )
+        feedback.pushInfo(f"Area Boundary layer extent area is {round(area_acres,4):,} {unit}\n")
 
 
 def getExtentArea(layer: QgsVectorLayer, unit_type):
@@ -446,6 +430,7 @@ def perform_raster_math(
     no_data,
     out_data_type,
     output=QgsProcessing.TEMPORARY_OUTPUT,
+    hide_no_data=False,
 ) -> dict:
     """Wrapper around QGIS GDAL Raster Calculator"""
 
@@ -456,7 +441,7 @@ def perform_raster_math(
         "BAND_D": input_dict.get("band_d", None),
         "BAND_E": input_dict.get("band_e", None),
         "BAND_F": input_dict.get("band_f", None),
-        "EXTRA": "--overwrite",
+        "EXTRA": f"--overwrite{' --hideNoData' if hide_no_data else ''}",
         "FORMULA": exprs,
         "INPUT_A": input_dict.get("input_a", None),
         "INPUT_B": input_dict.get("input_b", None),
@@ -469,6 +454,7 @@ def perform_raster_math(
         "OPTIONS": "",
         "OUTPUT": output,
     }
+
     return processing.run(
         "gdal:rastercalculator",
         alg_params,
@@ -478,7 +464,7 @@ def perform_raster_math(
     )["OUTPUT"]
 
 
-def generate_cn_exprs(lookup_layer) -> str:
+def generate_cn_exprs(lookup_layer, nodata=255) -> str:
     """Generate  CN expression"""
     cn_calc_expr = []
     hsg_map = {
@@ -492,6 +478,8 @@ def generate_cn_exprs(lookup_layer) -> str:
         cn = feat.attribute("cn")
         lc, hsg = grid_code.split("_")
         cn_calc_expr.append(f"logical_and(A=={lc},B=={hsg_map[hsg]})*{cn}")
+        if hsg == "D":
+            cn_calc_expr.append(f"logical_and(A=={lc},B=={nodata})*{cn}")
 
     cn_expression = " + ".join(cn_calc_expr)
     return cn_expression

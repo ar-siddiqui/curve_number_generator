@@ -342,7 +342,7 @@ class GlobalEsaIsric(CurveNumberGeneratorAlgorithm):
             if feedback.isCanceled():
                 return {}
 
-            cn_exprs = generate_cn_exprs(parameters["CnLookup"])
+            cn_exprs = generate_cn_exprs(parameters["CnLookup"], nodata=255)
             input_dict = {
                 "input_a": outputs["ESALandCover"],
                 "band_a": 1,
@@ -368,6 +368,7 @@ class GlobalEsaIsric(CurveNumberGeneratorAlgorithm):
                 output=soils_output,
                 no_data=255,
                 out_data_type=0,
+                hide_no_data=True,
             )
 
             step += 1
