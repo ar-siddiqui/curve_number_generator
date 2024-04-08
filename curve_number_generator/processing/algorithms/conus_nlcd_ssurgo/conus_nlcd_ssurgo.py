@@ -32,12 +32,10 @@ from qgis.core import (
     QgsProcessingMultiStepFeedback,
     QgsProcessingParameterBoolean,
     QgsProcessingParameterDefinition,
-    QgsProcessingParameterFeatureSource,
     QgsProcessingParameterRasterDestination,
     QgsProcessingParameterVectorDestination,
     QgsProcessingParameterVectorLayer,
     QgsUnitTypes,
-    QgsVectorLayer,
 )
 from qgis.PyQt.QtGui import QIcon
 
@@ -86,7 +84,7 @@ class ConusNlcdSsurgo(CurveNumberGeneratorAlgorithm):
 
     def initAlgorithm(self, config=None):
         self.addParameter(
-            QgsProcessingParameterFeatureSource(
+            QgsProcessingParameterVectorLayer(
                 "aoi",
                 "Area of Interest",
                 types=[QgsProcessing.TypeVectorPolygon],

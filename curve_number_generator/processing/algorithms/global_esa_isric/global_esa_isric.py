@@ -32,7 +32,6 @@ from qgis.core import (
     QgsProcessingMultiStepFeedback,
     QgsProcessingParameterDefinition,
     QgsProcessingParameterEnum,
-    QgsProcessingParameterFeatureSource,
     QgsProcessingParameterRasterDestination,
     QgsProcessingParameterVectorDestination,
     QgsProcessingParameterVectorLayer,
@@ -83,7 +82,7 @@ class GlobalEsaIsric(CurveNumberGeneratorAlgorithm):
         self.soils_pixel_size = 0.0026
 
         self.addParameter(
-            QgsProcessingParameterFeatureSource(
+            QgsProcessingParameterVectorLayer(
                 "aoi",
                 "Area of Interest",
                 types=[QgsProcessing.TypeVectorPolygon],

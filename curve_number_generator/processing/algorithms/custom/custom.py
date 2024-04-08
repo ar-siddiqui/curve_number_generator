@@ -28,14 +28,9 @@ import os
 import sys
 
 import processing
-from curve_number_generator.processing.config import PLUGIN_VERSION
-from curve_number_generator.processing.curve_number_generator_algorithm import CurveNumberGeneratorAlgorithm
-from curve_number_generator.processing.tools.curve_numper import CurveNumber
-from curve_number_generator.processing.tools.utils import clip, fixGeometries, gdalPolygonize, getAndUpdateMessage
 from qgis.core import (
     QgsProcessing,
     QgsProcessingMultiStepFeedback,
-    QgsProcessingParameterFeatureSource,
     QgsProcessingParameterField,
     QgsProcessingParameterRasterLayer,
     QgsProcessingParameterVectorDestination,
@@ -43,6 +38,17 @@ from qgis.core import (
 )
 from qgis.PyQt.QtGui import QIcon
 
+from curve_number_generator.processing.config import PLUGIN_VERSION
+from curve_number_generator.processing.curve_number_generator_algorithm import (
+    CurveNumberGeneratorAlgorithm,
+)
+from curve_number_generator.processing.tools.curve_numper import CurveNumber
+from curve_number_generator.processing.tools.utils import (
+    clip,
+    fixGeometries,
+    gdalPolygonize,
+    getAndUpdateMessage,
+)
 
 cmd_folder = os.path.split(inspect.getfile(inspect.currentframe()))[0]
 sys.path.append(cmd_folder)
@@ -68,7 +74,7 @@ class Custom(CurveNumberGeneratorAlgorithm):
     def initAlgorithm(self, config=None):
 
         self.addParameter(
-            QgsProcessingParameterFeatureSource(
+            QgsProcessingParameterVectorLayer(
                 "aoi",
                 "Area of Interest",
                 types=[QgsProcessing.TypeVectorPolygon],
@@ -200,7 +206,9 @@ class Custom(CurveNumberGeneratorAlgorithm):
         except Exception as e:
             print(e)
 
-        return msg + f"""<html><body><a "href"="https://github.com/ar-siddiqui/curve_number_generator/wiki/Tutorials#curve-number-generator-custom">Video Tutorial</a></h3>
+        return (
+            msg
+            + f"""<html><body><a "href"="https://github.com/ar-siddiqui/curve_number_generator/wiki/Tutorials#curve-number-generator-custom">Video Tutorial</a></h3>
 <h2>Algorithm description</h2>
 <p>This algorithm generates Curve Number layer for the given Area of Interest given a Land Cover Raster, Soil Layer, and a Lookup Table.</p>
 <h2>Input parameters</h2>
@@ -219,6 +227,7 @@ class Custom(CurveNumberGeneratorAlgorithm):
 <h3>Curve Number</h3>
 <p>Generated Curve Number Layer based on Land Cover and Soils.</p>
 <br><p align="right">Algorithm author: Abdul Raheem Siddiqui</p><p align="right">Help author: Abdul Raheem Siddiqui</p><p align="right">Algorithm version: {PLUGIN_VERSION}</p><p align="right">Contact email: ars.work.ce@gmail.com</p></body></html>"""
+        )
 
     def createInstance(self):
         return Custom()
