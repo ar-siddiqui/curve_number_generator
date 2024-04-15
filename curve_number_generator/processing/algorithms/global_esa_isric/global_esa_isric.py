@@ -112,7 +112,7 @@ class GlobalEsaIsric(CurveNumberGeneratorAlgorithm):
 
         param = QgsProcessingParameterEnum(
             "ARC",
-            "Anticedent Runoff Condition [Ignored when custom lookup table is provided]",
+            "Antecedent Runoff Condition [Ignored when custom lookup table is provided]",
             options=self.arc,
             allowMultiple=False,
             defaultValue=1,
