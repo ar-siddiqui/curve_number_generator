@@ -26,43 +26,40 @@ import os
 import sys
 
 import processing
+from qgis.core import (
+    QgsCoordinateReferenceSystem,
+    QgsProcessing,
+    QgsProcessingMultiStepFeedback,
+    QgsProcessingParameterDefinition,
+    QgsProcessingParameterEnum,
+    QgsProcessingParameterRasterDestination,
+    QgsProcessingParameterVectorDestination,
+    QgsProcessingParameterVectorLayer,
+)
+from qgis.PyQt.QtGui import QIcon
 
-from curve_number_generator.processing.config import CONUS_NLCD_SSURGO, PLUGIN_VERSION
+from curve_number_generator.processing.config import GLOBAL_ESA_ISRIC, PLUGIN_VERSION
 from curve_number_generator.processing.curve_number_generator_algorithm import (
     CurveNumberGeneratorAlgorithm,
 )
 from curve_number_generator.processing.tools.curve_numper import CurveNumber
 from curve_number_generator.processing.tools.utils import (
     createDefaultLookup,
-    createRequestBBOXDim,
-    downloadFile,
-    fixGeometries,
     gdalPolygonize,
     gdalWarp,
-    getExtentInEPSG4326,
-    reprojectLayer,
+    generate_cn_exprs,
     getAndUpdateMessage,
+    getExtentInEPSG4326,
+    perform_raster_math,
 )
-from qgis.core import (
-    QgsProcessing,
-    QgsProcessingMultiStepFeedback,
-    QgsProcessingParameterBoolean,
-    QgsProcessingParameterDefinition,
-    QgsProcessingParameterFeatureSource,
-    QgsProcessingParameterRasterDestination,
-    QgsProcessingParameterVectorDestination,
-    QgsProcessingParameterVectorLayer,
-    QgsProcessingParameterEnum,
-)
-from qgis.PyQt.QtGui import QIcon
 
 cmd_folder = os.path.split(inspect.getfile(inspect.currentframe()))[0]
 if cmd_folder not in sys.path:
     sys.path.insert(0, cmd_folder)
 
 __author__ = "Abdul Raheem Siddiqui"
-__date__ = "2022-07-22"
-__copyright__ = "(C) 2022 by Abdul Raheem Siddiqui"
+__date__ = "2024-03-12"
+__copyright__ = "(C) 2024 by Abdul Raheem Siddiqui"
 
 # This will get replaced with a git SHA1 when you do a git archive
 
@@ -81,9 +78,11 @@ class GlobalEsaIsric(CurveNumberGeneratorAlgorithm):
 
         self.hc = ["Poor", "Fair", "Good"]
         self.arc = ["I", "II", "III"]
+        self.lc_pixel_size = 0.000083333333333
+        self.soils_pixel_size = 0.0026
 
         self.addParameter(
-            QgsProcessingParameterFeatureSource(
+            QgsProcessingParameterVectorLayer(
                 "aoi",
                 "Area of Interest",
                 types=[QgsProcessing.TypeVectorPolygon],
@@ -131,38 +130,38 @@ class GlobalEsaIsric(CurveNumberGeneratorAlgorithm):
                 defaultValue=None,
             )
         )
-        # self.addParameter(
-        #     QgsProcessingParameterRasterDestination(
-        #         "Soils",
-        #         "ISRIC Derived HSG",
-        #         optional=True,
-        #         createByDefault=False,
-        #         defaultValue=None,
-        #     )
-        # )
-        # self.addParameter(
-        #     QgsProcessingParameterRasterDestination(
-        #         "CurveNumber",
-        #         "Curve Number",
-        #         optional=True,
-        #         createByDefault=False,
-        #         defaultValue=None,
-        #     )
-        # )
-        # self.addParameter(
-        #     QgsProcessingParameterVectorDestination(
-        #         "CurveNumberVector",
-        #         "Curve Number (Vectorized)",
-        #         optional=True,
-        #         createByDefault=False,
-        #         defaultValue=None,
-        #     )
-        # )
+        self.addParameter(
+            QgsProcessingParameterRasterDestination(
+                "Soils",
+                "ISRIC Derived HSG",
+                optional=True,
+                createByDefault=False,
+                defaultValue=None,
+            )
+        )
+        self.addParameter(
+            QgsProcessingParameterRasterDestination(
+                "CurveNumber",
+                "Curve Number",
+                optional=True,
+                createByDefault=True,
+                defaultValue=None,
+            )
+        )
+        self.addParameter(
+            QgsProcessingParameterVectorDestination(
+                "CurveNumberVector",
+                "Curve Number (Vectorized)",
+                optional=True,
+                createByDefault=False,
+                defaultValue=None,
+            )
+        )
 
     def processAlgorithm(self, parameters, context, model_feedback):
         # Use a multi-step feedback, so that individual child algorithm progress reports are adjusted for the
         # overall progress through the model
-        feedback = QgsProcessingMultiStepFeedback(1, model_feedback)
+        feedback = QgsProcessingMultiStepFeedback(6, model_feedback)
         results = {}
         outputs = {}
 
@@ -170,27 +169,32 @@ class GlobalEsaIsric(CurveNumberGeneratorAlgorithm):
         if not parameters.get("CnLookup", None):
             index_hc = self.parameterAsInt(parameters, "HC", context)
             index_arc = self.parameterAsInt(parameters, "ARC", context)
-            parameters["CnLookup"] = (
-                createDefaultLookup(
-                    os.path.join(cmd_folder, "lookups"),
-                    f"default_lookup_{(self.hc[index_hc][:1].lower())}_{(self.arc[index_arc][:1].lower())}.csv",
-                ),
+            parameters["CnLookup"] = createDefaultLookup(
+                os.path.join(cmd_folder, "lookups"),
+                f"default_lookup_{(self.hc[index_hc][:1].lower())}_{(self.arc[index_arc].lower())}.csv",
             )
 
-        area_layer = self.parameterAsVectorLayer(parameters, "aoi", context)
+        aoi_layer = self.parameterAsVectorLayer(parameters, "aoi", context)
 
-        extent = getExtentInEPSG4326(area_layer)
+        extent = getExtentInEPSG4326(aoi_layer)
         # add a buffer cell on each side, refer to #49 for reasoning
-        extent = (
-            extent[0] - 0.000083333333333,
-            extent[1] - 0.000083333333333,
-            extent[2] + 0.000083333333333,
-            extent[3] + 0.000083333333333,
+        extent_esa = (
+            extent[0] - 2 * self.lc_pixel_size,
+            extent[1] - 2 * self.lc_pixel_size,
+            extent[2] + 2 * self.lc_pixel_size,
+            extent[3] + 2 * self.lc_pixel_size,
         )
-        bbox_dim = createRequestBBOXDim(extent, 0.000083333333333)
-        print(bbox_dim, extent)
+        extent_isric = (
+            extent[0] - 2 * self.soils_pixel_size,
+            extent[1] - 2 * self.soils_pixel_size,
+            extent[2] + 2 * self.soils_pixel_size,
+            extent[3] + 2 * self.soils_pixel_size,
+        )
 
-        # https://maps.isric.org/mapserv?map=/map/clay.map&SERVICE=WCS&VERSION=1.0.0&REQUEST=GetCoverage&FORMAT=GEOTIFF_INT16&COVERAGE=clay_0-5cm_mean&BBOX=-11859783.04920493438839912,5423227.21973272785544395,-11542789.60037019103765488,5987949.80082611925899982&CRS=EPSG:152160&RESPONSE_CRS=EPSG:152160&WIDTH=635&HEIGHT=1131
+        step = 1
+        feedback.setCurrentStep(step)
+        if feedback.isCanceled():
+            return {}
 
         if any(
             [
@@ -200,17 +204,24 @@ class GlobalEsaIsric(CurveNumberGeneratorAlgorithm):
             ]
         ):
             # ESA Land Cover Data
-            parameters["ESALandCover"].destinationName = "ESA Land Cover"
-            # Uses clip raster to get a copy of the original raster
-            # Some other method of copying in a way that allows for temporary output would be better for this part
+            if parameters.get("ESALandCover", None):
+                try:
+                    parameters["ESALandCover"].destinationName = "ESA Land Cover"
+                except AttributeError:
+                    pass
+
+                lc_output = parameters["ESALandCover"]
+            else:
+                lc_output = QgsProcessing.TEMPORARY_OUTPUT
+
             alg_params = {
                 "DATA_TYPE": 0,
                 "EXTRA": "",
                 "INPUT": os.path.join(cmd_folder, "esa_worldcover_2021.vrt"),
                 "NODATA": None,
                 "OPTIONS": "",
-                "PROJWIN": parameters["aoi"],
-                "OUTPUT": parameters["ESALandCover"],
+                "PROJWIN": f"{extent_esa[0]},{extent_esa[2]},{extent_esa[1]},{extent_esa[3]} [EPSG:4326]",
+                "OUTPUT": lc_output,
             }
             outputs["ESALandCover"] = processing.run(
                 "gdal:cliprasterbyextent",
@@ -218,228 +229,180 @@ class GlobalEsaIsric(CurveNumberGeneratorAlgorithm):
                 context=context,
                 feedback=feedback,
                 is_child_algorithm=True,
-            )
+            )["OUTPUT"]
 
-            results["ESALandCover"] = outputs["ESALandCover"]
-
-            feedback.setCurrentStep(1)
+            step += 1
+            feedback.setCurrentStep(step)
             if feedback.isCanceled():
                 return {}
 
-        # if any(
-        #     [parameters.get("ESALandCover", None), parameters.get("CurveNumber", None), parameters.get("CurveNumberVector", None)]
-        # ):
-        #     outputs["DownloadEsaLC"] = downloadFile(
-        #         CONUS_NLCD_SSURGO["NLCD_LC_2021"].format(
-        #             epsg_code,
-        #             bbox_dim[0],
-        #             bbox_dim[1],
-        #             ",".join([str(item) for item in extent]),
-        #         ),
-        #         "https://www.mrlc.gov/geoserver/mrlc_display/NLCD_2021_Land_Cover_L48/ows",
-        #         "Error requesting land use data from 'www.mrlc.gov'. Most probably because either their server is down or there is a certification issue.\nThis should be temporary. Try again later.\n",
-        #         context=context,
-        #         feedback=feedback,
-        #     )
+            if parameters.get("ESALandCover", None):
+                lc_style_path = os.path.join(cmd_folder, "esa_land_cover.qml")
+                results["ESALandCover"] = outputs["ESALandCover"]
+                self.handle_post_processing(results["ESALandCover"], lc_style_path, context)
 
-        #     step += 1
-        #     feedback.setCurrentStep(step)
-        #     if feedback.isCanceled():
-        #         return {}
+        # Soil Layer
+        if any(
+            [
+                parameters.get("Soils", None),
+                parameters.get("CurveNumber", None),
+                parameters.get("CurveNumberVector", None),
+            ]
+        ):
 
-        #     if parameters.get("NLCDLandCover", None):
-        #         try:
-        #             parameters["NLCDLandCover"].destinationName = "NLCD Land Cover"
-        #         except AttributeError:
-        #             pass
+            alg_params = {
+                "DATA_TYPE": 0,
+                "EXTRA": "",
+                "INPUT": GLOBAL_ESA_ISRIC["ISRIC_CLAY"],
+                "NODATA": None,
+                "OPTIONS": "",
+                "PROJWIN": f"{extent_isric[0]},{extent_isric[2]},{extent_isric[1]},{extent_isric[3]} [EPSG:4326]",
+                "OUTPUT": QgsProcessing.TEMPORARY_OUTPUT,
+            }
+            outputs["IsricClay"] = processing.run(
+                "gdal:cliprasterbyextent",
+                alg_params,
+                context=context,
+                feedback=feedback,
+                is_child_algorithm=True,
+            )["OUTPUT"]
 
-        #         lc_output = parameters["NLCDLandCover"]
-        #     else:
-        #         lc_output = QgsProcessing.TEMPORARY_OUTPUT
+            step += 1
+            feedback.setCurrentStep(step)
+            if feedback.isCanceled():
+                return {}
 
-        #     # reproject to original crs
-        #     # Warp (reproject)
-        #     outputs["NLCDLandCover"] = gdalWarp(
-        #         outputs["DownloadNlcdLC"],
-        #         QgsCoordinateReferenceSystem(str(orig_epsg_code)),
-        #         lc_output,
-        #         context=context,
-        #         feedback=feedback,
-        #     )
+            # reproject to 4326
+            # the original CRS of of ISRIC raster is probalamtic and raster is disappearing in QGIS in that CRS
+            outputs["IsricClay4326"] = gdalWarp(
+                outputs["IsricClay"],
+                QgsCoordinateReferenceSystem("EPSG:4326"),
+                context=context,
+                feedback=feedback,
+            )
 
-        #     step += 1
-        #     feedback.setCurrentStep(step)
-        #     if feedback.isCanceled():
-        #         return {}
+            step += 1
+            feedback.setCurrentStep(step)
+            if feedback.isCanceled():
+                return {}
 
-        #     if parameters.get("NLCDLandCover", None):
-        #         lc_style_path = os.path.join(cmd_folder, "nlcd_land_cover.qml")
-        #         results["NLCDLandCover"] = outputs["NLCDLandCover"]
-        #         self.handle_post_processing(
-        #             results["NLCDLandCover"], lc_style_path, context
-        #         )
+            input_dict = {
+                "input_a": outputs["IsricClay4326"],
+                "band_a": 1,
+            }
+            exprs = "((A== 0) * 0) + ((A >= 1) * (A <= 100) * 1) + ((A >= 100) * (A <= 200) * 2) + ((A > 200) *(A <= 400) * 3) + ((A > 400) * 4)"
 
-        # # Soil Layer
-        # if any([parameters.get("Soils", None), parameters.get("CurveNumber", None)]):
-        #     ssurgoSoil = SsurgoSoil(
-        #         parameters["aoi"], context=context, feedback=feedback
-        #     )
-        #     # Call class method in required sequence
-        #     ssurgoSoil.reprojectTo4326()
-        #     step += 1
-        #     feedback.setCurrentStep(step)
-        #     if feedback.isCanceled():
-        #         return {}
+            if parameters.get("Soils", None):
+                try:
+                    parameters["Soils"].destinationName = "ISRIC Derived HSG"
+                except AttributeError:
+                    pass
 
-        #     try:
-        #         ssurgoSoil.postRequest()
-        #         step += 1
-        #         feedback.setCurrentStep(step)
-        #         if feedback.isCanceled():
-        #             return {}
-        #     except:
-        #         feedback.pushWarning(
-        #             "Error getting soil data through post request. Your input layer maybe too large. Trying WFS download now.\nIf the Algorithm get stuck during download. Terminate the Algorithm and rerun with a smaller input layer."
-        #         )
-        #         ssurgoSoil.wfsRequest()
-        #         step += 1
-        #         feedback.setCurrentStep(step)
-        #         if feedback.isCanceled():
-        #             return {}
+                soils_output = parameters["Soils"]
+            else:
+                soils_output = QgsProcessing.TEMPORARY_OUTPUT
 
-        #         # SSURGO wfs is misconfigured to return x as y and y and x
-        #         ssurgoSoil.swapXY()
-        #         step += 1
-        #         feedback.setCurrentStep(step)
-        #         if feedback.isCanceled():
-        #             return {}
+            outputs["Soils"] = perform_raster_math(
+                exprs,
+                input_dict,
+                context,
+                feedback,
+                output=soils_output,
+                no_data=255,
+                out_data_type=0,
+            )
 
-        #     ssurgoSoil.fixSoilLayer()
-        #     step += 1
-        #     feedback.setCurrentStep(step)
-        #     if feedback.isCanceled():
-        #         return {}
+            step += 1
+            feedback.setCurrentStep(step)
+            if feedback.isCanceled():
+                return {}
 
-        #     ssurgoSoil.clipSoilLayer()
-        #     step += 1
-        #     feedback.setCurrentStep(step)
-        #     if feedback.isCanceled():
-        #         return {}
+            if parameters.get("Soils", None):
+                soils_style_path = os.path.join(os.path.dirname(cmd_folder), "hsg_raster.qml")
+                results["Soils"] = outputs["Soils"]
+                self.handle_post_processing(results["Soils"], soils_style_path, context)
 
-        #     outputs["Soils4326"] = ssurgoSoil.soil_layer
-        #     outputs["ReprojectedSoils"] = reprojectLayer(
-        #         outputs["Soils4326"],
-        #         QgsCoordinateReferenceSystem(str(orig_epsg_code)),
-        #         context=context,
-        #         feedback=feedback,
-        #     )
-        #     step += 1
-        #     feedback.setCurrentStep(step)
-        #     if feedback.isCanceled():
-        #         return {}
+        if any(
+            [
+                parameters.get("CurveNumber", None),
+                parameters.get("CurveNumberVector", None),
+            ]
+        ):
+            outputs["SoilsAligned"] = gdalWarp(
+                outputs["Soils"],
+                QgsCoordinateReferenceSystem("EPSG:4326"),
+                context=context,
+                feedback=feedback,
+                extent_layer=outputs["ESALandCover"],
+                target_resolution=self.lc_pixel_size,
+            )
+            step += 1
+            feedback.setCurrentStep(step)
+            if feedback.isCanceled():
+                return {}
 
-        #     # final result
-        #     if parameters.get("Soils", None):
-        #         try:
-        #             parameters["Soils"].destinationName = "SSURGO Soils"
-        #         except AttributeError:
-        #             pass
-        #         soils_output = parameters["Soils"]
-        #     else:
-        #         soils_output = QgsProcessing.TEMPORARY_OUTPUT
+            cn_exprs = generate_cn_exprs(parameters["CnLookup"], nodata=255)
+            input_dict = {
+                "input_a": outputs["ESALandCover"],
+                "band_a": 1,
+                "input_b": outputs["SoilsAligned"],
+                "band_b": 1,
+            }
 
-        #     outputs["Soils"] = fixGeometries(
-        #         outputs["ReprojectedSoils"],
-        #         soils_output,
-        #         context=context,
-        #         feedback=feedback,
-        #     )
-        #     step += 1
-        #     feedback.setCurrentStep(step)
-        #     if feedback.isCanceled():
-        #         return {}
+            if parameters.get("CurveNumber", None):
+                try:
+                    parameters["CurveNumber"].destinationName = "Curve Number"
+                except AttributeError:
+                    pass
 
-        #     if parameters.get("Soils", None):
-        #         soils_style_path = os.path.join(cmd_folder, "soils.qml")
-        #         results["Soils"] = outputs["Soils"]
-        #         self.handle_post_processing(results["Soils"], soils_style_path, context)
+                soils_output = parameters["CurveNumber"]
+            else:
+                soils_output = QgsProcessing.TEMPORARY_OUTPUT
 
-        # # # Curve Number Calculations
-        # if parameters.get("CurveNumber", None):
-        #     # Prepare Land Cover for Curve Number Calculation
-        #     # Polygonize (raster to vector)
-        #     outputs["NLCDLandCoverPolygonize"] = gdalPolygonize(
-        #         outputs["NLCDLandCover"],
-        #         "land_cover",
-        #         context=context,
-        #         feedback=feedback,
-        #     )
+            outputs["CurveNumber"] = perform_raster_math(
+                cn_exprs,
+                input_dict,
+                context,
+                feedback,
+                output=soils_output,
+                no_data=255,
+                out_data_type=0,
+                hide_no_data=True,
+            )
 
-        #     step += 1
-        #     feedback.setCurrentStep(step)
-        #     if feedback.isCanceled():
-        #         return {}
+            step += 1
+            feedback.setCurrentStep(step)
+            if feedback.isCanceled():
+                return {}
 
-        #     # Fix geometries
-        #     outputs["NLCDLandCoverVector"] = fixGeometries(
-        #         outputs["NLCDLandCoverPolygonize"], context=context, feedback=feedback
-        #     )
+            if parameters.get("CurveNumber", None):
+                cn_style_path = os.path.join(os.path.dirname(cmd_folder), "curve_number_raster.qml")
+                results["CurveNumber"] = outputs["CurveNumber"]
+                self.handle_post_processing(results["CurveNumber"], cn_style_path, context)
 
-        #     # Prepare Soil for Curve Number Calculation by turning dual soil to single soil
-        #     if parameters["DrainedSoils"]:
-        #         single_soil_formula = "replace(\"HYDGRPDCD\", '/D', '')"
-        #     else:
-        #         single_soil_formula = (
-        #             "replace(\"HYDGRPDCD\", map('A/', '', 'B/', '', 'C/', ''))"
-        #         )
-        #     alg_params = {
-        #         "FIELD_LENGTH": 5,
-        #         "FIELD_NAME": "_hsg_single_",
-        #         "FIELD_PRECISION": 3,
-        #         "FIELD_TYPE": 2,
-        #         "FORMULA": single_soil_formula,
-        #         "INPUT": outputs["Soils"],
-        #         "NEW_FIELD": True,
-        #         "OUTPUT": QgsProcessing.TEMPORARY_OUTPUT,
-        #     }
-        #     outputs["SoilsSingle"] = processing.run(
-        #         "qgis:fieldcalculator",
-        #         alg_params,
-        #         context=context,
-        #         feedback=feedback,
-        #         is_child_algorithm=True,
-        #     )["OUTPUT"]
+        if parameters.get("CurveNumberVector", None):
+            try:
+                parameters["CurveNumberVector"].destinationName = "Curve Number"
+            except AttributeError:
+                pass
 
-        #     curve_number = CurveNumber(
-        #         outputs["NLCDLandCoverVector"],
-        #         outputs["SoilsSingle"],
-        #         parameters["CnLookup"],
-        #         context=context,
-        #         feedback=feedback,
-        #     )
+            # Polygonize (raster to vector)
+            outputs["CurveNumberVector"] = gdalPolygonize(
+                outputs["CurveNumber"],
+                "cn",
+                output=parameters["CurveNumberVector"],
+                context=context,
+                feedback=feedback,
+            )
 
-        #     try:
-        #         parameters["CurveNumber"].destinationName = "Curve Number"
-        #     except AttributeError:
-        #         pass
+            step += 1
+            feedback.setCurrentStep(step)
+            if feedback.isCanceled():
+                return {}
 
-        #     results["CurveNumber"], step = curve_number.generateCurveNumber(
-        #         ["MUSYM", "HYDGRPDCD", "MUNAME", "_hsg_single_"],
-        #         ["MUSYM", "MUNAME", "_hsg_single_"],
-        #         'IF ("_hsg_single_" IS NOT NULL, "land_cover" || \'_\' ||  "_hsg_single_", IF (("MUSYM" = \'W\' OR lower("MUSYM") = \'water\' OR lower("MUNAME") = \'water\' OR "MUNAME" = \'W\'), \'11_\', "land_cover" || \'_\'))',
-        #         start_step=step + 1,
-        #         output=parameters["CurveNumber"],
-        #     )
-
-        #     step += 1
-        #     feedback.setCurrentStep(step)
-        #     if feedback.isCanceled():
-        #         return {}
-
-        #     cn_style_path = os.path.join(
-        #         os.path.dirname(cmd_folder), "curve_number.qml"
-        #     )
-        #     self.handle_post_processing(results["CurveNumber"], cn_style_path, context)
+            cn_style_path = os.path.join(os.path.dirname(cmd_folder), "curve_number.qml")
+            results["CurveNumberVector"] = outputs["CurveNumberVector"]
+            self.handle_post_processing(results["CurveNumberVector"], cn_style_path, context)
 
         return results
 
@@ -475,27 +438,25 @@ class GlobalEsaIsric(CurveNumberGeneratorAlgorithm):
             msg
             + f"""<html><body><a "href"="https://github.com/ar-siddiqui/curve_number_generator/wiki/Tutorials#curve-number-generator-conus-nlcd--ssurgo">Video Tutorial</a></h3>
 <h2>Algorithm description</h2>
-<p>This algorithm generates Curve Number layer for the given Area of Interest within the contiguous United States. It can also download Soil, Land Cover, and Impervious Surface datasets for the same area.</p>
+<p>This algorithm generates a Curve Number layer for the given Area of Interest anywhere in the world. It can also download ISRIC-derived Hydrologic Soil Groups and ESA Land Cover datasets for the same area.</p>
 <h2>Input parameters</h2>
 <h3>Area of Interest</h3>
-<p>Polygon layer representing area of interest</p>
-<h3>Lookup Table [optional]</h3>
-<p>Optional Table to relate NLCD Land Use Value and HSG Value to a particular curve number. By default the algorithm uses pre defined table. The table must have two columns 'grid_code' and 'cn'. grid_code is concatenation of NLCD Land Use code and Hydrologic Soil Group. <a href="https://raw.githubusercontent.com/ar-siddiqui/curve_number_generator/v{PLUGIN_VERSION}/curve_number_generator/processing/algorithms/conus_nlcd_ssurgo/default_lookup.csv">Template csv file to create custom table</a> (add an optional <a href="https://raw.githubusercontent.com/ar-siddiqui/curve_number_generator/v{PLUGIN_VERSION}/curve_number_generator/processing/algorithms/conus_nlcd_ssurgo/default_lookup.csvt">`.csvt`</a> file to control column data types).</p>
-<h3>Drained Soils? [leave unchecked if not sure]</h3>
-<p>Certain Soils are categorized as dual category in SSURGO dataset. They have Hydrologic Soil Group D for Undrained Conditions and Hydrologic Soil Group A/B/C for Drained Conditions.
-
-If left unchecked, the algorithm will assume HSG D for all dual category soils.
-
-If checked the algorithm will assume HSG A/B/C for each dual category soil.</p>
+<p>Polygon layer representing an area of interest</p>
+<h3>Lookup Table [optional</h3>
+<p>Optional Table to relate ESA Land Use Value and HSG Value to a particular curve number with Hydrologic Condition and Antecedent Runoff Condition as additional arguments. The table must have two columns 'grid_code' and 'cn'. grid_code is a concatenation of ESA Land Use code and Hydrologic Soil Group. <a href="https://raw.githubusercontent.com/ar-siddiqui/curve_number_generator/v{PLUGIN_VERSION}/curve_number_generator/processing/algorithms/conus_nlcd_ssurgo/default_lookup.csv">Template csv file to create custom table</a> (add an optional <a href="https://raw.githubusercontent.com/ar-siddiqui/curve_number_generator/v{PLUGIN_VERSION}/curve_number_generator/processing/algorithms/conus_nlcd_ssurgo/default_lookup.csvt">`.csvt`</a> file to control column data types).</p>
+<h3>Hydrologic Condition [optional]</h3>
+<p> Either Poor, Fair, or Good, based on the percentage of ground cover from the land use (see <a href="https://directives.sc.egov.usda.gov/17758.wba">Table 9-1</a> for further description). If unsure, use the default fair hydrologic conidtion which is the most common case in hydrologic studies.
+<h3>Antecedent Runoff Condition</h3>
+<p> ARC-I for dry, II for average, and III for wet conditions of soil. The standard curve number is calculated for ARC-II and is factored up or down for ARC-I or ARC-III. (see <a href="https://directives.sc.egov.usda.gov/17752.wba">Table 10-1</a> for further understanding). If unsure, leave the default choices as they are.</p> 
 <h2>Outputs</h2>
-<h3>NLCD Land Cover</h3>
-<p>NLCD 2021 Land Cover Raster</p>
-<h3>NLCD Impervious Surface</h3>
-<p>NLCD 2021 Impervious Surface Raster</p>
-<h3>Soils</h3>
-<p>SSURGO Extended Soil Dataset </p>
+<h3>ESA World Cover</h3>
+<p>ESA Land Cover 2021 raster.</p>
+<h3>ISRIC Derived HSG</h3>
+<p>Hydrologic Soil Groups raster derived from the ISRIC clay dataset. Note that in dense urban areas, ISRIC soil raster has nodata which reflects in the HSG.</p>
 <h3>Curve Number</h3>
 <p>Generated Curve Number Layer based on Land Cover and HSG values.</p>
+<h3>Curve Number (Vectorized)</h3>
+<p>Vector form of generated Curve Number Layer.</p>
 <br><p align="right">Algorithm author: Abdul Raheem Siddiqui</p><p align="right">Help author: Abdul Raheem Siddiqui</p><p align="right">Algorithm version: {PLUGIN_VERSION}</p><p align="right">Contact email: ars.work.ce@gmail.com</p><p>Disclaimer: The curve numbers generated with this algorithm are high level estimates and should be reviewed in detail before being used for detailed modeling or construction projects.</p></body></html>"""
         )
 
