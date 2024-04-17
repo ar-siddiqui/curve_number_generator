@@ -469,9 +469,9 @@ class ConusNlcdSsurgo(CurveNumberGeneratorAlgorithm):
 <p>This algorithm generates Curve Number layer for the given Area of Interest within the contiguous United States. It can also download Soil, Land Cover, and Impervious Surface datasets for the same area.</p>
 <h2>Input parameters</h2>
 <h3>Area of Interest</h3>
-<p>Polygon layer representing area of interest</p>
+<p>Polygon layer representing area of interest.</p>
 <h3>Lookup Table [optional]</h3>
-<p>Optional Table to relate NLCD Land Use Value and HSG Value to a particular curve number. By default the algorithm uses pre defined table. The table must have two columns 'grid_code' and 'cn'. grid_code is concatenation of NLCD Land Use code and Hydrologic Soil Group. <a href="https://raw.githubusercontent.com/ar-siddiqui/curve_number_generator/v{PLUGIN_VERSION}/curve_number_generator/processing/algorithms/conus_nlcd_ssurgo/default_lookup.csv">Template csv file to create custom table</a> (add an optional <a href="https://raw.githubusercontent.com/ar-siddiqui/curve_number_generator/v{PLUGIN_VERSION}/curve_number_generator/processing/algorithms/conus_nlcd_ssurgo/default_lookup.csvt">`.csvt`</a> file to control column data types).</p>
+<p>Optional Table to relate NLCD Land Cover Value and HSG Value to a particular curve number. By default the algorithm uses pre defined table. The table must have two columns 'grid_code' and 'cn'. grid_code is concatenation of NLCD Land Use code and Hydrologic Soil Group (HSG). <a href="https://raw.githubusercontent.com/ar-siddiqui/curve_number_generator/v{PLUGIN_VERSION}/curve_number_generator/processing/algorithms/conus_nlcd_ssurgo/default_lookup.csv">Template csv file to create custom table</a> (add an optional <a href="https://raw.githubusercontent.com/ar-siddiqui/curve_number_generator/v{PLUGIN_VERSION}/curve_number_generator/processing/algorithms/conus_nlcd_ssurgo/default_lookup.csvt">`.csvt`</a> file to control column data types).</p>
 <h3>Drained Soils? [leave unchecked if not sure]</h3>
 <p>Certain Soils are categorized as dual category in SSURGO dataset. They have Hydrologic Soil Group D for Undrained Conditions and Hydrologic Soil Group A/B/C for Drained Conditions.
 
@@ -486,7 +486,7 @@ If checked the algorithm will assume HSG A/B/C for each dual category soil.</p>
 <h3>Soils</h3>
 <p>SSURGO Extended Soil Dataset </p>
 <h3>Curve Number</h3>
-<p>Generated Curve Number Layer based on Land Cover and HSG values.</p>
+<p>Generated Curve Number layer based on Land Cover and HSG values.</p>
 <br><p align="right">Algorithm author: Abdul Raheem Siddiqui</p><p align="right">Help author: Abdul Raheem Siddiqui</p><p align="right">Algorithm version: {PLUGIN_VERSION}</p><p align="right">Contact email: ars.work.ce@gmail.com</p><p>Disclaimer: The curve numbers generated with this algorithm are high level estimates and should be reviewed in detail before being used for detailed modeling or construction projects.</p></body></html>"""
         )
 
