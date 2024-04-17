@@ -134,17 +134,17 @@
         <stdDevFactor>2</stdDevFactor>
       </minMaxOrigin>
       <colorPalette>
-        <paletteEntry alpha="255" color="#006400" label="10" value="10"/>
-        <paletteEntry alpha="255" color="#ffbb22" label="20" value="20"/>
-        <paletteEntry alpha="255" color="#ffff4c" label="30" value="30"/>
-        <paletteEntry alpha="255" color="#f096ff" label="40" value="40"/>
-        <paletteEntry alpha="255" color="#fa0000" label="50" value="50"/>
-        <paletteEntry alpha="255" color="#b4b4b4" label="60" value="60"/>
-        <paletteEntry alpha="255" color="#f0f0f0" label="70" value="70"/>
-        <paletteEntry alpha="255" color="#0064c8" label="80" value="80"/>
-        <paletteEntry alpha="255" color="#0096a0" label="90" value="90"/>
-        <paletteEntry alpha="255" color="#00cf75" label="95" value="95"/>
-        <paletteEntry alpha="255" color="#fae6a0" label="100" value="100"/>
+        <paletteEntry alpha="255" color="#006400" label="Tree cover (10)" value="10"/>
+        <paletteEntry alpha="255" color="#ffbb22" label="Shrubland (20)" value="20"/>
+        <paletteEntry alpha="255" color="#ffff4c" label="Grassland (30)" value="30"/>
+        <paletteEntry alpha="255" color="#f096ff" label="Cropland (40)" value="40"/>
+        <paletteEntry alpha="255" color="#fa0000" label="Built-up (50)" value="50"/>
+        <paletteEntry alpha="255" color="#b4b4b4" label="Bare/sparse vegetation (60)" value="60"/>
+        <paletteEntry alpha="255" color="#f0f0f0" label="Snow and ice (70)" value="70"/>
+        <paletteEntry alpha="255" color="#0064c8" label="Permanent water bodies (80)" value="80"/>
+        <paletteEntry alpha="255" color="#0096a0" label="Herbacious wetland (90)" value="90"/>
+        <paletteEntry alpha="255" color="#00cf75" label="Mangroves (95)" value="95"/>
+        <paletteEntry alpha="255" color="#fae6a0" label="Moss and lichen (100)" value="100"/>
       </colorPalette>
       <colorramp type="randomcolors" name="[source]">
         <Option/>
