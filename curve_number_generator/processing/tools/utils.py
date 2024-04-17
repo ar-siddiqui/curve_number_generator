@@ -1,30 +1,38 @@
 import os
 import pickle
-import requests
 import time
 import xml.etree.ElementTree as ET
 
 import processing
 import requests
-from curve_number_generator.processing.config import PLUGIN_VERSION, PROFILE_DICT, MESSAGE_URL
 from qgis.core import (
     Qgis,
     QgsApplication,
+    QgsCoordinateReferenceSystem,
+    QgsCoordinateTransform,
     QgsCoordinateTransformContext,
     QgsDistanceArea,
     QgsGeometry,
     QgsProcessing,
     QgsProcessingException,
+    QgsProject,
     QgsVectorLayer,
 )
 from qgis.PyQt.QtWidgets import QPushButton
 from qgis.utils import iface
 
+from curve_number_generator.processing.config import (
+    MESSAGE_URL,
+    PLUGIN_VERSION,
+    PROFILE_DICT,
+)
+
 qgis_settings_path = QgsApplication.qgisSettingsDirPath().replace("\\", "/")
 cn_log_path = os.path.join(qgis_settings_path, "curve_number_generator.log")
 cn_pickle_path = os.path.join(qgis_settings_path, "curve_number_generator.p")
-cn_msg_path = os.path.join(qgis_settings_path, 'curve_number_generator_msg.html')
+cn_msg_path = os.path.join(qgis_settings_path, "curve_number_generator_msg.html")
 cn_msg_cache_duration = 24 * 60 * 60  # 24 hours in seconds
+
 
 def fetchMessage(url, timeout=2) -> str:
     response = requests.get(url, timeout=timeout)
@@ -33,8 +41,9 @@ def fetchMessage(url, timeout=2) -> str:
 
 
 def saveToCache(message):
-    with open(cn_msg_path, 'w') as file:
+    with open(cn_msg_path, "w") as file:
         file.write(message)
+
 
 def isCacheValid():
     if os.path.exists(cn_msg_path):
@@ -43,12 +52,14 @@ def isCacheValid():
             return True
     return False
 
+
 def loadMessageFromCache():
     if isCacheValid():
-        with open(cn_msg_path, 'r') as file:
+        with open(cn_msg_path, "r") as file:
             text = file.read()
             return text
     return ""
+
 
 def getAndUpdateMessage():
     cached_message = loadMessageFromCache()
@@ -58,6 +69,7 @@ def getAndUpdateMessage():
     fetched_message = fetchMessage(MESSAGE_URL)
     saveToCache(fetched_message)
     return fetched_message
+
 
 def incrementUsageCounter() -> int:
     # log usage
@@ -225,11 +237,24 @@ def displayMessageWidget(widget, level: int = 0, duration: int = 10):
     iface.messageBar().pushWidget(widget, level=level, duration=duration)
 
 
-def createDefaultLookup(cmd_folder) -> QgsVectorLayer:
+def createDefaultLookup(cmd_folder, file_name="default_lookup.csv") -> QgsVectorLayer:
     """Expects a default_lookup.csv" file in the cmd_folder."""
-    csv_uri = "file:///" + os.path.join(cmd_folder, "default_lookup.csv") + "?delimiter=,"
-    csv = QgsVectorLayer(csv_uri, "default_lookup.csv", "delimitedtext")
+    csv_uri = "file:///" + os.path.join(cmd_folder, file_name) + "?delimiter=,"
+    csv = QgsVectorLayer(csv_uri, file_name, "delimitedtext")
     return csv
+
+
+def getExtentInEPSG4326(layer) -> tuple:
+    source_crs = layer.crs()
+    target_crs = QgsCoordinateReferenceSystem("EPSG:4326")
+
+    transform = QgsCoordinateTransform(source_crs, target_crs, QgsProject.instance())
+    extent = layer.extent()
+
+    xmin, ymin = transform.transform(extent.xMinimum(), extent.yMinimum())
+    xmax, ymax = transform.transform(extent.xMaximum(), extent.yMaximum())
+
+    return xmin, ymin, xmax, ymax
 
 
 def getExtent(layer) -> tuple:
@@ -343,6 +368,8 @@ def gdalWarp(
     output=QgsProcessing.TEMPORARY_OUTPUT,
     context=None,
     feedback=None,
+    extent_layer=None,
+    target_resolution=None,
 ):
     # reproject to original crs
     # Warp (reproject)
@@ -356,9 +383,9 @@ def gdalWarp(
         "RESAMPLING": 0,
         "SOURCE_CRS": None,
         "TARGET_CRS": target_crs,
-        "TARGET_EXTENT": None,
+        "TARGET_EXTENT": extent_layer,
         "TARGET_EXTENT_CRS": None,
-        "TARGET_RESOLUTION": None,
+        "TARGET_RESOLUTION": target_resolution,
         "OUTPUT": output,
     }
     return processing.run(
@@ -393,3 +420,66 @@ def gdalPolygonize(
         feedback=feedback,
         is_child_algorithm=True,
     )["OUTPUT"]
+
+
+def perform_raster_math(
+    exprs,
+    input_dict,
+    context,
+    feedback,
+    no_data,
+    out_data_type,
+    output=QgsProcessing.TEMPORARY_OUTPUT,
+    hide_no_data=False,
+) -> dict:
+    """Wrapper around QGIS GDAL Raster Calculator"""
+
+    alg_params = {
+        "BAND_A": input_dict.get("band_a", None),
+        "BAND_B": input_dict.get("band_b", None),
+        "BAND_C": input_dict.get("band_c", None),
+        "BAND_D": input_dict.get("band_d", None),
+        "BAND_E": input_dict.get("band_e", None),
+        "BAND_F": input_dict.get("band_f", None),
+        "EXTRA": f"--overwrite{' --hideNoData' if hide_no_data else ''}",
+        "FORMULA": exprs,
+        "INPUT_A": input_dict.get("input_a", None),
+        "INPUT_B": input_dict.get("input_b", None),
+        "INPUT_C": input_dict.get("input_c", None),
+        "INPUT_D": input_dict.get("input_d", None),
+        "INPUT_E": input_dict.get("input_e", None),
+        "INPUT_F": input_dict.get("input_f", None),
+        "NO_DATA": no_data,
+        "RTYPE": out_data_type,
+        "OPTIONS": "",
+        "OUTPUT": output,
+    }
+
+    return processing.run(
+        "gdal:rastercalculator",
+        alg_params,
+        context=context,
+        feedback=feedback,
+        is_child_algorithm=True,
+    )["OUTPUT"]
+
+
+def generate_cn_exprs(lookup_layer, nodata=255) -> str:
+    """Generate  CN expression"""
+    cn_calc_expr = []
+    hsg_map = {
+        "A": 1,
+        "B": 2,
+        "C": 3,
+        "D": 4,
+    }
+    for feat in lookup_layer.getFeatures():
+        grid_code = feat.attribute("grid_code")
+        cn = feat.attribute("cn")
+        lc, hsg = grid_code.split("_")
+        cn_calc_expr.append(f"logical_and(A=={lc},B=={hsg_map[hsg]})*{cn}")
+        if hsg == "D":
+            cn_calc_expr.append(f"logical_and(A=={lc},B=={nodata})*{cn}")
+
+    cn_expression = " + ".join(cn_calc_expr)
+    return cn_expression
