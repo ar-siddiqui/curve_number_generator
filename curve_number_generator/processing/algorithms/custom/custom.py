@@ -208,12 +208,12 @@ class Custom(CurveNumberGeneratorAlgorithm):
 
         return (
             msg
-            + f"""<html><body><a "href"="https://github.com/ar-siddiqui/curve_number_generator/wiki/Tutorials#curve-number-generator-custom">Video Tutorial</a></h3>
+            + f"""<html><body>
 <h2>Algorithm description</h2>
 <p>This algorithm generates Curve Number layer for the given Area of Interest given a Land Cover Raster, Soil Layer, and a Lookup Table.</p>
 <h2>Input parameters</h2>
 <h3>Area of Interest</h3>
-<p>Polygon layer representing area of interest</p>
+<p>Polygon layer representing area of interest.</p>
 <h3>Land Cover Raster</h3>
 <p>Raster representing land cover values of the AOI</p>
 <h3>Soils Layer</h3>
