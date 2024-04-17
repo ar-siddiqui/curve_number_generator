@@ -436,28 +436,34 @@ class GlobalEsaIsric(CurveNumberGeneratorAlgorithm):
 
         return (
             msg
-            + f"""<html><body><a "href"="https://github.com/ar-siddiqui/curve_number_generator/wiki/Tutorials#curve-number-generator-conus-nlcd--ssurgo">Video Tutorial</a></h3>
+            + f"""<html><body>
 <h2>Algorithm description</h2>
-<p>This algorithm generates a Curve Number layer for the given Area of Interest anywhere in the world. It can also download ISRIC-derived Hydrologic Soil Groups and ESA Land Cover datasets for the same area.</p>
+<p>This algorithm generates a Curve Number layer for the given Area of Interest. It can also generate Hydrologic Soil Groups (HSG) raster from ISRIC clay dataset and download ESA Land Cover raster for the same area.
+
+For areas where the ISRIC dataset has no data such as urban areas, HSG D is assumed.</p>
 <h2>Input parameters</h2>
 <h3>Area of Interest</h3>
 <p>Polygon layer representing an area of interest</p>
 <h3>Lookup Table [optional</h3>
-<p>Optional Table to relate ESA Land Use Value and HSG Value to a particular curve number with Hydrologic Condition and Antecedent Runoff Condition as additional arguments. The table must have two columns 'grid_code' and 'cn'. grid_code is a concatenation of ESA Land Use code and Hydrologic Soil Group. <a href="https://raw.githubusercontent.com/ar-siddiqui/curve_number_generator/v{PLUGIN_VERSION}/curve_number_generator/processing/algorithms/conus_nlcd_ssurgo/default_lookup.csv">Template csv file to create custom table</a> (add an optional <a href="https://raw.githubusercontent.com/ar-siddiqui/curve_number_generator/v{PLUGIN_VERSION}/curve_number_generator/processing/algorithms/conus_nlcd_ssurgo/default_lookup.csvt">`.csvt`</a> file to control column data types).</p>
-<h3>Hydrologic Condition [optional]</h3>
-<p> Either Poor, Fair, or Good, based on the percentage of ground cover from the land use (see <a href="https://directives.sc.egov.usda.gov/17758.wba">Table 9-1</a> for further description). If unsure, use the default fair hydrologic conidtion which is the most common case in hydrologic studies.
-<h3>Antecedent Runoff Condition</h3>
-<p> ARC-I for dry, II for average, and III for wet conditions of soil. The standard curve number is calculated for ARC-II and is factored up or down for ARC-I or ARC-III. (see <a href="https://directives.sc.egov.usda.gov/17752.wba">Table 10-1</a> for further understanding). If unsure, leave the default choices as they are.</p> 
+<p>Optional Table to relate ESA Land Cover Value and HSG Value to a particular curve number. By default the algorithm uses pre defined tables. The table must have two columns 'grid_code' and 'cn'. grid_code is a concatenation of ESA Land Cover code and Hydrologic Soil Group. <a href="https://raw.githubusercontent.com/ar-siddiqui/curve_number_generator/v{PLUGIN_VERSION}/curve_number_generator/processing/algorithms/global_esa_isric/lookups/default_lookup_f_ii.csv">Template csv file to create custom table</a>.</p>
+<h3>Hydrologic Condition [Ignored when custom lookup table is provided]</h3>
+<p> Hydrologic condition is a parameter that represents combinations of factors that affect infiltration and runof. It can be Poor, Fair, or Good. (see <a href="https://directives.sc.egov.usda.gov/17758.wba">Table 9-1</a> for further description).
+
+If unsure, use the default fair hydrologic conidtion which is the most common case in hydrologic studies.
+<h3>Antecedent Runoff Condition [Ignored when custom lookup table is provided]</h3>
+<p> Antecedent Runoff Condition (ARC) is the relative wetness or dryness index for the soil. I for dry, II for average, and III for wet conditions. (see <a href="https://directives.sc.egov.usda.gov/17752.wba">Table 10-1</a> for further understanding)</p>
 <h2>Outputs</h2>
 <h3>ESA World Cover</h3>
 <p>ESA Land Cover 2021 raster.</p>
 <h3>ISRIC Derived HSG</h3>
-<p>Hydrologic Soil Groups raster derived from the ISRIC clay dataset. Note that in dense urban areas, ISRIC soil raster has nodata which reflects in the HSG.</p>
+<p>Hydrologic Soil Groups raster derived from the ISRIC clay dataset.
+
+Note: In dense urban areas, ISRIC soil raster has nodata cells, which are also reflected in the derived HSG raster.</p>
 <h3>Curve Number</h3>
-<p>Generated Curve Number Layer based on Land Cover and HSG values.</p>
+<p>Generated Curve Number layer based on Land Cover and HSG values.</p>
 <h3>Curve Number (Vectorized)</h3>
-<p>Vector form of generated Curve Number Layer.</p>
-<br><p align="right">Algorithm author: Abdul Raheem Siddiqui</p><p align="right">Help author: Abdul Raheem Siddiqui</p><p align="right">Algorithm version: {PLUGIN_VERSION}</p><p align="right">Contact email: ars.work.ce@gmail.com</p><p>Disclaimer: The curve numbers generated with this algorithm are high level estimates and should be reviewed in detail before being used for detailed modeling or construction projects.</p></body></html>"""
+<p>Vector form of the generated Curve Number layer.</p>
+<br><p align="right">Algorithm author: Abdullah Azzam</p><p align="right">Help author: Abdullah Azzam</p><p align="right">Algorithm version: {PLUGIN_VERSION}</p><p align="right">Contact email: ars.work.ce@gmail.com</p><p>Disclaimer: The curve numbers generated with this algorithm are high level estimates and should be reviewed in detail before being used for detailed modeling or construction projects.</p></body></html>"""
         )
 
     def createInstance(self):
