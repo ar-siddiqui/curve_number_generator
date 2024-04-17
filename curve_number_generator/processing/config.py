@@ -1,7 +1,9 @@
 # Constants
-PLUGIN_VERSION = "2.1.3"
+PLUGIN_VERSION = "2.2.0"
 
-REGISTRATION_FORM_LINK = "https://docs.google.com/forms/d/e/1FAIpQLSe-X-OR6tFvULP6oiiPK3M49-v07sjtxTu8md9XAuBOwxk7Xg/formResponse"
+REGISTRATION_FORM_LINK = (
+    "https://docs.google.com/forms/d/e/1FAIpQLSe-X-OR6tFvULP6oiiPK3M49-v07sjtxTu8md9XAuBOwxk7Xg/formResponse"
+)
 
 REGISTRATION_FORM_ENRIES = {
     "name": "entry.1135373624",
@@ -19,9 +21,7 @@ CONUS_NLCD_SSURGO = {
     "SSURGO_Soil": "https://sdmdataaccess.sc.egov.usda.gov/Spatial/SDMWGS84GEOGRAPHIC.wfs?SERVICE=WFS&VERSION=1.1.0&REQUEST=GetFeature&TYPENAME=mapunitpolyextended&SRSNAME=EPSG:4326&BBOX={}",
 }
 
-GLOBAL_ESA_ISRIC = {
-    "ISRIC_CLAY": "/vsicurl/https://files.isric.org/soilgrids/latest/data/clay/clay_0-5cm_mean.vrt"
-}
+GLOBAL_ESA_ISRIC = {"ISRIC_CLAY": "/vsicurl/https://files.isric.org/soilgrids/latest/data/clay/clay_0-5cm_mean.vrt"}
 
 MESSAGE_URL = "https://gist.githubusercontent.com/ar-siddiqui/2260461cfd0107150840ab6fb4f83516/raw"
 
