@@ -21,7 +21,10 @@ CONUS_NLCD_SSURGO = {
     "SSURGO_Soil": "https://sdmdataaccess.sc.egov.usda.gov/Spatial/SDMWGS84GEOGRAPHIC.wfs?SERVICE=WFS&VERSION=1.1.0&REQUEST=GetFeature&TYPENAME=mapunitpolyextended&SRSNAME=EPSG:4326&BBOX={}",
 }
 
-GLOBAL_ESA_ISRIC = {"ISRIC_CLAY": "/vsicurl/https://files.isric.org/soilgrids/latest/data/clay/clay_0-5cm_mean.vrt"}
+GLOBAL_ESA_ORNL = {
+    "ORNL_HYSOG": "https://webmap.ornl.gov/ogcbroker/wcs?SERVICE=WCS&VERSION=1.0.0&REQUEST=GetCoverage&FORMAT=GeoTIFF_BYTE&COVERAGE=1566_1&WIDTH={}&HEIGHT={}&BBOX={}&CRS=epsg:4326&RESPONSE_CRS=epsg:4326"
+}
+
 
 MESSAGE_URL = "https://gist.githubusercontent.com/ar-siddiqui/2260461cfd0107150840ab6fb4f83516/raw"
 
