@@ -425,12 +425,12 @@ class GlobalEsaORNL(CurveNumberGeneratorAlgorithm):
             msg
             + f"""<html><body>
 <h2>Algorithm description</h2>
-<p>This algorithm generates a Curve Number layer for the given Area of Interest. It can also generate Hydrologic Soil Groups (HSG) raster from ORNL clay dataset and download ESA Land Cover raster for the same area.
+<p>This algorithm generates a Curve Number layer for the given Area of Interest. It can also generate Hydrologic Soil Groups (HSG) raster from ORNL Hydrologic Soil Group dataset (HYSOGs250m) and download ESA Land Cover 2021 raster for the same area.
 
-For areas where the ORNL dataset has no data such as urban areas, HSG D is assumed.</p>
+For areas where the ORNL dataset has no data such as permanent water bodies, HSG D is assumed.</p>
 <h2>Input parameters</h2>
 <h3>Area of Interest</h3>
-<p>Polygon layer representing an area of interest</p>
+<p>Polygon layer representing an area of interest.</p>
 <h3>Lookup Table [optional</h3>
 <p>Optional Table to relate ESA Land Cover Value and HSG Value to a particular curve number. By default the algorithm uses pre defined tables. The table must have two columns 'grid_code' and 'cn'. grid_code is a concatenation of ESA Land Cover code and Hydrologic Soil Group. <a href="https://raw.githubusercontent.com/ar-siddiqui/curve_number_generator/v{PLUGIN_VERSION}/curve_number_generator/processing/algorithms/global_esa_ornl/lookups/default_lookup_f_ii.csv">Template csv file to create custom table</a>.</p>
 <h3>Hydrologic Condition [Ignored when custom lookup table is provided]</h3>
@@ -439,16 +439,18 @@ For areas where the ORNL dataset has no data such as urban areas, HSG D is assum
 If unsure, use the default fair hydrologic conidtion which is the most common case in hydrologic studies.
 <h3>Antecedent Runoff Condition [Ignored when custom lookup table is provided]</h3>
 <p> Antecedent Runoff Condition (ARC) is the relative wetness or dryness index for the soil. I for dry, II for average, and III for wet conditions. (see <a href="https://directives.sc.egov.usda.gov/17752.wba">Table 10-1</a> for further understanding)</p>
+
+If unsure, use the default ARC II which is the most common case in hydrologic studies.
 <h2>Outputs</h2>
 <h3>ESA World Cover</h3>
 <p>ESA Land Cover 2021 raster.</p>
 <h3>HSG</h3>
-<p>ORNL Hydrologic Soil Groups.</p>
+<p>ORNL Hydrologic Soil Groups (HYSOGs250m).</p>
 <h3>Curve Number</h3>
 <p>Generated Curve Number layer based on Land Cover and HSG values.</p>
 <h3>Curve Number (Vectorized)</h3>
 <p>Vector form of the generated Curve Number layer.</p>
-<br><p align="right">Algorithm author: Abdullah Azzam</p><p align="right">Help author: Abdullah Azzam</p><p align="right">Algorithm version: {PLUGIN_VERSION}</p><p align="right">Contact email: ars.work.ce@gmail.com</p><p>Disclaimer: The curve numbers generated with this algorithm are high level estimates and should be reviewed in detail before being used for detailed modeling or construction projects.</p></body></html>"""
+<br><p align="right">Algorithm author: Abdullah Azzam</p><p align="right">Help author: Abdul Raheem Siddiqui</p><p align="right">Algorithm version: {PLUGIN_VERSION}</p><p align="right">Contact email: ars.work.ce@gmail.com</p><p>Disclaimer: The curve numbers generated with this algorithm are high level estimates and should be reviewed in detail before being used for detailed modeling or construction projects.</p></body></html>"""
         )
 
     def createInstance(self):
