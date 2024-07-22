@@ -147,7 +147,7 @@ def createHTML(outputFile, counter) -> None:
     <p style="font-size:21px;line-height: 1.5;text-align:center;"><br>🎉 WOW! You have used the Curve Number Generator
         Plugin <b>{counter}</b>
         times already 🎉.<br />If you would like to get any GIS task automated for your organization please contact me at
-        ars.work.ce@gmail.com<br />
+        ar-siddiqui@outlook.com<br />
         If this plugin has saved your time, please consider making a personal or organizational donation of any value to
         the developer.</p>
     <br>

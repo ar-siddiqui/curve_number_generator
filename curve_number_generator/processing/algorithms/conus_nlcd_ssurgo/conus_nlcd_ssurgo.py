@@ -9,7 +9,7 @@
                               -------------------
         begin                : 2022-07-22
         copyright            : (C) 2022 by Abdul Raheem Siddiqui
-        email                : ars.work.ce@gmail.com
+        email                : ar-siddiqui@outlook.com
  ***************************************************************************/
 
 /***************************************************************************
@@ -487,7 +487,7 @@ If checked the algorithm will assume HSG A/B/C for each dual category soil.</p>
 <p>SSURGO Extended Soil Dataset </p>
 <h3>Curve Number</h3>
 <p>Generated Curve Number layer based on Land Cover and HSG values.</p>
-<br><p align="right">Algorithm author: Abdul Raheem Siddiqui</p><p align="right">Help author: Abdul Raheem Siddiqui</p><p align="right">Algorithm version: {PLUGIN_VERSION}</p><p align="right">Contact email: ars.work.ce@gmail.com</p><p>Disclaimer: The curve numbers generated with this algorithm are high level estimates and should be reviewed in detail before being used for detailed modeling or construction projects.</p></body></html>"""
+<br><p align="right">Algorithm author: Abdul Raheem Siddiqui</p><p align="right">Help author: Abdul Raheem Siddiqui</p><p align="right">Algorithm version: {PLUGIN_VERSION}</p><p align="right">Contact email: ar-siddiqui@outlook.com</p><p>Disclaimer: The curve numbers generated with this algorithm are high level estimates and should be reviewed in detail before being used for detailed modeling or construction projects.</p></body></html>"""
         )
 
     def createInstance(self):

@@ -9,7 +9,7 @@
                               -------------------
         begin                : 2020-06-06
         copyright            : (C) 2021 by Abdul Raheem Siddiqui
-        email                : mailto:ars.work.ce@gmail.com
+        email                : mailto:ar-siddiqui@outlook.com
  ***************************************************************************/
 
 /***************************************************************************
@@ -33,11 +33,13 @@ __revision__ = "$Format:%H$"
 import inspect
 import os
 
-from curve_number_generator.processing import algorithms
-from curve_number_generator.processing.curve_number_generator_algorithm import \
-    CurveNumberGeneratorAlgorithm
 from qgis.core import QgsProcessingProvider
 from qgis.PyQt.QtGui import QIcon
+
+from curve_number_generator.processing import algorithms
+from curve_number_generator.processing.curve_number_generator_algorithm import (
+    CurveNumberGeneratorAlgorithm,
+)
 
 
 class CurveNumberGeneratorProvider(QgsProcessingProvider):
@@ -90,9 +92,7 @@ class CurveNumberGeneratorProvider(QgsProcessingProvider):
         the Processing toolbox.
         """
         cmd_folder = os.path.split(inspect.getfile(inspect.currentframe()))[0]
-        icon = QIcon(
-            os.path.join(os.path.join(os.path.dirname(cmd_folder), "icon.png"))
-        )
+        icon = QIcon(os.path.join(os.path.join(os.path.dirname(cmd_folder), "icon.png")))
         return icon
 
     def longName(self):

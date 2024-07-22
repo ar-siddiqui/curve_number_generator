@@ -6,9 +6,9 @@
 name=Curve Number Generator
 qgisMinimumVersion=3.18
 description=Curve Number Generator plugin has multiple algorithms to generate the curve number layer for any area of interest using different datasets.
-version=2.2.0
+version=2.2.1
 author=Abdul Raheem Siddiqui
-email=ars.work.ce@gmail.com
+email=ar-siddiqui@outlook.com
 
 about=Curve Number Generator plugin has multiple algorithms to generate the curve number layer for any area of interest using different datasets.
 
@@ -21,7 +21,10 @@ repository=https://github.com/ar-siddiqui/curve_number_generator
 
 hasProcessingProvider=yes
 # Uncomment the following line and add your changelog:
-changelog= Version 2.2.0 - 2024-04-16
+changelog=Version 2.2.1 - 2024-07-21
+	- Add a new global algorithm utilizing ESA Land Cover and ORNL HSG datasets
+	- Deprecate ESA and ISRIL aglorithm
+	Version 2.2.0 - 2024-04-16
 	- Add a new global algorithm utilizing ESA and ISRIC datasets
 	Version 2.1.3 - 2023-10-17
 	- Change NLCD Land Cover and Impervious layer to 2021 dataset

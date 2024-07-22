@@ -9,7 +9,7 @@
                               -------------------
         begin                : 2022-07-22
         copyright            : (C) 2022 by Abdul Raheem Siddiqui
-        email                : mailto:ars.work.ce@gmail.com
+        email                : mailto:ar-siddiqui@outlook.com
  ***************************************************************************/
 
 /***************************************************************************
@@ -226,7 +226,7 @@ class Custom(CurveNumberGeneratorAlgorithm):
 <h2>Outputs</h2>
 <h3>Curve Number</h3>
 <p>Generated Curve Number Layer based on Land Cover and Soils.</p>
-<br><p align="right">Algorithm author: Abdul Raheem Siddiqui</p><p align="right">Help author: Abdul Raheem Siddiqui</p><p align="right">Algorithm version: {PLUGIN_VERSION}</p><p align="right">Contact email: ars.work.ce@gmail.com</p></body></html>"""
+<br><p align="right">Algorithm author: Abdul Raheem Siddiqui</p><p align="right">Help author: Abdul Raheem Siddiqui</p><p align="right">Algorithm version: {PLUGIN_VERSION}</p><p align="right">Contact email: ar-siddiqui@outlook.com</p></body></html>"""
         )
 
     def createInstance(self):
