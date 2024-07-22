@@ -450,7 +450,8 @@ If unsure, use the default ARC II which is the most common case in hydrologic st
 <p>Generated Curve Number layer based on Land Cover and HSG values.</p>
 <h3>Curve Number (Vectorized)</h3>
 <p>Vector form of the generated Curve Number layer.</p>
-<br><p align="right">Algorithm author: Abdullah Azzam</p><p align="right">Help author: Abdul Raheem Siddiqui</p><p align="right">Algorithm version: {PLUGIN_VERSION}</p><p align="right">Contact email: ars.work.ce@gmail.com</p><p>Disclaimer: The curve numbers generated with this algorithm are high level estimates and should be reviewed in detail before being used for detailed modeling or construction projects.</p></body></html>"""
+<br>
+<p align="right">Algorithm science author: Abdullah Azzam</p><p align="right">Code author: Abdul Raheem Siddiqui</p><p align="right">Help author: Abdullah Azzam</p><p align="right">Algorithm version: {PLUGIN_VERSION}</p><p align="right">Contact email: ars.work.ce@gmail.com</p><p>Disclaimer: The curve numbers generated with this algorithm are high level estimates and should be reviewed in detail before being used for detailed modeling or construction projects.</p></body></html>"""
         )
 
     def createInstance(self):
