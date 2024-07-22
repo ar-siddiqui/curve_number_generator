@@ -25,20 +25,24 @@ import inspect
 import os
 import sys
 
-from curve_number_generator.processing.tools.layer_post_processor import LayerPostProcessor
+from qgis.core import QgsApplication, QgsProcessingAlgorithm
+from qgis.PyQt.QtCore import QCoreApplication
+from qgis.PyQt.QtGui import QIcon
+
+from curve_number_generator.processing.config import (
+    REGISTRATION_FORM_ENRIES,
+    REGISTRATION_FORM_LINK,
+)
+from curve_number_generator.processing.tools.layer_post_processor import (
+    LayerPostProcessor,
+)
+from curve_number_generator.processing.tools.registration import RegisterForm
 from curve_number_generator.processing.tools.utils import (
     checkPluginUptodate,
     displayUsageMessage,
     getRegistrationStatus,
     incrementUsageCounter,
 )
-from curve_number_generator.processing.tools.registration import RegisterForm
-
-from curve_number_generator.processing.config import REGISTRATION_FORM_ENRIES, REGISTRATION_FORM_LINK
-
-from qgis.core import QgsApplication, QgsProcessingAlgorithm
-from qgis.PyQt.QtCore import QCoreApplication
-from qgis.PyQt.QtGui import QIcon
 
 cmd_folder = os.path.split(inspect.getfile(inspect.currentframe()))[0]
 sys.path.append(cmd_folder)
