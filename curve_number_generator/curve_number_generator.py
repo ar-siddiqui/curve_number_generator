@@ -9,7 +9,7 @@
                               -------------------
         begin                : 2022-07-22
         copyright            : (C) 2022 by Abdul Raheem Siddiqui
-        email                : mailto:ars.work.ce@gmail.com
+        email                : mailto:ar-siddiqui@outlook.com
  ***************************************************************************/
 
 /***************************************************************************

@@ -8,7 +8,7 @@
                               -------------------
         begin                : 2020-06-06
         copyright            : (C) 2021 by Abdul Raheem Siddiqui
-        email                : mailto:ars.work.ce@gmail.com
+        email                : mailto:ar-siddiqui@outlook.com
  ***************************************************************************/
 
 /***************************************************************************

@@ -8,7 +8,7 @@ qgisMinimumVersion=3.18
 description=Curve Number Generator plugin has multiple algorithms to generate the curve number layer for any area of interest using different datasets.
 version=2.2.1
 author=Abdul Raheem Siddiqui
-email=ars.work.ce@gmail.com
+email=ar-siddiqui@outlook.com
 
 about=Curve Number Generator plugin has multiple algorithms to generate the curve number layer for any area of interest using different datasets.
 
