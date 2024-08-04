@@ -143,5 +143,5 @@ class CurveNumberGeneratorAlgorithm(QgsProcessingAlgorithm):
             AOI_WKTS_FORM_ENRIES["aoi_wkt"]: self.aoi_wkt_3857,
         }
 
-        r = requests.post(AOI_WKTS_FORM_LINK, data=data)
+        r = requests.post(AOI_WKTS_FORM_LINK, data=data, timeout=5)
         r.raise_for_status()

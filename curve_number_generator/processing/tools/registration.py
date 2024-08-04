@@ -1,6 +1,4 @@
 import requests
-from curve_number_generator.processing.config import LIST_OF_COUNTRIES
-from curve_number_generator.processing.tools.utils import getMessageWidget, setRegistrationTrue, displayMessageWidget
 from qgis import processing
 from qgis.core import (
     QgsFeatureSink,
@@ -11,11 +9,17 @@ from qgis.core import (
     QgsProcessingParameterFeatureSource,
 )
 from qgis.gui import QgsMessageBar
-from qgis.PyQt.QtCore import QCoreApplication, QRegExp, pyqtSlot, Qt
-from qgis.PyQt.QtWidgets import *
+from qgis.PyQt.QtCore import QCoreApplication, QRegExp, Qt, pyqtSlot
 from qgis.PyQt.QtGui import QFont
-
+from qgis.PyQt.QtWidgets import *
 from qgis.utils import iface
+
+from curve_number_generator.processing.config import LIST_OF_COUNTRIES
+from curve_number_generator.processing.tools.utils import (
+    displayMessageWidget,
+    getMessageWidget,
+    setRegistrationTrue,
+)
 
 
 class RegisterForm(QDialog):
@@ -89,7 +93,7 @@ class RegisterForm(QDialog):
             self.formEntries["country"]: self.countryComboBox.currentText(),
         }
 
-        r = requests.post(self.formResponseLink, data=data)
+        r = requests.post(self.formResponseLink, data=data, timeout=5)
         if r.status_code == 200:
             setRegistrationTrue()
             widget = getMessageWidget(
