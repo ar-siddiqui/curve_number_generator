@@ -257,6 +257,17 @@ def getExtentInEPSG4326(layer) -> tuple:
     return xmin, ymin, xmax, ymax
 
 
+def getExtentWKTIn3857(layer) -> str:
+    source_crs = layer.crs()
+    target_crs = QgsCoordinateReferenceSystem("EPSG:3857")
+    transform = QgsCoordinateTransform(source_crs, target_crs, QgsProject.instance())
+
+    extent = layer.extent()
+    extent_3857 = transform.transform(extent)
+
+    return extent_3857.asWktPolygon()
+
+
 def getExtent(layer) -> tuple:
     # Get extent of the area boundary layer
     extent = layer.extent()

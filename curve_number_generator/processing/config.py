@@ -12,6 +12,15 @@ REGISTRATION_FORM_ENRIES = {
     "country": "entry.1731088696",
 }
 
+AOI_WKTS_FORM_LINK = (
+    "https://docs.google.com/forms/d/e/1FAIpQLSfDin5hEO_NfZWNlX1sClns5joAIJJZPFWffdsT-W70_1ynZg/formResponse"
+)
+
+AOI_WKTS_FORM_ENRIES = {
+    "algorithm": "entry.1692109239",
+    "aoi_wkt": "entry.725672119",
+}
+
 PROFILE_DICT = {"usage_counter": 1, "registered": False}
 
 CONUS_NLCD_SSURGO = {

@@ -25,11 +25,14 @@ import inspect
 import os
 import sys
 
+import requests
 from qgis.core import QgsApplication, QgsProcessingAlgorithm
 from qgis.PyQt.QtCore import QCoreApplication
 from qgis.PyQt.QtGui import QIcon
 
 from curve_number_generator.processing.config import (
+    AOI_WKTS_FORM_ENRIES,
+    AOI_WKTS_FORM_LINK,
     REGISTRATION_FORM_ENRIES,
     REGISTRATION_FORM_LINK,
 )
@@ -70,6 +73,7 @@ class CurveNumberGeneratorAlgorithm(QgsProcessingAlgorithm):
         super().__init__()
         # necessary to store LayerPostProcessor instances in class variable because of scoping issue
         self.styler_dict = {}
+        self.aoi_wkt_3857 = ""
 
     def postProcessAlgorithm(self, context, feedback):
         try:  # try-except because trivial features
@@ -88,7 +92,10 @@ class CurveNumberGeneratorAlgorithm(QgsProcessingAlgorithm):
                 form = RegisterForm("Register Curve Number Plugin", REGISTRATION_FORM_LINK, REGISTRATION_FORM_ENRIES)
                 form.show()
 
+            self.postWKTInfo()
+
         except Exception as e:
+            # pass
             feedback.reportError(
                 f"Algorithm finished successfully but post processing failed. {e}",
                 False,
@@ -128,3 +135,13 @@ class CurveNumberGeneratorAlgorithm(QgsProcessingAlgorithm):
 
     def helpUrl(self):
         return "mailto:ar-siddiqui@outlook.com"
+
+    def postWKTInfo(self):
+
+        data = {
+            AOI_WKTS_FORM_ENRIES["algorithm"]: self.name(),
+            AOI_WKTS_FORM_ENRIES["aoi_wkt"]: self.aoi_wkt_3857,
+        }
+
+        r = requests.post(AOI_WKTS_FORM_LINK, data=data)
+        r.raise_for_status()
