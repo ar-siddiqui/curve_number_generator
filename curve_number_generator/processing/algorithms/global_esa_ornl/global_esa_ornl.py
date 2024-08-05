@@ -52,6 +52,7 @@ from curve_number_generator.processing.tools.utils import (
     generate_cn_exprs,
     getAndUpdateMessage,
     getExtentInEPSG4326,
+    getExtentWKTIn3857,
     perform_raster_math,
 )
 
@@ -177,6 +178,7 @@ class GlobalEsaORNL(CurveNumberGeneratorAlgorithm):
             )
 
         aoi_layer = self.parameterAsVectorLayer(parameters, "aoi", context)
+        self.aoi_wkt_3857 = getExtentWKTIn3857(aoi_layer)
 
         extent = getExtentInEPSG4326(aoi_layer)
         # add a buffer cell on each side, refer to #49 for reasoning

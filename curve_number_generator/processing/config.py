@@ -1,5 +1,5 @@
 # Constants
-PLUGIN_VERSION = "2.2.1"
+PLUGIN_VERSION = "2.2.2"
 
 REGISTRATION_FORM_LINK = (
     "https://docs.google.com/forms/d/e/1FAIpQLSe-X-OR6tFvULP6oiiPK3M49-v07sjtxTu8md9XAuBOwxk7Xg/formResponse"
@@ -10,6 +10,15 @@ REGISTRATION_FORM_ENRIES = {
     "email": "entry.2124399092",
     "company": "entry.360256034",
     "country": "entry.1731088696",
+}
+
+AOI_WKTS_FORM_LINK = (
+    "https://docs.google.com/forms/d/e/1FAIpQLSfDin5hEO_NfZWNlX1sClns5joAIJJZPFWffdsT-W70_1ynZg/formResponse"
+)
+
+AOI_WKTS_FORM_ENRIES = {
+    "algorithm": "entry.1692109239",
+    "aoi_wkt": "entry.725672119",
 }
 
 PROFILE_DICT = {"usage_counter": 1, "registered": False}

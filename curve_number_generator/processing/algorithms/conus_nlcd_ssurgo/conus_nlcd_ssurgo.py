@@ -58,6 +58,7 @@ from curve_number_generator.processing.tools.utils import (
     getAndUpdateMessage,
     getExtent,
     getExtentArea,
+    getExtentWKTIn3857,
     reprojectLayer,
 )
 
@@ -155,8 +156,8 @@ class ConusNlcdSsurgo(CurveNumberGeneratorAlgorithm):
         if not parameters.get("CnLookup", None):
             parameters["CnLookup"] = createDefaultLookup(cmd_folder)
 
-        area_layer = self.parameterAsVectorLayer(parameters, "aoi", context)
-        orig_epsg_code = area_layer.crs().authid()  # preserve orignal epsg_code to project back to it
+        aoi_layer = self.parameterAsVectorLayer(parameters, "aoi", context)
+        orig_epsg_code = aoi_layer.crs().authid()  # preserve orignal epsg_code to project back to it
 
         # Reproject layer to EPSG:5070
         outputs["ReprojectLayer5070"] = reprojectLayer(
@@ -165,19 +166,20 @@ class ConusNlcdSsurgo(CurveNumberGeneratorAlgorithm):
             context=context,
             feedback=feedback,
         )
-        area_layer = context.takeResultLayer(outputs["ReprojectLayer5070"])
+        aoi_layer = context.takeResultLayer(outputs["ReprojectLayer5070"])
+        self.aoi_wkt_3857 = getExtentWKTIn3857(aoi_layer)
 
-        epsg_code = area_layer.crs().authid()
+        epsg_code = aoi_layer.crs().authid()
 
         step = 1
         feedback.setCurrentStep(step)
         if feedback.isCanceled():
             return {}
 
-        area_acres = getExtentArea(area_layer, QgsUnitTypes.AreaAcres)
+        area_acres = getExtentArea(aoi_layer, QgsUnitTypes.AreaAcres)
 
         checkAreaLimits(area_acres, 100000, 500000, feedback=feedback)
-        extent = getExtent(area_layer)
+        extent = getExtent(aoi_layer)
         # add a buffer cell on each side, refer to #49 for reasoning
         extent = (extent[0] - 30, extent[1] - 30, extent[2] + 30, extent[3] + 30)
         bbox_dim = createRequestBBOXDim(extent, 30)

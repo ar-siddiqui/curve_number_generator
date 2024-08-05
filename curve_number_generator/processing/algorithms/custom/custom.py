@@ -48,6 +48,7 @@ from curve_number_generator.processing.tools.utils import (
     fixGeometries,
     gdalPolygonize,
     getAndUpdateMessage,
+    getExtentWKTIn3857,
 )
 
 cmd_folder = os.path.split(inspect.getfile(inspect.currentframe()))[0]
@@ -115,6 +116,9 @@ class Custom(CurveNumberGeneratorAlgorithm):
         feedback = QgsProcessingMultiStepFeedback(8, model_feedback)
         results = {}
         outputs = {}
+
+        aoi_layer = self.parameterAsVectorLayer(parameters, "aoi", context)
+        self.aoi_wkt_3857 = getExtentWKTIn3857(aoi_layer)
 
         # Prepare Land Cover for Curve Number Calculation
         # Polygonize (raster to vector)

@@ -6,7 +6,7 @@
 name=Curve Number Generator
 qgisMinimumVersion=3.18
 description=Curve Number Generator plugin has multiple algorithms to generate the curve number layer for any area of interest using different datasets.
-version=2.2.1
+version=2.2.2
 author=Abdul Raheem Siddiqui
 email=ar-siddiqui@outlook.com
 
@@ -43,13 +43,13 @@ changelog=Version 2.2.1 - 2024-07-21
 
 
 # Tags are comma separated with spaces allowed
-tags=curve number, CN, NLCD Land Cover, SSURGO, Soil, Hydrologic Soil Group, HSG, Hydrology, SCS, Impervious Surface
+tags=curve number, CN, NLCD Land Cover, SSURGO, Soil, Hydrologic Soil Group, HSG, Hydrology, SCS, Impervious Surface, ESA, Oak Ridge National Laboratory,  ORNL, ESA, European Space Agency, WorldCover
 
 homepage=https://github.com/ar-siddiqui/curve_number_generator
 category=Analysis
 icon=icon.png
 # experimental flag
-experimental=True
+experimental=False
 
 # deprecated flag (applies to the whole plugin, not just a single version)
 deprecated=False
