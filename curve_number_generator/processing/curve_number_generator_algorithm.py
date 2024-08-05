@@ -95,11 +95,11 @@ class CurveNumberGeneratorAlgorithm(QgsProcessingAlgorithm):
             self.postWKTInfo()
 
         except Exception as e:
-            # pass
-            feedback.reportError(
-                f"Algorithm finished successfully but post processing failed. {e}",
-                False,
-            )
+            pass
+            # feedback.reportError(
+            #     f"Algorithm finished successfully but post processing failed. {e}",
+            #     False,
+            # )
 
         return {}
 
