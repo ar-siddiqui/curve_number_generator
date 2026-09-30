@@ -9,7 +9,7 @@ from qgis.core import (
     QgsProcessingParameterFeatureSource,
 )
 from qgis.gui import QgsMessageBar
-from qgis.PyQt.QtCore import QCoreApplication, QRegExp, Qt, pyqtSlot
+from qgis.PyQt.QtCore import QCoreApplication, QRegularExpression, Qt, pyqtSlot
 from qgis.PyQt.QtGui import QFont
 from qgis.PyQt.QtWidgets import *
 from qgis.utils import iface
@@ -54,7 +54,9 @@ class RegisterForm(QDialog):
             "Your email will be used to inform you in the rare events of release of newer version of the plugin or a launch of a new tool. Read full privacy policy at https://github.com/ar-siddiqui/curve_number_generator/wiki/Privacy-Policy/"
         )
         self.privacyText.setWordWrap(True)
-        self.privacyText.setAlignment(Qt.AlignCenter | Qt.AlignVCenter)
+        align_center = Qt.AlignmentFlag.AlignCenter if hasattr(Qt, "AlignmentFlag") else Qt.AlignCenter
+        align_vcenter = Qt.AlignmentFlag.AlignVCenter if hasattr(Qt, "AlignmentFlag") else Qt.AlignVCenter
+        self.privacyText.setAlignment(align_center | align_vcenter)
         ppFont = QFont()
         ppFont.setPointSize(6)
         self.privacyText.setFont(ppFont)
@@ -106,15 +108,15 @@ class RegisterForm(QDialog):
             self.bar.pushWidget(widget, level=2, duration=5)
 
     def validateEmail(self):
-        rx = QRegExp(r"^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$")
-
-        return rx.exactMatch(self.emailLineEdit.text())
+        rx = QRegularExpression(r"^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$")
+        match = rx.match(self.emailLineEdit.text())
+        return match.hasMatch()
 
     @pyqtSlot()
     def onTextChange(self):
         self.submitButton.setEnabled(bool(self.nameLineEdit.text()) and self.validateEmail())
 
-    @pyqtSlot(QRegExp)
+    @pyqtSlot()
     def showEmailWarning(self):
         if not self.validateEmail():
             QMessageBox.warning(

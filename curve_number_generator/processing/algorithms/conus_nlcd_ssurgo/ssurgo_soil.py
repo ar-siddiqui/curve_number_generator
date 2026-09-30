@@ -31,6 +31,16 @@ from qgis.core import (QgsCoordinateReferenceSystem, QgsFeature, QgsField,
                        QgsGeometry, QgsProcessing, QgsVectorLayer)
 from qgis.PyQt.QtCore import QVariant
 
+try:
+    if hasattr(QVariant, 'String'):
+        STRING_TYPE = QVariant.String
+    else:
+        from qgis.PyQt.QtCore import QMetaType
+        STRING_TYPE = QMetaType.Type.QString
+except (ImportError, AttributeError):
+    from qgis.PyQt.QtCore import QMetaType
+    STRING_TYPE = QMetaType.Type.QString
+
 
 class SsurgoSoil:
     """Class to get SSURGO soil data"""
@@ -115,7 +125,7 @@ class SsurgoSoil:
 
         # initialize fields
         for field in attr_dict:
-            attributes.append(QgsField(field["name"], QVariant.String))
+            attributes.append(QgsField(field["name"], STRING_TYPE))
             provider.addAttributes(attributes)
             self.soil_layer.updateFields()
 
